@@ -1,20 +1,48 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Orderscreencomponent from './src/components/Orderscreencomponent';
+import { StyleSheet, Text, View, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 
-export default function App() {
+
+
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    // <NavigationContainer>
+    //   <Stack.Navigator
+    //     screenOptions={{
+    //       headerStyle: {
+    //         backgroundColor: '#6200EE',
+    //       },
+    //       headerTintColor: '#fff',
+    //       headerTitleStyle: {
+    //         fontWeight: 'bold',
+    //       },
+    //     }}
+    //   >
+    //     <Stack.Screen name="Orders" component={orderscreen} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
 
+        <View style={styles.container}>
+        <Orderscreencomponent />
+        </View>
+  
+  );
+};
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1, // Occupies the entire screen
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
+    backgroundColor: '#ffffff', // Set a visible background color
+  },
+  text: {
+    fontSize: 24,
+    color: '#333',
   },
 });
+
+export default App;
