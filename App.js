@@ -25,10 +25,12 @@ const App = () => {
     //     <Stack.Screen name="Orders" component={orderscreen} />
     //   </Stack.Navigator>
     // </NavigationContainer>
-
-        <View style={styles.container}>
-        <Orderscreencomponent />
-        </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Orders" component={Orderscreencomponent} />
+      </Stack.Navigator>
+    </NavigationContainer>
+   
   
   );
 };
