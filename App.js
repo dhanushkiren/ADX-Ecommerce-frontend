@@ -1,18 +1,39 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Orderscreencomponent from './src/components/Orderscreencomponent';
+import Orderhistorycomponent from './src/components/Orderhistorycomponent';
+import SearchBar from './src/components/SearchBar';
 import { StyleSheet, Text, View, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 
 
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Orders" component={Orderscreencomponent} />
+      <Stack.Navigator initialRouteName="Orders">
+      <Stack.Screen name="Orders" component={Orderscreencomponent}
+       options={{
+        headerTitle: () => <SearchBar />, // Adding Search Bar in header
+        headerStyle: {
+          backgroundColor: '#6200EE', // Header background color
+        },
+        headerRight: () => (
+          <Image source={require('./assets/filter.png')} style={styles.filterIcon} resizeMode="center" />
+        ),
+      }} />
+      <Stack.Screen name="history" component={Orderhistorycomponent} 
+        options={{
+            headerTitle: () => <SearchBar />, // Adding Search Bar in header
+            headerStyle: {
+              backgroundColor: '#6200EE', // Header background color
+            },
+            headerRight: () => (
+              <Image source={require('./assets/filter.png')} style={styles.filterIcon} resizeMode="center" />
+            ),
+          }} />
       </Stack.Navigator>
     </NavigationContainer>
    
@@ -29,6 +50,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     color: '#333',
+  },
+  filterIcon: {
+    marginRight: 10,
+    width: 18,
+    height: 18, // Space between icon and input
   },
 });
 
