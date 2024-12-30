@@ -111,7 +111,7 @@ const EditProfile = ({ navigation }) => {
                 <View style={{ alignItems: "center", marginVertical: 22 }}>
                     <TouchableOpacity onPress={handleImageSelection}>
                     <Image
-                        source={selectedImage ? { uri: selectedImage } : require('D:/adverpix/e-commerce/ADX-Ecommerce-frontend/src/components/pic.png')}
+                        source={selectedImage ? { uri: selectedImage } : require('../components/pic.png')}
                         style={{
                         height: 170,
                         width: 170,
