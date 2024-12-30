@@ -15,15 +15,15 @@ export default function ProductPage() {
       {/* Product Image Slider */}
       <Swiper style={styles.swiper} showsButtons={true} autoplay={true}>
         <Image
-          source={require('./src/images/1.webp')} 
+          source={require('../images/1.webp')} 
           style={styles.productImage}
         />
         <Image
-          source={require('./src/images/2.webp')} 
+          source={require('../images/2.webp')} 
           style={styles.productImage}
         />
         <Image
-          source={require('./src/images/3.webp')} 
+          source={require('../images/3.webp')} 
           style={styles.productImage}
         />
       </Swiper>
