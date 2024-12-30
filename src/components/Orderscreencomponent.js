@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ScrollView,Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import productImage from '../../assets/yellow.png';
 import productImage1 from '../../assets/orange.png';
@@ -50,21 +50,10 @@ const orderData = [
     isStatusHighlighted: false,
   },
 ];
-const Orderscreencomponent = () => {
+const Orderscreencomponent = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <View style={styles.header}>
-      <View style={styles.searchContainer}>
-        <Image source={SearchIcon} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search Tradezy.in"
-          placeholderTextColor="#aaa"
-        />
-      </View>
-      <Icon name="filter-list" size={24} color="#fff" style={styles.filterIcon} />
-    </View>
 
          <View style={styles.sectionHeader}>
       {/* Background Image */}
@@ -84,7 +73,7 @@ const Orderscreencomponent = () => {
   <View style={styles.headerRow}>
     <Text style={styles.sectionTitle}>Buy Again</Text>
     <TouchableOpacity>
-      <Text style={styles.link}>See More</Text>
+    <Text style={styles.link}>See More</Text>
     </TouchableOpacity>
   </View>
 
@@ -126,8 +115,9 @@ const Orderscreencomponent = () => {
           ))}
     </View>
 
-        <TouchableOpacity style={styles.viewMoreButton}>
-          <Text style={styles.viewMoreText}>View More</Text>
+        <TouchableOpacity style={styles.viewMoreButton}   onPress={() => navigation.navigate('history')}>
+          <Text style={styles.viewMoreText}
+        > View More </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -150,7 +140,6 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1, 
-    paddingTop:40,
    
   },
   header: {
