@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Orderscreencomponent from './src/components/Orderscreencomponent';
-import Orderhistorycomponent from './src/components/Orderhistorycomponent';
-import SearchBar from './src/components/SearchBar';
+import Orderscreencomponent from './src/screens/orders/Orderscreencomponent';
+import Orderhistorycomponent from './src/screens/orders/Orderhistorycomponent';
+import SearchBar from './src/screens/orders/SearchBar';
 import { StyleSheet, Text, View, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 
 

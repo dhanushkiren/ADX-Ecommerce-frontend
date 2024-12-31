@@ -14,7 +14,7 @@ const SearchBar = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjusts for iOS or Android
     >
       <View style={styles.searchContainer}>
-        <Image source={require('./../../assets/search.png')} style={styles.searchIcon} resizeMode="center" />
+        <Image source={require('../../../assets/search.png')} style={styles.searchIcon} resizeMode="center" />
         <TextInput
         ref={inputRef} // Assign the ref to the TextInput
           style={styles.searchInput}

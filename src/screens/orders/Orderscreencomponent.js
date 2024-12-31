@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, TextInput, ScrollView,Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import productImage from '../../assets/yellow.png';
-import productImage1 from '../../assets/orange.png';
-import productImage2 from '../../assets/red.png';
-import productImage3 from '../../assets/violet.png';
-import productImage4 from '../../assets/green.png'
-import OrderImage from '../../assets/cat food.png'
-import OrderImage1 from '../../assets/milk.png'
-import OrderImage2 from '../../assets/oats.png'
-import OrderImage3 from '../../assets/lotion.png'
-import OrderImage4 from '../../assets/sunscreen.png'
-import SearchIcon from '../../assets/searchicon.png'
+import productImage from '../../../assets/yellow.png';
+import productImage1 from '../../../assets/orange.png';
+import productImage2 from '../../../assets/red.png';
+import productImage3 from '../../../assets/violet.png';
+import productImage4 from '../../../assets/green.png'
+import OrderImage from '../../../assets/cat food.png'
+import OrderImage1 from '../../../assets/milk.png'
+import OrderImage2 from '../../../assets/oats.png'
+import OrderImage3 from '../../../assets/lotion.png'
+import OrderImage4 from '../../../assets/sunscreen.png'
+import SearchIcon from '../../../assets/searchicon.png'
 
 const orderData = [
   {
@@ -58,7 +58,7 @@ const Orderscreencomponent = ({ navigation }) => {
          <View style={styles.sectionHeader}>
       {/* Background Image */}
       <Image 
-        source={require('../../assets/image.png')} // Replace with your local image path
+        source={require('../../../assets/image.png')} // Replace with your local image path
         style={styles.backgroundImage}
       />
       
