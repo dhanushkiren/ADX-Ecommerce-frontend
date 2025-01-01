@@ -7,15 +7,15 @@ import RegisterScreen from './src/screens/RegisterScreen';
 import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import EditProfile  from "./src/components/EditProfile";
-
+import FAQScreen from './src/screens/FAQScreen'; 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="FAQ" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="TabHome" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Payment" component={PaymentPage} />
         <Stack.Screen name="Product" component={ProductPage} />
@@ -23,8 +23,10 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
+
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
 
