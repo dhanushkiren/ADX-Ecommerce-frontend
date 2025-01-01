@@ -8,13 +8,17 @@ import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import EditProfile  from "./src/components/EditProfile";
 import FAQScreen from './src/screens/FAQScreen'; 
+import searchlist from './src/screens/searchlist';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="FAQ" screenOptions={{ headerShown: false }}>
+
+      <Stack.Navigator initialRouteName="searchlist" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="searchlist" component={searchlist} />
         <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="TabHome" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Payment" component={PaymentPage} />
