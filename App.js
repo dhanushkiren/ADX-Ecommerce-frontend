@@ -6,14 +6,18 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import EditProfile from "./src/components/EditProfile";
+import { Provider as ReduxStoreProvider } from "react-redux";
+import store from "./src/redux/store";
 import FAQScreen from "./src/screens/FAQScreen";
 import searchlist from "./src/screens/searchlist";
 import Home from "./src/screens/Home.js";
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+   <ReduxStoreProvider  store={store}>
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="home"
@@ -29,5 +33,6 @@ export default function App() {
         <Stack.Screen name="register" component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+   </ReduxStoreProvider>
   );
 }
