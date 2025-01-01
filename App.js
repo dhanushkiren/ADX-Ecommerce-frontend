@@ -8,25 +8,31 @@ import ProductPage from "./src/screens/ProductPage";
 import EditProfile from "./src/components/EditProfile";
 import { Provider as ReduxStoreProvider } from "react-redux";
 import store from "./src/redux/store";
+import FAQScreen from "./src/screens/FAQScreen";
+import searchlist from "./src/screens/searchlist";
+import Home from "./src/screens/Home.js";
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <ReduxStoreProvider  store={store}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Payment" component={PaymentPage} />
-          <Stack.Screen name="Product" component={ProductPage} />
-          <Stack.Screen name="Profile" component={EditProfile} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ReduxStoreProvider>
+   <ReduxStoreProvider  store={store}>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="home"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="searchlist" component={searchlist} />
+        <Stack.Screen name="faq" component={FAQScreen} />
+        <Stack.Screen name="home" component={Home} />
+        <Stack.Screen name="payment" component={PaymentPage} />
+        <Stack.Screen name="product" component={ProductPage} />
+        <Stack.Screen name="profile" component={EditProfile} />
+        <Stack.Screen name="login" component={LoginScreen} />
+        <Stack.Screen name="register" component={RegisterScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+   </ReduxStoreProvider>
   );
 }
