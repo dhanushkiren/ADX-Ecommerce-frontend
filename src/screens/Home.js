@@ -3,7 +3,7 @@ import SearchIcon from '../../assets/Search.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
-const App = () => {
+const Home = () => {
   const categories = [
     { name: 'Mobiles',
        image: 'https://m.media-amazon.com/images/I/81XmCGfKlWL._AC_UL480_QL65_.jpg' },
@@ -209,4 +209,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Home;
