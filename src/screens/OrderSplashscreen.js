@@ -7,7 +7,7 @@ return
 (
  <View style={StyleSheet.container}>
     <View>
-       <Image source={Icon} style={StyleSheet.images}/>
+       <Image source={Icon} style={StyleSheet.image}/>
     </View>
  </View>
 )
