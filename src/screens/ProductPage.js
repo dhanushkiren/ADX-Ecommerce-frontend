@@ -93,6 +93,113 @@ export default function ProductPage() {
           <Text style={styles.buttonText}>Buy Now</Text>
         </TouchableOpacity>
       </View>
+      
+          {/* Technical Details Heading */}
+<Text style={styles.tableHeading}>Technical Details</Text>
+
+{/* Product Description Table */}
+<View style={styles.tableContainer}>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Manufacturer</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>
+        KADENA, KADENA INDUSTRIES LIMITED, RM-1006, 10/F PO YIP BUILDING, 23 HING YIP STREET, KOWLOON, Hong Kong Island, 999077
+      </Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Brand</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>Royal Enfield</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Model</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>STREETWIND</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Product Dimensions</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>73.5 x 61 x 73.5 cm; 1.3 kg</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Item Model Number</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>JRA220001</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Manufacturer Part Number</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>RRGJRA220072</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Outer Material</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>Polyester</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Material</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>Polyester</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Chest Size</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>42 Centimetres</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Colour</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>BLACK</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Water Resistance</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>Water Resistant</Text>
+    </View>
+  </View>
+  <View style={styles.tableRow}>
+    <View style={[styles.tableCellHeader, styles.leftCell]}>
+      <Text>Item Weight</Text>
+    </View>
+    <View style={[styles.tableCell, styles.rightCell]}>
+      <Text>1 kg 300 g</Text>
+    </View>
+  </View>
+</View>
+
+
     </ScrollView>
   );
 }
@@ -221,4 +328,45 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "gray",
   },
+  tableHeading: {
+    margin: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  tableContainer: {
+    margin: 10,
+    borderRadius: 5,
+    overflow: "hidden",
+    borderColor: "#ddd",
+    borderWidth: 1,
+  },
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  tableCellHeader: {
+    flex: 1,
+    padding: 10,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+  },
+  tableCell: {
+    flex: 2,
+    padding: 10,
+    color: "#555",
+    textAlign: "left",
+  },
+  leftCell: {
+    backgroundColor: "#f0f0f0",
+    borderRightWidth: 1,
+    borderRightColor: "#d0d0d0",
+  },
+  rightCell: {
+    backgroundColor: "#ffffff",
+  },
+
 });
