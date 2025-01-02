@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Orderscreencomponent from './src/screens/orders/Orderscreencomponent';
 import Orderhistorycomponent from './src/screens/orders/Orderhistorycomponent';
-import SearchBar from './src/screens/orders/SearchBar';
+import SearchBar from './src/components/SearchBar';
 import { StyleSheet, Text, View, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 
 
@@ -16,9 +16,9 @@ const App = () => {
       <Stack.Navigator initialRouteName="Orders">
       <Stack.Screen name="Orders" component={Orderscreencomponent}
        options={{
-        headerTitle: () => <SearchBar />, // Adding Search Bar in header
+        headerTitle: () => <SearchBar />, 
         headerStyle: {
-          backgroundColor: '#6200EE', // Header background color
+          backgroundColor: '#6200EE', 
         },
         headerRight: () => (
           <Image source={require('./assets/filter.png')} style={styles.filterIcon} resizeMode="center" />
@@ -26,9 +26,9 @@ const App = () => {
       }} />
       <Stack.Screen name="history" component={Orderhistorycomponent} 
         options={{
-            headerTitle: () => <SearchBar />, // Adding Search Bar in header
+            headerTitle: () => <SearchBar />, 
             headerStyle: {
-              backgroundColor: '#6200EE', // Header background color
+              backgroundColor: '#6200EE', 
             },
             headerRight: () => (
               <Image source={require('./assets/filter.png')} style={styles.filterIcon} resizeMode="center" />
@@ -36,8 +36,6 @@ const App = () => {
           }} />
       </Stack.Navigator>
     </NavigationContainer>
-   
-  
   );
 };
 const styles = StyleSheet.create({

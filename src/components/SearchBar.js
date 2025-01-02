@@ -2,6 +2,7 @@ import React, { useRef }  from 'react';
 import { View, TextInput, StyleSheet, Image, KeyboardAvoidingView, Platform} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+
 const SearchBar = () => {
   const inputRef = useRef(null); // Create a ref for the TextInput
 
@@ -14,7 +15,7 @@ const SearchBar = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjusts for iOS or Android
     >
       <View style={styles.searchContainer}>
-        <Image source={require('../../../assets/search.png')} style={styles.searchIcon} resizeMode="center" />
+        <Image source={require('../../assets/search.png')} style={styles.searchIcon} resizeMode="center" />
         <TextInput
         ref={inputRef} // Assign the ref to the TextInput
           style={styles.searchInput}
