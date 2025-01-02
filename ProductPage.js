@@ -3,7 +3,12 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'rea
 import Icon from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper';
 
-export default function ProductPage() {
+
+export default function ProductPage({ navigation }) {
+  const handleGoToConfirmOrder = () => {
+    // Navigate to the ConfirmOrder screen
+    navigation.navigate('Confirm Order');
+  };
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
@@ -65,7 +70,7 @@ export default function ProductPage() {
           {/* <Text style={styles.buttonText}>Pay with EMI</Text>
           <Text style={styles.buttonSubText}>From ₹1,428/m</Text> */}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buyNowButton}>
+        <TouchableOpacity style={styles.buyNowButton} onPress={handleGoToConfirmOrder}>
           <Text style={styles.buttonText}>Buy Now</Text>
         </TouchableOpacity>
       </View>
@@ -77,6 +82,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9f9f9',
+    paddingTop: 40
   },
   header: {
     flexDirection: 'row',
