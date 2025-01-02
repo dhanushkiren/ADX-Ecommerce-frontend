@@ -11,19 +11,20 @@ import store from "./src/redux/store";
 import FAQScreen from "./src/screens/FAQScreen";
 import searchlist from "./src/screens/searchlist";
 import Home from "./src/screens/Home.js";
-
+import SplashScreen from "./src/screens/SplashScreen.js";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-   <ReduxStoreProvider  store={store}>
+    // <ReduxStoreProvider store={store}>
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="home"
+        initialRouteName="splash"
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="searchlist" component={searchlist} />
+        <Stack.Screen name="splash" component={SplashScreen} />
         <Stack.Screen name="faq" component={FAQScreen} />
         <Stack.Screen name="home" component={Home} />
         <Stack.Screen name="payment" component={PaymentPage} />
@@ -33,6 +34,6 @@ export default function App() {
         <Stack.Screen name="register" component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
-   </ReduxStoreProvider>
+    // </ReduxStoreProvider>
   );
 }
