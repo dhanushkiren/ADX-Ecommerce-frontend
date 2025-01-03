@@ -17,6 +17,10 @@ import { useDispatch } from "react-redux";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
+  const goToProductPage = (category) => {
+    navigation.navigate('Product', { category });
+  };
+
   const categories = [
     {
       name: "Mobiles",
@@ -44,6 +48,7 @@ const Home = ({ navigation }) => {
         "https://m.media-amazon.com/images/I/71X5DF+c+gL._AC_UL480_FMwebp_QL65_.jpg",
     },
   ];
+  
 
   const products = [
     {
@@ -67,6 +72,7 @@ const Home = ({ navigation }) => {
         "https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/MSO/PD3/PC_QuadCard_Zeb_0.5x_1._SY116_CB570220221_.jpg",
     },
   ];
+
 
   const handleLogout = () => {
     Alert.alert(
@@ -92,9 +98,11 @@ const Home = ({ navigation }) => {
     );
   };
 
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.searchContainer}>

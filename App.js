@@ -49,6 +49,7 @@ function MyStack() {
 
   return (
     <NavigationContainer>
+
       <Stack.Navigator
         initialRouteName={token ? "home" : "login"}
         screenOptions={{ headerShown: false }}

@@ -40,6 +40,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>TRADEZY.in</Text>
