@@ -9,7 +9,7 @@ import EditProfile from "./src/components/EditProfile";
 import { Provider as ReduxStoreProvider } from "react-redux";
 import store from "./src/redux/store";
 import FAQScreen from "./src/screens/FAQScreen";
-
+import MenuBar from "./src/components/MenuBar.js";
 import searchlist from "./src/screens/searchlist";
 import Home from "./src/screens/Home.js";
 import SplashScreen from "./src/screens/SplashScreen.js";
@@ -24,9 +24,10 @@ export default function App() {
     // <ReduxStoreProvider store={store}>
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="search"
+        initialRouteName="menu"
         screenOptions={{ headerShown: false }}
       >
+        <Stack.Screen name="menu" component={MenuBar} />
         <Stack.Screen name="searchlist" component={searchlist} />
         <Stack.Screen name="splash" component={SplashScreen} />
         <Stack.Screen name="faq" component={FAQScreen} />
