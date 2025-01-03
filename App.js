@@ -9,15 +9,18 @@ import EditProfile from "./src/components/EditProfile";
 import { Provider as ReduxStoreProvider } from "react-redux";
 import store from "./src/redux/store";
 import FAQScreen from "./src/screens/FAQScreen";
+
 import searchlist from "./src/screens/searchlist";
 import Home from "./src/screens/Home.js";
 import SplashScreen from "./src/screens/SplashScreen.js";
 import SearchBar from "./src/components/SearchBar.js";
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+
     // <ReduxStoreProvider store={store}>
     <NavigationContainer>
       <Stack.Navigator
@@ -37,5 +40,6 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
     // </ReduxStoreProvider>
+
   );
 }
