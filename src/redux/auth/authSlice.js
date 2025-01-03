@@ -1,33 +1,36 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {PUBLIC} from '../../utils/role';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userName: null,
-  email: null,
-  role: PUBLIC,
-
-  toiletId: 'T124',
-
+  token: null,
+  loading: false,
+  error: null,
 };
 
-export const languageSlice = createSlice({
-  name: 'auth',
+const authSlice = createSlice({
+  name: "auth",
   initialState,
   reducers: {
-    setAuth: (state, action) => {
-      // console.log('setting auth data to', action.payload);
-      state.role = action.payload.role;
+    loginRequest: (state) => {
+      state.loading = true;
     },
-    setAuthAction: state => {},
-    initialAuthSetUpAction: state => {},
+    loginSuccess: (state, action) => {
+      console.log("slice ::: ", action.payload);
+      state.token = action.payload.token;
+      state.loading = false;
+      state.error = null;
+    },
+    loginFailure: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    logout: (state) => {
+      state.token = null;
+      state.error = null;
+    },
   },
 });
 
-export const selectUserRole = state => state.auth.role;
-export const selectToiletId = state => state.auth.toiletId;
-export const selectAuthData = state => state.auth;
-
-export const {setAuth, setAuthAction, initialAuthSetUpAction} =
-  languageSlice.actions;
-const authReducer = languageSlice.reducer;
+export const { loginRequest, loginSuccess, loginFailure, logout } =
+  authSlice.actions;
+const authReducer = authSlice.reducer;
 export default authReducer;
