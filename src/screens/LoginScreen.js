@@ -15,6 +15,9 @@ const LoginScreen = ({navigation})=> {
   const gotoRegister = () =>{
     navigation.navigate('Register')
   }
+  const gotohome = () =>{
+    navigation.navigate('TabHome')
+  }
 
   return (
     <View style={styles.container}>
@@ -36,7 +39,7 @@ const LoginScreen = ({navigation})=> {
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity onPress={gotohome} style={styles.loginButton}>
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
 
@@ -89,6 +92,7 @@ const LoginScreen = ({navigation})=> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop:26,
     backgroundColor: '#f8f8f8', 
     alignItems: 'center',
     justifyContent: 'center',

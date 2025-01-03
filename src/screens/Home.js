@@ -1,9 +1,16 @@
 import React from 'react';
 import SearchIcon from '../../assets/Search.png';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, TextInput, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
+
 const App = () => {
+  const navigation = useNavigation();
+  const goToProductPage = (category) => {
+    navigation.navigate('Product', { category });
+  };
+
   const categories = [
     { name: 'Mobiles',
        image: 'https://m.media-amazon.com/images/I/81XmCGfKlWL._AC_UL480_QL65_.jpg' },
@@ -13,6 +20,7 @@ const App = () => {
     { name: 'SkinCare', image: 'https://m.media-amazon.com/images/I/71Epv8aPEoL._AC_UL480_FMwebp_QL65_.jpg' },
     { name: 'Dress', image: 'https://m.media-amazon.com/images/I/71X5DF+c+gL._AC_UL480_FMwebp_QL65_.jpg' },
   ];
+  
 
   const products = [
     { name: '', image: 'https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_boAt_0.5x._SY116_CB553870684_.jpg' },
@@ -20,6 +28,8 @@ const App = () => {
     { name: '', image: 'https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_Noise_0.5x._SY116_CB553870684_.jpg' },
     { name: '', image: 'https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/MSO/PD3/PC_QuadCard_Zeb_0.5x_1._SY116_CB570220221_.jpg' },
   ];
+
+  
 
   return (
     <View style={styles.container}>
@@ -45,13 +55,15 @@ const App = () => {
       </View>
       {/* Horizontal Categories */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
-        {categories.map((category, index) => (
-          <View key={index} style={styles.category}>
-            <Image source={{ uri: category.image }} style={styles.categoryImage} />
-            <Text>{category.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
+          {categories.map((category, index) => (
+            <View key={index} style={styles.category}>
+              <TouchableOpacity onPress={() => goToProductPage(category)}>
+                <Image source={{ uri: category.image }} style={styles.categoryImage} />
+                <Text>{category.name}</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
 
       {/* Promo Section */}
       <View style={styles.promo}>
@@ -61,7 +73,7 @@ const App = () => {
         />
       </View>
 
-      {/* Vertical Products Section */}
+
       <ScrollView showsVerticalScrollIndicator={false} style={styles.productsScroll}>
         <Text style={styles.sectionTitle}>Deals for you</Text>
         <View style={styles.products}>
@@ -88,7 +100,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f9f9f9',
-    paddingTop: 30,
+    paddingTop: 26,
     
     
   },
