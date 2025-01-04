@@ -7,16 +7,20 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 
-const PaymentPage = () => {
+const PaymentPage = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [upiMethod, setUpiMethod] = useState(null); // For UPI selection
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backButtonText}>←</Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("home")}
+        >
+          <Icon name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Payments</Text>
         <Text style={styles.secure}>🔒 100% Secure</Text>
@@ -45,7 +49,14 @@ const PaymentPage = () => {
                 ]}
                 onPress={() => setUpiMethod("googlePay")}
               >
-                <Text style={[styles.radioText, upiMethod === "googlePay" && styles.selectedText]}>Google Pay</Text>
+                <Text
+                  style={[
+                    styles.radioText,
+                    upiMethod === "googlePay" && styles.selectedText,
+                  ]}
+                >
+                  Google Pay
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
@@ -54,7 +65,14 @@ const PaymentPage = () => {
                 ]}
                 onPress={() => setUpiMethod("phonePe")}
               >
-                <Text style={[styles.radioText, upiMethod === "phonePe" && styles.selectedText]}>PhonePe</Text>
+                <Text
+                  style={[
+                    styles.radioText,
+                    upiMethod === "phonePe" && styles.selectedText,
+                  ]}
+                >
+                  PhonePe
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
@@ -63,7 +81,14 @@ const PaymentPage = () => {
                 ]}
                 onPress={() => setUpiMethod("amazonPay")}
               >
-                <Text style={[styles.radioText, upiMethod === "amazonPay" && styles.selectedText]}>Amazon Pay</Text>
+                <Text
+                  style={[
+                    styles.radioText,
+                    upiMethod === "amazonPay" && styles.selectedText,
+                  ]}
+                >
+                  Amazon Pay
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.payButton}>
                 <Text style={styles.payButtonText}>Pay ₹2025</Text>

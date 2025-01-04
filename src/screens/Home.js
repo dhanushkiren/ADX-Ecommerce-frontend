@@ -14,11 +14,13 @@ import {
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { useDispatch } from "react-redux";
-
+import ProductScreen from "./searchlist";
+import SearchBar from "../components/SearchBar";
+import MenuBar from "../components/MenuBar";
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const goToProductPage = (category) => {
-    navigation.navigate('Product', { category });
+    navigation.navigate("Product", { category });
   };
 
   const categories = [
@@ -48,7 +50,6 @@ const Home = ({ navigation }) => {
         "https://m.media-amazon.com/images/I/71X5DF+c+gL._AC_UL480_FMwebp_QL65_.jpg",
     },
   ];
-  
 
   const products = [
     {
@@ -72,7 +73,6 @@ const Home = ({ navigation }) => {
         "https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/MSO/PD3/PC_QuadCard_Zeb_0.5x_1._SY116_CB570220221_.jpg",
     },
   ];
-
 
   const handleLogout = () => {
     Alert.alert(
@@ -98,44 +98,13 @@ const Home = ({ navigation }) => {
     );
   };
 
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.searchContainer}>
-            <Image source={SearchIcon} style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search Tradezy.in"
-              placeholderTextColor="#aaa"
-            />
-          </View>
-          <TouchableOpacity onPress={handleLogout}>
-            <Icon
-              name="notifications"
-              size={24}
-              color="#fff"
-              style={styles.filterIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Location */}
-        <View style={styles.location}>
-          {/* Location Icon and Text */}
-          <Icon
-            name="location-on"
-            size={24}
-            color="#007ACC"
-            style={styles.icon}
-          />
-          <Text style={styles.locationText}>
-            Deliver to JK - Thoothukudi 628004
-          </Text>
-        </View>
+        <TouchableOpacity onPress={() => navigation.navigate("searchlist")}>
+          <SearchBar />
+        </TouchableOpacity>
         {/* Horizontal Categories */}
         <ScrollView
           horizontal
@@ -182,6 +151,7 @@ const Home = ({ navigation }) => {
 
         {/* Footer */}
       </ScrollView>
+      <MenuBar navigation={navigation} />
     </View>
   );
 };

@@ -1,93 +1,53 @@
-// src/components/MenuBar.js
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Home from '../screens/Home';
-import { View } from 'react-native'; // Placeholder for other tabs
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
-const Tab = createBottomTabNavigator();
+const MenuBar = ({ navigation }) => {
+  const menuItems = [
+    { name: "Home", icon: "home", route: "home" },
+    { name: "Profile", icon: "person", route: "profile" },
+    { name: "Cart", icon: "shopping-cart", route: "product" },
+    { name: "Payment", icon: "payment", route: "payment" },
+    { name: "Menu", icon: "menu", route: "faq" },
+  ];
 
-// Placeholder Component to display the plain color screen for each and every tab used as the icons in our Home Page
-const PlaceholderScreen = () => {
-  return <View style={{ flex: 1, backgroundColor: '#8D67F1' }} />;
-};
-
-const MenuBar = () => {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarStyle: {
-          backgroundColor: '#8D67F1',
-          paddingBottom: 5,
-          height: 60,
-        },
-        tabBarActiveTintColor: '#ffffff',
-        tabBarInactiveTintColor: '#dcdcdc',
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Profile') {
-            iconName = 'account';
-          } else if (route.name === 'Cart') {
-            iconName = 'cart';
-          } else if (route.name === 'Wallet') {
-            iconName = 'wallet';
-          } else if (route.name === 'Menu') {
-            iconName = 'menu';
-          }
-
-          return <MaterialCommunityIcons name={iconName} color={color} size={size} />;
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
-      })}
-    >
-      <Tab.Screen
-        name="Home"
-        component={Home}
-        options={{
-          tabBarLabel: 'Home',
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={PlaceholderScreen} 
-        options={{
-          tabBarLabel: 'Profile',
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Cart"
-        component={PlaceholderScreen} 
-        options={{
-          tabBarLabel: 'Cart',
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Wallet"
-        component={PlaceholderScreen} 
-        options={{
-          tabBarLabel: 'Wallet',
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Menu"
-        component={PlaceholderScreen} 
-        options={{
-          tabBarLabel: 'Menu',
-          headerShown: false,
-        }}
-      />
-    </Tab.Navigator>
+    <View style={styles.container}>
+      {menuItems.map((item, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.menuItem}
+          onPress={() => navigation.navigate(item.route)}
+        >
+          <Icon name={item.icon} size={24} color="#fff" />
+          <Text style={styles.menuText}>{item.name}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#7041EE", // Customize the background color
+    height: 60,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+  },
+  menuItem: {
+    alignItems: "center",
+  },
+  menuText: {
+    fontSize: 12,
+    color: "#fff",
+    marginTop: 4,
+  },
+});
 
 export default MenuBar;

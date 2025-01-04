@@ -15,7 +15,7 @@ export default function ProductPage({ navigation }) {
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('TabHome')}>
+        <TouchableOpacity onPress={() => navigation.navigate('home')}>
           <Icon name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.iconContainer}>

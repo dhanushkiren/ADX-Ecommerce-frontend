@@ -1,189 +1,359 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
-  TextInput,
-  TouchableOpacity,
   Text,
   StyleSheet,
-  Modal,
   FlatList,
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons"; // Ensure you have react-native-vector-icons installed
+  TouchableOpacity,
+  ScrollView,
+  Animated,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const { height } = Dimensions.get('window');
 
 const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSortModalVisible, setSortModalVisible] = useState(false);
-  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
-
-  const sortOptions = ["Price: Low to High", "Price: High to Low", "Newest Arrivals"];
-  const filterOptions = ["Category", "Brand", "Rating", "Price Range"];
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    // Handle search logic here (e.g., API call or filtering the list)
-  };
-
-  const applySort = (option) => {
-    console.log(`Sort applied: ${option}`);
-    setSortModalVisible(false);
-    // Handle sort logic here
-  };
-
-  const applyFilter = (option) => {
-    console.log(`Filter applied: ${option}`);
-    setFilterModalVisible(false);
-    // Handle filter logic here
-  };
-
-  return (
-    <View style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchBarContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search products"
-          value={searchQuery}
-          onChangeText={handleSearch}
-        />
-        <TouchableOpacity style={styles.iconButton}>
-          <Icon name="search" size={20} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Sort and Filter Buttons */}
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity
-          style={styles.optionButton}
-          onPress={() => setSortModalVisible(true)}
-        >
-          <Icon name="funnel" size={18} color="#000" />
-          <Text style={styles.optionText}>Sort By</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.optionButton}
-          onPress={() => setFilterModalVisible(true)}
-        >
-          <Icon name="options" size={18} color="#000" />
-          <Text style={styles.optionText}>Filter</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Sort Modal */}
-      <Modal
-        visible={isSortModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setSortModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setSortModalVisible(false)}
-          >
-            <Icon name="close" size={24} color="#fff" />
+  const [isSortVisible, setSortVisible] = useState(false);
+    const [isFilterVisible, setFilterVisible] = useState(false);
+    const [selectedSortOption, setSelectedSortOption] = useState('');
+    const sortTranslateY = useState(new Animated.Value(height))[0];
+    const filterTranslateY = useState(new Animated.Value(height))[0];
+    const [selectedCategory, setSelectedCategory] = useState('Brands');
+    
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity>
+            <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <FlatList
-            data={sortOptions}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => applySort(item)}
-              >
-                <Text style={styles.modalText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
+          <View style={styles.searchInput}>
+          <Icon name="search" size={24} color="#ccc" style={styles.icon} />
+           <Text  style={styles.searchInputText}>Search</Text>
+            </View>
         </View>
-      </Modal>
-
-      {/* Filter Modal */}
-      <Modal
-        visible={isFilterModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setFilterModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setFilterModalVisible(false)}
-          >
-            <Icon name="close" size={24} color="#fff" />
-          </TouchableOpacity>
-          <FlatList
-            data={filterOptions}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => applyFilter(item)}
-              >
-                <Text style={styles.modalText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
+  
+        <View style={styles.location}>
+         
+          <Icon name="location-on" size={24} color="#fff" style={styles.icon} />
+          <Text  style={styles.locationText} >Deliver to Zeus, Chennai - 600028</Text>
         </View>
-      </Modal>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
+      </View>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#f5f5f5',
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#6200ee',
+      padding: 10,
+      marginTop: 20, 
+    },
+    searchInput: {
+      flex: 1,
+      backgroundColor: '#6200ee',  
+      borderRadius: 20,
+      paddingHorizontal: 10,
+      color: '#f5f5f5', 
+      borderWidth: 1, 
+      borderColor: '#fff',  
+      flexDirection: 'row',  
+      height: 40, 
+      marginRight: 20,
+      marginLeft:20, 
+      alignItems: 'center',  
+    },
+    searchInputText:{
+     color:"#ccc",
+     fontSize:15,
+     marginLeft:5,
+    },
+    locationText: {
+      padding: 5,
+      backgroundColor: '#8D67F1',
+      color: '#fff',
+    },
+    location: {
+      padding: 5,
+      backgroundColor: '#8D67F1',  
+      fontSize: 14,
+      paddingBottom: 5,
+      flexDirection: 'row',  
+      alignItems: 'center',  
+      justifyContent: 'flex-start', 
+      width: '100%',
+      
+    },
+    productContainer: {
+      flexDirection: 'row',
+      padding: 10,
+      backgroundColor: '#fff',
+      marginBottom: 10,
+    },
+    imagePlaceholder: {
+      width: 100,
+      height: 100,
+      backgroundColor: '#ccc',
+      borderRadius: 8,
+      marginTop:20,
+    },
+    productDetails: {
+      flex: 1,
+      marginLeft: 10,
+    },
+    productName: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#000',
+    },
+    ratingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 5,
+    },
+    rating: {
+      color: '#ffb400',
+      fontSize: 14,
+    },
+    reviews: {
+      marginLeft: 5,
+      color: '#777',
+    },
+    priceContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    discountedPrice: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#000',
+    },
+    originalPrice: {
+      textDecorationLine: 'line-through',
+      marginLeft: 10,
+      color: '#777',
+    },
+    discount: {
+      marginLeft: 10,
+      color: '#388e3c',
+    },
+    warranty: {
+      fontSize: 12,
+      color: '#555',
+      marginVertical: 5,
+    },
+    addToCartButton: {
+      borderWidth: 1,
+      borderColor: '#6200ee',
+      borderRadius: 15,
+      alignItems: 'center',
+      padding: 8,
+      marginTop: 5,
+      marginLeft:5,
+  
+    },
+    addToCartText: {
+      color: '#6200ee',
+      fontWeight: 'bold',
+    },
+    bottomNavigation: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      backgroundColor: '#6200ee',
+      padding: 10,
+      borderTopLeftRadius: 20,  
+      borderTopRightRadius: 20, 
+    },
+    dimmedBackground: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+      zIndex: 10, 
+    },
+    animatedModal: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: '65%',
+      backgroundColor: '#fff',
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      overflow: 'hidden',
+      zIndex: 11, 
+    },
+      modalContent: {
+      padding: 20,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+    modalOption: {
+      paddingVertical: 18,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ddd',
+    },
+    modalButton: {
+      backgroundColor: '#6200ee',
+      padding: 10,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 20,
+    },
+    modalButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    filterCategory: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginVertical: 10,
+    },
+    filterOptions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: 10,
+    },
+    filterContainer: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    sidebar: {
+      width: '40%',
+      backgroundColor: '#f0f0f0',
+      paddingVertical: 5,
+    },
+    categoryItem: {
+      padding: 15,
+      borderWidth:0.5,
+      borderColor:"#ccc",
+    },
+    selectedCategoryItem: {
+      backgroundColor: '#6200ee',
+    },
+    categoryText: {
+      fontSize: 13,
+      color: '#000',
+    },
+    selectedCategoryText: {
+      color: '#fff',
+    },
+    optionsPanel: {
+      flex: 1,
+      padding: 15,
+      marginBottom: 20, 
+    },
+    optionsTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    optionsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10, 
+      justifyContent: 'flex-start', 
+      marginTop: 10,
+    },
+    optionItem: {
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      marginLeft:10,
+      marginRight: 20,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#6200ee', 
+      borderRadius: 20, 
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    optionText: {
+      fontSize: 14,
+      color: '#6200ee', 
+      fontWeight: '500',
+    },
+    filterTitle:{
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      marginTop:15,
+      marginLeft:20,
+    },
+    filterChip: {
+      backgroundColor: '#eee',
+      padding: 8,
+      borderRadius: 16,
+      margin: 5,
+    },
+    modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
+    borderTopWidth: 1, 
+    borderTopColor: '#ddd',
+    backgroundColor: '#f5f5f5', 
   },
-  searchBarContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#8D67F1",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: 8,
-  },
-  iconButton: {
-    marginLeft: 10,
-  },
-  optionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  optionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#e0e0e0",
-    borderRadius: 5,
-    padding: 10,
-  },
-  optionText: {
-    marginLeft: 5,
-    fontSize: 14,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 20,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-    marginBottom: 10,
-  },
-  modalItem: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 16,
-  },
-});
+    clearFilterText: {
+      color: '#6200ee',
+      fontWeight: 'bold',
+    },
+    modalButton: {
+      backgroundColor: '#6200ee',
+      padding: 15,
+      borderRadius: 8,
+      marginTop:10,
+    },
+    modalButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    radioButtonContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    radioButton: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: '#6200ee',
+      marginRight: 10,
+    },
+    radioButtonSelected: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      backgroundColor: '#6200ee',
+      marginRight: 10,
+    },
+    radioButtonLabel: {
+      fontSize: 16,
+      color: '#000',
+    },
+    closeButton: {
+      position: 'absolute',
+      top: 10,
+      right: 10,
+      zIndex: 12, 
+      backgroundColor: '#fff',
+      borderRadius: 15,
+      padding: 5,
+      elevation: 5, 
+    },
+    
+  });
 
 export default SearchBar;
