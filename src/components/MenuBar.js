@@ -6,7 +6,7 @@ const MenuBar = ({ navigation }) => {
   const menuItems = [
     { name: "Home", icon: "home", route: "home" },
     { name: "Profile", icon: "person", route: "profile" },
-    { name: "Cart", icon: "shopping-cart", route: "product" },
+    { name: "Cart", icon: "shopping-cart", route: "cart" },
     { name: "Payment", icon: "payment", route: "payment" },
     { name: "Menu", icon: "menu", route: "faq" },
   ];
