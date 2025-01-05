@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,6 +9,11 @@ import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
+import EditProfile from "./src/components/EditProfile";
+import Orderscreencomponent from './src/screens/orders/Orderscreencomponent';
+import Orderhistorycomponent from './src/screens/orders/Orderhistorycomponent';
+import {StyleSheet, Image } from 'react-native';
+
 
 import {
   Provider as ReduxStoreProvider,
@@ -71,8 +77,13 @@ function MyStack() {
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="search" component={SearchBar} />
         <Stack.Screen name="cart" component={CartScreen} />
+
         <Stack.Screen name="Confirm Order" component={ConfirmOrder}  />
         <Stack.Screen name="Order Checkout" component={Placeorder}  />
+
+        <Stack.Screen name="Orders" component={Orderscreencomponent}/>
+      <Stack.Screen name="history" component={Orderhistorycomponent} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -85,3 +96,4 @@ export default function App() {
     </ReduxStoreProvider>
   );
 }
+
