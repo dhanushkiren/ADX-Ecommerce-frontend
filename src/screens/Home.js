@@ -1,5 +1,5 @@
 import React from "react";
-import SearchIcon from "../../assets/Search.png";
+import SearchIcon from "../../assets/search.png";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   View,
