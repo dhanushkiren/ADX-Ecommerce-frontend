@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -6,6 +7,9 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import EditProfile from "./src/components/EditProfile";
+import Orderscreencomponent from './src/screens/orders/Orderscreencomponent';
+import Orderhistorycomponent from './src/screens/orders/Orderhistorycomponent';
+import {StyleSheet, Image } from 'react-native';
 
 import {
   Provider as ReduxStoreProvider,
@@ -69,6 +73,8 @@ function MyStack() {
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="search" component={SearchBar} />
         <Stack.Screen name="cart" component={CartScreen} />
+        <Stack.Screen name="Orders" component={Orderscreencomponent}/>
+      <Stack.Screen name="history" component={Orderhistorycomponent} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -81,3 +87,21 @@ export default function App() {
     </ReduxStoreProvider>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, // Occupies the entire screen
+    justifyContent: 'center', // Center content vertically
+    alignItems: 'center', // Center content horizontally
+    backgroundColor: '#ffffff', // Set a visible background color
+  },
+  text: {
+    fontSize: 24,
+    color: '#333',
+  },
+  filterIcon: {
+    marginRight: 10,
+    width: 18,
+    height: 18, // Space between icon and input
+  },
+});
+
