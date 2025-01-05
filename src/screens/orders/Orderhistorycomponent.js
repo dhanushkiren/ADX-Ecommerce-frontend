@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TextInput, FlatList, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 
 const OrderhistoryComponent = () => {
   // Order data
@@ -87,9 +86,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 10,
+    paddingTop: 30
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'left',
