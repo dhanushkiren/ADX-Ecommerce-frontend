@@ -6,6 +6,7 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import EditProfile from "./src/components/EditProfile";
+
 import {
   Provider as ReduxStoreProvider,
   useDispatch,
@@ -18,6 +19,7 @@ import searchlist from "./src/screens/searchlist";
 import Home from "./src/screens/Home.js";
 import SplashScreen from "./src/screens/SplashScreen.js";
 import SearchBar from "./src/components/SearchBar.js";
+import CartScreen from "./src/screens/CartScreen";
 import { retrieveData } from "./src/utils/asyncStorage.js";
 import { loginSuccess } from "./src/redux/auth/authSlice.js";
 
@@ -51,7 +53,7 @@ function MyStack() {
     <NavigationContainer>
 
       <Stack.Navigator
-        initialRouteName={token ? "home" : "login"}
+         initialRouteName={token ? "home" : "login"}
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -66,6 +68,7 @@ function MyStack() {
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="search" component={SearchBar} />
+        <Stack.Screen name="cart" component={CartScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
