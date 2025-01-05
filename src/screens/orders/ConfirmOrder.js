@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 10,
+    paddingTop: 40
   },
   productContainer: {
     flexDirection: "row",
