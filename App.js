@@ -58,7 +58,7 @@ function MyStack() {
     <NavigationContainer>
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
-        initialRouteName="Orders"
+        initialRouteName={token ? "home" : "login"}
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
