@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
+import { productImages, productDetails } from "../utils/data"; // Adjust the import path accordingly
 
 export default function ProductPage({ navigation }) {
   return (
@@ -26,69 +27,42 @@ export default function ProductPage({ navigation }) {
 
       {/* Product Image Slider */}
       <Swiper style={styles.swiper} showsButtons={true} autoplay={true}>
-        <Image
-
-          source={require("../../assets/images/1.webp")}
-          style={styles.productImage}
-        />
-        <Image
-          source={require("../../assets/images/2.webp")}
-          style={styles.productImage}
-        />
-        <Image
-          source={require("../../assets/images/3.webp")}
-
-          style={styles.productImage}
-        />
+        {productImages.map((image, index) => (
+          <Image key={index} source={image} style={styles.productImage} />
+        ))}
       </Swiper>
 
       {/* Bestseller Tag */}
-      <Text style={styles.bestSellerTag}>BESTSELLER</Text>
+      <Text style={styles.bestSellerTag}>{productDetails.bestsellerTag}</Text>
 
       {/* Product Info */}
-      <Text style={styles.productTitle}>
-        ROYAL ENFIELD Streetwind V3 Riding Protection Jacket
-      </Text>
-
+      <Text style={styles.productTitle}>{productDetails.title}</Text>
       <Text style={styles.discountText}>
-        28% <Text style={styles.originalPrice}>6,500</Text> 4,680
+        {productDetails.discountText} <Text style={styles.originalPrice}>{productDetails.originalPrice}</Text> {productDetails.discountedPrice}
       </Text>
 
       {/* Heart and Share Icons */}
       <View style={styles.iconRow}>
         <Icon name="heart-outline" size={24} color="red" />
-        <Icon
-          name="share-outline"
-          size={24}
-          color="black"
-          style={styles.shareIcon}
-        />
+        <Icon name="share-outline" size={24} color="black" style={styles.shareIcon} />
       </View>
 
       {/* Order Info */}
-      <Text style={styles.orderInfo}>
-        140 people ordered this in the last 30 days
-      </Text>
+      <Text style={styles.orderInfo}>{productDetails.orderInfo}</Text>
 
       {/* Seller Info */}
-      <Text style={styles.sellerTitle}>View More From REYNOX RIDING</Text>
-      <Text style={styles.sellerProductTitle}>
-        ROYAL ENFIELD Mountain Riding Protecting Jacket (Black, L)
-      </Text>
-      <Text style={styles.rating}>4.2 ★ 267 ratings</Text>
+      <Text style={styles.sellerTitle}>{productDetails.sellerInfo.title}</Text>
+      <Text style={styles.sellerProductTitle}>{productDetails.sellerInfo.productTitle}</Text>
+      <Text style={styles.rating}>{productDetails.sellerInfo.rating}</Text>
 
       {/* Offer Section */}
-      <Text style={styles.offerTag}>Top Discount of the Sale</Text>
-      <Text style={styles.deliveryInfo}>Free delivery by Tomorrow</Text>
+      <Text style={styles.offerTag}>{productDetails.offerTag}</Text>
+      <Text style={styles.deliveryInfo}>{productDetails.deliveryInfo}</Text>
 
       {/* EMI Section */}
-      <Text style={styles.emiText}>
-        No cost EMI ₹1,428/month. <Text style={styles.link}>View Plans</Text>
-      </Text>
-
-      <Text style={styles.emiText}>
-        Buy & Pay in easy EMIs with TRADEZY EMI.
-      </Text>
+      {productDetails.emiInfo.map((emi, index) => (
+        <Text key={index} style={styles.emiText}>{emi}</Text>
+      ))}
 
       {/* Buttons */}
       <View style={styles.buttonContainer}>
@@ -99,113 +73,23 @@ export default function ProductPage({ navigation }) {
           <Text style={styles.buttonText}>Buy Now</Text>
         </TouchableOpacity>
       </View>
-      
-          {/* Technical Details Heading */}
-<Text style={styles.tableHeading}>Technical Details</Text>
 
-{/* Product Description Table */}
-<View style={styles.tableContainer}>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Manufacturer</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>
-        KADENA, KADENA INDUSTRIES LIMITED, RM-1006, 10/F PO YIP BUILDING, 23 HING YIP STREET, KOWLOON, Hong Kong Island, 999077
-      </Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Brand</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>Royal Enfield</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Model</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>STREETWIND</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Product Dimensions</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>73.5 x 61 x 73.5 cm; 1.3 kg</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Item Model Number</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>JRA220001</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Manufacturer Part Number</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>RRGJRA220072</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Outer Material</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>Polyester</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Material</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>Polyester</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Chest Size</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>42 Centimetres</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Colour</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>BLACK</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Water Resistance</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>Water Resistant</Text>
-    </View>
-  </View>
-  <View style={styles.tableRow}>
-    <View style={[styles.tableCellHeader, styles.leftCell]}>
-      <Text>Item Weight</Text>
-    </View>
-    <View style={[styles.tableCell, styles.rightCell]}>
-      <Text>1 kg 300 g</Text>
-    </View>
-  </View>
-</View>
+      {/* Technical Details Heading */}
+      <Text style={styles.tableHeading}>Technical Details</Text>
 
-
+      {/* Product Description Table */}
+      <View style={styles.tableContainer}>
+        {productDetails.technicalDetails.map((detail, index) => (
+          <View key={index} style={styles.tableRow}>
+            <View style={[styles.tableCellHeader, styles.leftCell]}>
+              <Text>{detail.key}</Text>
+            </View>
+            <View style={[styles.tableCell, styles.rightCell]}>
+              <Text>{detail.value}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
     </ScrollView>
   );
 }

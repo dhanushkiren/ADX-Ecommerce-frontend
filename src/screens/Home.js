@@ -14,63 +14,14 @@ import {
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { useDispatch } from "react-redux";
+import { categories, products } from "../utils/data";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
+
   const goToProductPage = (category) => {
     navigation.navigate("Product", { category });
   };
-
-  const categories = [
-    {
-      name: "Mobiles",
-      image:
-        "https://m.media-amazon.com/images/I/81XmCGfKlWL._AC_UL480_QL65_.jpg",
-    },
-    {
-      name: "Beauty",
-      image:
-        "https://m.media-amazon.com/images/I/51aiuoKu5HL._AC_UL480_FMwebp_QL65_.jpg",
-    },
-    {
-      name: "Fashion",
-      image:
-        "https://m.media-amazon.com/images/I/71mX4WATh-L._AC_UL480_FMwebp_QL65_.jpg",
-    },
-    {
-      name: "SkinCare",
-      image:
-        "https://m.media-amazon.com/images/I/71Epv8aPEoL._AC_UL480_FMwebp_QL65_.jpg",
-    },
-    {
-      name: "Dress",
-      image:
-        "https://m.media-amazon.com/images/I/71X5DF+c+gL._AC_UL480_FMwebp_QL65_.jpg",
-    },
-  ];
-
-  const products = [
-    {
-      name: "",
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_boAt_0.5x._SY116_CB553870684_.jpg",
-    },
-    {
-      name: "",
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_Boult_0.5x._SY116_CB553870684_.jpg",
-    },
-    {
-      name: "",
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_Noise_0.5x._SY116_CB553870684_.jpg",
-    },
-    {
-      name: "",
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/MSO/PD3/PC_QuadCard_Zeb_0.5x_1._SY116_CB570220221_.jpg",
-    },
-  ];
 
   const handleLogout = () => {
     Alert.alert(
@@ -121,7 +72,6 @@ const Home = ({ navigation }) => {
 
         {/* Location */}
         <View style={styles.location}>
-          {/* Location Icon and Text */}
           <Icon
             name="location-on"
             size={24}
@@ -132,6 +82,7 @@ const Home = ({ navigation }) => {
             Deliver to JK - Thoothukudi 628004
           </Text>
         </View>
+        
         {/* Horizontal Categories */}
         <ScrollView
           horizontal
@@ -175,8 +126,6 @@ const Home = ({ navigation }) => {
             ))}
           </View>
         </ScrollView>
-
-        {/* Footer */}
       </ScrollView>
     </View>
   );
@@ -204,7 +153,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   searchIcon: {
-    width: 20, // Adjust size to fit the design
+    width: 20,
     height: 20,
     marginRight: 8,
   },
@@ -225,12 +174,12 @@ const styles = StyleSheet.create({
   },
   location: {
     padding: 15,
-    backgroundColor: "#8D67F1", // Purple background color
+    backgroundColor: "#8D67F1",
     fontSize: 14,
     paddingBottom: 20,
-    flexDirection: "row", // Align icon and text horizontally
-    alignItems: "center", // Vertically center the items
-    justifyContent: "flex-start", // Align items to the left
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
     width: "100%",
   },
   categoriesScroll: {
@@ -267,7 +216,6 @@ const styles = StyleSheet.create({
   products: {
     flexDirection: "row",
     flexWrap: "wrap",
-
     justifyContent: "space-between",
   },
   product: {
@@ -280,13 +228,6 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 10,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#6200ea",
-    padding: 10,
-  },
   filterIcon: {
     marginLeft: 10,
     alignSelf: "center",
@@ -295,11 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     marginLeft: 10,
-  },
-
-  footerIcon: {
-    fontSize: 20,
-    color: "#fff",
   },
 });
 
