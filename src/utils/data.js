@@ -244,3 +244,88 @@ export const searchProducts = [
     ],
   };
   
+
+  // orders/OrderhistoryComponent
+
+  export const orderHistoryData = [
+    {
+      orderId: 'A235',
+      product: 'Philips Hair Accessory',
+      date: '4th Nov, 2024',
+      price: '300 ₹',
+      rating: 3,
+      image: 'https://m.media-amazon.com/images/I/712KKGqy-wL._SL1500_.jpg',
+    },
+    {
+      orderId: 'J234',
+      product: 'Silk saree',
+      date: '4th May, 2024',
+      price: '2500 ₹',
+      rating: 1,
+      image: 'https://m.media-amazon.com/images/I/61t5Rq80yeL._SY879_.jpg',
+    },
+    {
+      orderId: 'B233',
+      product: 'Food',
+      date: '4th Feb, 2024',
+      price: '900 ₹',
+      rating: 4,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Pizza-3007395.jpg',
+    },
+    {
+      orderId: 'A232',
+      product: 'School bag',
+      date: '2nd May, 2023',
+      price: '500 ₹',
+      rating: 5,
+      image: 'https://m.media-amazon.com/images/I/81ctaeouDCL._SX679_.jpg',
+    },
+  ];
+
+  //Orders/Orderscreencomponent5
+
+  export const prodImages = [
+    require('../../assets/yellow.png'),
+    require('../../assets/orange.png'),
+    require('../../assets/red.png'),
+    require('../../assets/violet.png'),
+    require('../../assets/green.png'),
+  ];
+  
+  export const orderData = [
+    {
+      id: 1,
+      image: require('../../assets/cat food.png'),
+      title: 'Arriving tomorrow by 10 PM',
+      status: 'Dispatched',
+      isStatusHighlighted: true,
+    },
+    {
+      id: 2,
+      image: require('../../assets/milk.png'),
+      title: 'Chemist At Play Exfoliating Face Scrub',
+      status: 'Delivered 3 December',
+      isStatusHighlighted: false,
+    },
+    {
+      id: 3,
+      image: require('../../assets/oats.png'),
+      title: 'Purepet Adult Dry Cat Food',
+      status: 'Delivered 1 November',
+      isStatusHighlighted: false,
+    },
+    {
+      id: 4,
+      image: require('../../assets/lotion.png'),
+      title: 'Body Lotion',
+      status: 'Delivered 1 August',
+      isStatusHighlighted: false,
+    },
+    {
+      id: 5,
+      image: require('../../assets/sunscreen.png'),
+      title: 'Sunscreen',
+      status: 'Delivered 1 April',
+      isStatusHighlighted: false,
+    },
+  ];
