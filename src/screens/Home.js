@@ -1,5 +1,6 @@
 import React from "react";
 import SearchIcon from "../../assets/Search.png";
+import { TouchableWithoutFeedback } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   View,
@@ -14,6 +15,7 @@ import {
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { useDispatch } from "react-redux";
+import { SearchBar } from "react-native-screens";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -106,11 +108,13 @@ const Home = ({ navigation }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.searchContainer}>
-            <Image source={SearchIcon} style={styles.searchIcon} />
+            <Image source={SearchIcon} style={styles.searchIcon}
+             />
             <TextInput
               style={styles.searchBar}
               placeholder="Search Tradezy.in"
               placeholderTextColor="#aaa"
+              onPress={()=> navigation.navigate("search")}
             />
           </View>
           <TouchableOpacity onPress={handleLogout}>

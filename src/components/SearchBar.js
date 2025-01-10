@@ -8,7 +8,7 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons"; // Ensure you have react-native-vector-icons installed
+import Icon from "react-native-vector-icons/Ionicons"; 
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,11 +42,12 @@ const SearchBar = () => {
         <TextInput
           style={styles.searchInput}
           placeholder="Search products"
+          placeholderTextColor="#ccc"
           value={searchQuery}
           onChangeText={handleSearch}
         />
         <TouchableOpacity style={styles.iconButton}>
-          <Icon name="search" size={20} color="#000" />
+          <Icon name="search" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
@@ -56,7 +57,7 @@ const SearchBar = () => {
           style={styles.optionButton}
           onPress={() => setSortModalVisible(true)}
         >
-          <Icon name="funnel" size={18} color="#000" />
+          <Icon name="funnel" size={20} color="#fff" />
           <Text style={styles.optionText}>Sort By</Text>
         </TouchableOpacity>
 
@@ -64,7 +65,7 @@ const SearchBar = () => {
           style={styles.optionButton}
           onPress={() => setFilterModalVisible(true)}
         >
-          <Icon name="options" size={18} color="#000" />
+          <Icon name="options" size={20} color="#fff" />
           <Text style={styles.optionText}>Filter</Text>
         </TouchableOpacity>
       </View>
@@ -132,19 +133,28 @@ const SearchBar = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 15,
+    paddingTop: 40,
+    backgroundColor: "#F4F4F8",
+    flex: 1,
   },
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#8D67F1",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    backgroundColor: "#6A4DFF",
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   searchInput: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 10,
+    color: "#fff",
+    fontSize: 16,
   },
   iconButton: {
     marginLeft: 10,
@@ -152,37 +162,51 @@ const styles = StyleSheet.create({
   optionsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: 20,
   },
   optionButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#e0e0e0",
-    borderRadius: 5,
-    padding: 10,
+    backgroundColor: "#6A4DFF",
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   optionText: {
-    marginLeft: 5,
-    fontSize: 14,
+    marginLeft: 8,
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
     padding: 20,
   },
   closeButton: {
     alignSelf: "flex-end",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   modalItem: {
     backgroundColor: "#fff",
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   modalText: {
     fontSize: 16,
+    color: "#333",
   },
 });
 
