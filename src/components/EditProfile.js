@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import {
     View, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,
     FlatList, Alert
@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useDispatch, useSelector } from 'react-redux'; 
+import { updateProfileRequest } from './slice'; 
 
 const COUNTRIES = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
@@ -28,7 +30,6 @@ const COUNTRIES = [
     "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", 
     "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", 
     "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
-
 ];
 
 const EditProfile = ({ navigation }) => {
@@ -46,16 +47,26 @@ const EditProfile = ({ navigation }) => {
     };
 
     const [selectedImage, setSelectedImage] = useState("");
-    const [name, setName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [address1, setAddress1] = useState("");
     const [address2, setAddress2] = useState("");
     const [address3, setAddress3] = useState("");
     const [country, setCountry] = useState("");
-    const [state, setState] = useState("");
+    const [mobileNumber, setMobileNumber] = useState("");
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [countryModalVisible, setCountryModalVisible] = useState(false); 
+    const [countryModalVisible, setCountryModalVisible] = useState(false);
+
+    const dispatch = useDispatch();
+    const { loading, error, userId } = useSelector(state => state.auth);  // userId is in auth state
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert("Error", error);
+        }
+    }, [error]);
 
     const handleImageSelection = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -70,15 +81,8 @@ const EditProfile = ({ navigation }) => {
         }
     };
 
-    const handleDateChange = (event, selectedDate) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            setDateOfBirth(selectedDate);
-        }
-    };
-
     const handleUpdateProfile = () => {
-        if (!name || !email || !address1 || !country || !state || !dateOfBirth) {
+        if (!firstName || !lastName || !email || !address1 || !country || !mobileNumber || !dateOfBirth) {
             Alert.alert(
                 "Incomplete Form",
                 "Please fill in all the required fields.",
@@ -87,48 +91,26 @@ const EditProfile = ({ navigation }) => {
             return;
         }
 
-        console.log({
-            name,
+        const profileData = {
+            id: userId, 
+            firstName,
+            lastName,
             email,
-            address1,
-            address2,
-            address3,
+            address: [address1, address2, address3], 
             country,
-            state,
+            mobileNumber,
             dateOfBirth: dateOfBirth.toISOString(),
             selectedImage
-        });
+        };
 
-        Alert.alert(
-            "Profile Updated",
-            "Your profile has been successfully updated.",
-            [{ text: "OK" }]
-        );
+        dispatch(updateProfileRequest(profileData));
     };
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: COLORS.white,
-            paddingHorizontal: 22
-        }}>
-            <View style={{
-                marginHorizontal: 12,
-                flexDirection: "row",
-                justifyContent: "center",
-                
-            }}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={{
-                        position: "absolute",
-                        left: 0
-                    }}>
-                    <MaterialIcons
-                        name="keyboard-arrow-left"
-                        size={24}
-                        color={COLORS.black}
-                    />
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white, paddingHorizontal: 22 }}>
+            <View style={{ marginHorizontal: 12, flexDirection: "row", justifyContent: "center" }}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: "absolute", left: 0 }}>
+                    <MaterialIcons name="keyboard-arrow-left" size={24} color={COLORS.black} />
                 </TouchableOpacity>
                 <Text style={{ ...FONTS.h3 }}>Edit Profile</Text>
             </View>
@@ -151,17 +133,13 @@ const EditProfile = ({ navigation }) => {
                             name="photo-camera"
                             size={32}
                             color={COLORS.primary}
-                            style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                right: 10,
-                            }}
+                            style={{ position: 'absolute', bottom: 0, right: 10 }}
                         />
                     </TouchableOpacity>
                 </View>
 
                 <View>
-                    {["Name", "Email", "Address 1", "Address 2", "Address 3", "Country", "State"].map((field, index) => (
+                    {["First Name", "Last Name", "Email", "Mobile Number", "Address 1", "Address 2", "Address 3", "Country"].map((field, index) => (
                         <View key={index} style={{ marginBottom: 12 }}>
                             <Text style={{ ...FONTS.h4 }}>{field}</Text>
                             <View style={{
@@ -180,106 +158,100 @@ const EditProfile = ({ navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TextInput
-                                        value={
-                                            field === "Name" ? name :
+                                        value={field === "First Name" ? firstName :
+                                            field === "Last Name" ? lastName :
                                                 field === "Email" ? email :
-                                                    field === "Address 1" ? address1 :
-                                                        field === "Address 2" ? address2 :
-                                                            field === "Address 3" ? address3 : state
-                                        }
-                                        onChangeText={text => {
-                                            if (field === "Name") setName(text);
-                                            else if (field === "Email") setEmail(text);
-                                            else if (field === "Address 1") setAddress1(text);
-                                            else if (field === "Address 2") setAddress2(text);
-                                            else if (field === "Address 3") setAddress3(text);
-                                            else if (field === "State") setState(text);
+                                                    field === "Mobile Number" ? mobileNumber :
+                                                        field === "Address 1" ? address1 :
+                                                            field === "Address 2" ? address2 :
+                                                                field === "Address 3" ? address3 : ""}
+                                        onChangeText={(text) => {
+                                            if (field === "First Name") setFirstName(text);
+                                            if (field === "Last Name") setLastName(text);
+                                            if (field === "Email") setEmail(text);
+                                            if (field === "Mobile Number") setMobileNumber(text);
+                                            if (field === "Address 1") setAddress1(text);
+                                            if (field === "Address 2") setAddress2(text);
+                                            if (field === "Address 3") setAddress3(text);
                                         }}
-                                        placeholder={`Enter your ${field.toLowerCase()}`}
-                                        style={{ fontSize: 16 }}
+                                        style={{ ...FONTS.body3, color: COLORS.black }}
                                     />
                                 )}
                             </View>
                         </View>
                     ))}
-
-                    <View style={{ marginBottom: 12 }}>
-                        <Text style={{ ...FONTS.h4 }}>Date of Birth</Text>
-                        <TouchableOpacity
-                            onPress={() => setShowDatePicker(true)}
-                            style={{
-                                height: 44,
-                                borderColor: COLORS.secondaryGray,
-                                borderWidth: 1,
-                                borderRadius: 4,
-                                marginVertical: 6,
-                                justifyContent: "center",
-                                paddingLeft: 8,
-                                backgroundColor: COLORS.white
-                            }}
-                        >
-                            <Text style={{ ...FONTS.body3, color: COLORS.black }}>
-                                {dateOfBirth ? dateOfBirth.toDateString() : "Select your date of birth"}
-                            </Text>
-                        </TouchableOpacity>
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={dateOfBirth || new Date()}
-                                mode="date"
-                                display="default"
-                                onChange={handleDateChange}
-                            />
-                        )}
-                    </View>
-
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: COLORS.primary,
-                            height: 44,
-                            borderRadius: 4,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginTop: 20
-                        }}
-                        onPress={handleUpdateProfile}
-                    >
-                        <Text style={{ ...FONTS.body3, color: COLORS.white }}>Update Profile</Text>
-                    </TouchableOpacity>
                 </View>
+
+                {showDatePicker && (
+                    <DateTimePicker
+                        value={dateOfBirth || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                            setShowDatePicker(false);
+                            setDateOfBirth(selectedDate || dateOfBirth);
+                        }}
+                    />
+                )}
+
+                <TouchableOpacity
+                    onPress={() => setShowDatePicker(true)}
+                    style={{
+                        height: 44,
+                        borderColor: COLORS.secondaryGray,
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        marginVertical: 6,
+                        justifyContent: "center",
+                        paddingLeft: 8,
+                        backgroundColor: COLORS.white
+                    }}>
+                    <Text style={{ ...FONTS.body3, color: COLORS.black }}>
+                        {dateOfBirth ? dateOfBirth.toDateString() : "Select Date of Birth"}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={handleUpdateProfile}
+                    style={{
+                        backgroundColor: COLORS.primary,
+                        paddingVertical: 12,
+                        borderRadius: 4,
+                        marginTop: 20,
+                    }}>
+                    <Text style={{ ...FONTS.h4, color: COLORS.white, textAlign: "center" }}>
+                        {loading ? "Updating..." : "Update Profile"}
+                    </Text>
+                </TouchableOpacity>
             </ScrollView>
 
             {/* Country Modal */}
             <Modal
                 visible={countryModalVisible}
-                animationType="slide"
-                transparent={true}
                 onRequestClose={() => setCountryModalVisible(false)}
+                transparent={true}
+                animationType="slide"
             >
                 <View style={{
                     flex: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                    backgroundColor: "rgba(0,0,0,0.5)"
                 }}>
                     <View style={{
                         backgroundColor: COLORS.white,
-                        width: '80%',
-                        borderRadius: 10,
                         padding: 20,
-                        elevation: 5
+                        borderRadius: 8,
+                        width: '80%',
                     }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Select Country</Text>
                         <FlatList
                             data={COUNTRIES}
-                            keyExtractor={(item, index) => index.toString()}
+                            keyExtractor={(item) => item}
                             renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setCountry(item);
-                                        setCountryModalVisible(false);
-                                    }}
-                                >
-                                    <Text style={{ paddingVertical: 10 }}>{item}</Text>
+                                <TouchableOpacity onPress={() => { setCountry(item); setCountryModalVisible(false); }}>
+                                    <Text style={{ padding: 10, ...FONTS.body3 }}>
+                                        {item}
+                                    </Text>
                                 </TouchableOpacity>
                             )}
                         />
