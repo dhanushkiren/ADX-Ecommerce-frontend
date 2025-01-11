@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SearchIcon from "../../assets/search.png";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
@@ -10,18 +10,31 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductsRequest } from `"../redux/home/homeSlice"`; // Import the action
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
-import { useDispatch } from "react-redux";
 import { categories, products } from "../utils/data";
+
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
 
-  const goToProductPage = (category) => {
-    navigation.navigate("Product", { category });
+  // Select the products, loading, and error from the Redux store
+  const { products, loading, error } = useSelector((state) => state.home);
+
+  useEffect(() => {
+    // Dispatch action to fetch products when the component mounts
+    dispatch(fetchProductsRequest());
+  }, [dispatch]);
+
+  const goToProductPage = (product) => {
+    navigation.navigate("Product", { product });
   };
+
+
 
   const handleLogout = () => {
     Alert.alert(
@@ -46,6 +59,32 @@ const Home = ({ navigation }) => {
       { cancelable: true }
     );
   };
+
+  const categories = [
+    { name: "Mobiles", image: "https://m.media-amazon.com/images/I/81XmCGfKlWL._AC_UL480_QL65_.jpg" },
+    { name: "Beauty", image: "https://m.media-amazon.com/images/I/51aiuoKu5HL._AC_UL480_FMwebp_QL65_.jpg" },
+    { name: "Fashion", image: "https://m.media-amazon.com/images/I/71mX4WATh-L._AC_UL480_FMwebp_QL65_.jpg" },
+    { name: "SkinCare", image: "https://m.media-amazon.com/images/I/71Epv8aPEoL._AC_UL480_FMwebp_QL65_.jpg" },
+    { name: "Dress", image: "https://m.media-amazon.com/images/I/71X5DF+c+gL._AC_UL480_FMwebp_QL65_.jpg" },
+  ];
+
+  // Handle loading state
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#7041EE" />
+      </View>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: "red", textAlign: "center" }}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -72,29 +111,17 @@ const Home = ({ navigation }) => {
 
         {/* Location */}
         <View style={styles.location}>
-          <Icon
-            name="location-on"
-            size={24}
-            color="#007ACC"
-            style={styles.icon}
-          />
-          <Text style={styles.locationText}>
-            Deliver to JK - Thoothukudi 628004
-          </Text>
+
+          <Icon name="location-on" size={24} color="#007ACC" style={styles.icon} />
+          <Text style={styles.locationText}>Deliver to JK - Thoothukudi 628004</Text>
         </View>
-        
-        {/* Horizontal Categories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesScroll}
-        >
+
+        {/* Categories Section */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
+
           {categories.map((category, index) => (
             <View key={index} style={styles.category}>
-              <Image
-                source={{ uri: category.image }}
-                style={styles.categoryImage}
-              />
+              <Image source={{ uri: category.image }} style={styles.categoryImage} />
               <Text>{category.name}</Text>
             </View>
           ))}
@@ -102,27 +129,25 @@ const Home = ({ navigation }) => {
 
         {/* Promo Section */}
         <View style={styles.promo}>
-          <Image
-            source={require("../../assets/Banner.png")}
-            style={styles.promoImage}
-          />
+          <Image source={require("../../assets/Banner.png")} style={styles.promoImage} />
         </View>
 
-        {/* Vertical Products Section */}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={styles.productsScroll}
-        >
-          <Text style={styles.sectionTitle}>Deals for you</Text>
+        {/* Products Section */}
+        <Text style={styles.sectionTitle}>Deals for you</Text>
+        <ScrollView showsVerticalScrollIndicator={false} style={styles.productsScroll}>
           <View style={styles.products}>
             {products.map((product, index) => (
-              <View key={index} style={styles.product}>
-                <Image
-                  source={{ uri: product.image }}
-                  style={styles.productImage}
-                />
-                <Text>{product.name}</Text>
-              </View>
+              <TouchableOpacity
+                key={index}
+                style={styles.productCard}
+                onPress={() => goToProductPage(product)}
+              >
+                <Image source={{ uri: product.image }} style={styles.productImage} />
+                <View style={styles.productDetails}>
+                  <Text style={styles.productName}>{product.name}</Text>
+                  <Text style={styles.productPrice}>{product.price}</Text>
+                </View>
+              </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
@@ -164,9 +189,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
-  iconGroup: {
-    flexDirection: "row",
-  },
   icon: {
     fontSize: 18,
     color: "#fff",
@@ -181,6 +203,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
+
   },
   categoriesScroll: {
     marginVertical: 10,
@@ -218,16 +241,44 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  product: {
+  productCard: {
     width: "48%",
     marginBottom: 15,
-    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   productImage: {
-    width: 170,
+    width: "100%",
     height: 150,
-    borderRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
+  productDetails: {
+    padding: 10,
+    alignItems: "center",
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  productPrice: {
+    fontSize: 14,
+    color: "#7041EE",
+  },
+
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#6200ea",
+    padding: 10,
+},
   filterIcon: {
     marginLeft: 10,
     alignSelf: "center",
@@ -236,6 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     marginLeft: 10,
+
   },
 });
 
