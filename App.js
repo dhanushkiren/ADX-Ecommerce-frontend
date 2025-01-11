@@ -10,14 +10,6 @@ import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import Orderscreencomponent from "./src/screens/orders/Orderscreencomponent";
 import Orderhistorycomponent from "./src/screens/orders/Orderhistorycomponent";
-import { StyleSheet, Image } from "react-native";
-
-import {
-  Provider as ReduxStoreProvider,
-  useDispatch,
-  useSelector,
-} from "react-redux";
-import { store } from "./src/redux/store";
 import FAQScreen from "./src/screens/FAQScreen";
 import MenuBar from "./src/components/MenuBar.js";
 import searchlist from "./src/screens/searchlist";
@@ -25,8 +17,12 @@ import Home from "./src/screens/Home.js";
 import SplashScreen from "./src/screens/SplashScreen.js";
 import SearchBar from "./src/components/SearchBar.js";
 import CartScreen from "./src/screens/CartScreen";
+import { StyleSheet, Image } from "react-native";
+import { Provider as ReduxStoreProvider, useDispatch, useSelector } from "react-redux";
+import { store } from "./src/redux/store";
 import { retrieveData } from "./src/utils/asyncStorage.js";
 import { loginSuccess } from "./src/redux/auth/authSlice.js";
+import { homeRequest } from `"./src/redux/home/homeSlice"`; // Updated import for homeRequest
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +30,12 @@ function MyStack() {
   const [loading, setLoading] = useState(true); // Add loading state
   const dispatch = useDispatch(); // Dispatch action
   const token = useSelector((state) => state.auth.token); // Select token from Redux state
+  const homeLoading = useSelector((state) => state.home.loading); // Get loading status for home
+  const products = useSelector((state) => state.home.products); // Get products from home state
+  const homeError = useSelector((state) => state.home.error); // Get error state for home
+  
   console.log("dk token :::", token);
+  console.log("Products from Redux :::", products);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -49,8 +50,15 @@ function MyStack() {
     checkAuth();
   }, [dispatch]);
 
-  if (loading) {
-    // Show a splash screen or placeholder while checking token
+  useEffect(() => {
+    // Fetch home products once user is logged in
+    if (token) {
+      dispatch(homeRequest(token)); // Pass token to fetch products
+    }
+  }, [dispatch, token]);
+
+  if (loading || homeLoading) {
+    // Show a splash screen or placeholder while checking token or fetching products
     return <SplashScreen />;
   }
 
@@ -58,10 +66,10 @@ function MyStack() {
     <NavigationContainer>
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
-        initialRouteName="Orders"
+
+        initialRouteName={token ? "home" : "login"}
         screenOptions={{ headerShown: false }}
       >
-        {/* Define your screens */}
         <Stack.Screen name="menu" component={MenuBar} />
         <Stack.Screen name="searchlist" component={searchlist} />
         <Stack.Screen name="splash" component={SplashScreen} />
