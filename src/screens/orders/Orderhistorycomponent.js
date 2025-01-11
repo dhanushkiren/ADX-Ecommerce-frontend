@@ -1,43 +1,8 @@
 import React from 'react';
-import { View, Text, TextInput, FlatList, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { orderHistoryData } from '../../utils/data';
 
 const OrderhistoryComponent = () => {
-  // Order data
-  const orders = [
-    {
-      orderId: 'A235',
-      product: 'Philips Hair Accessory',
-      date: '4th Nov, 2024',
-      price: '300 ₹',
-      rating: 3,
-      image: 'https://m.media-amazon.com/images/I/712KKGqy-wL._SL1500_.jpg',
-    },
-    {
-      orderId: 'J234',
-      product: 'Silk saree',
-      date: '4th May, 2024',
-      price: '2500 ₹',
-      rating: 1,
-      image: 'https://m.media-amazon.com/images/I/61t5Rq80yeL._SY879_.jpg',
-    },
-    {
-      orderId: 'B233',
-      product: 'Food',
-      date: '4th Feb, 2024',
-      price: '900 ₹',
-      rating: 4,
-      image: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Pizza-3007395.jpg',
-    },
-    {
-      orderId: 'A232',
-      product: 'School bag',
-      date: '2nd May, 2023',
-      price: '500 ₹',
-      rating: 5,
-      image: 'https://m.media-amazon.com/images/I/81ctaeouDCL._SX679_.jpg',
-    },
-  ];
-
   // Render individual order cards
   const renderOrder = ({ item }) => (
     <View style={styles.card}>
@@ -65,14 +30,13 @@ const OrderhistoryComponent = () => {
         <Text style={styles.downloadText}>Download invoice</Text>
       </TouchableOpacity>
     </View>
-
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>ORDER HISTORY</Text>
       <FlatList
-        data={orders}
+        data={orderHistoryData}
         renderItem={renderOrder}
         keyExtractor={(item) => item.orderId}
         showsVerticalScrollIndicator={false}
@@ -80,6 +44,7 @@ const OrderhistoryComponent = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

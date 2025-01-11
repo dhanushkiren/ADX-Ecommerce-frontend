@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsRequest } from `"../redux/home/homeSlice"`; // Import the action
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
+import { categories, products } from "../utils/data";
+
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -31,6 +33,8 @@ const Home = ({ navigation }) => {
   const goToProductPage = (product) => {
     navigation.navigate("Product", { product });
   };
+
+
 
   const handleLogout = () => {
     Alert.alert(
@@ -107,12 +111,14 @@ const Home = ({ navigation }) => {
 
         {/* Location */}
         <View style={styles.location}>
+
           <Icon name="location-on" size={24} color="#007ACC" style={styles.icon} />
           <Text style={styles.locationText}>Deliver to JK - Thoothukudi 628004</Text>
         </View>
 
         {/* Categories Section */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
+
           {categories.map((category, index) => (
             <View key={index} style={styles.category}>
               <Image source={{ uri: category.image }} style={styles.categoryImage} />
@@ -145,8 +151,6 @@ const Home = ({ navigation }) => {
             ))}
           </View>
         </ScrollView>
-
-        {/* Footer */}
       </ScrollView>
     </View>
   );
@@ -193,8 +197,13 @@ const styles = StyleSheet.create({
   location: {
     padding: 15,
     backgroundColor: "#8D67F1",
+    fontSize: 14,
+    paddingBottom: 20,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+
   },
   categoriesScroll: {
     marginVertical: 10,
@@ -262,12 +271,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#7041EE",
   },
+
   footer: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#6200ea",
     padding: 10,
+},
+  filterIcon: {
+    marginLeft: 10,
+    alignSelf: "center",
+  },
+  locationText: {
+    fontSize: 14,
+    color: "#fff",
+    marginLeft: 10,
+
   },
 });
 
