@@ -17,6 +17,7 @@ import { fetchProductsRequest } from "../redux/home/homeSlice"; // Import the ac
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { categories, products } from "../utils/data";
+import SearchBar from "../components/SearchBar";
 
 
 const Home = ({ navigation }) => {
@@ -88,16 +89,7 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.searchContainer}>
-            <Image source={SearchIcon} style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search Tradezy.in"
-              placeholderTextColor="#aaa"
-            />
-          </View>
+        
           <TouchableOpacity onPress={handleLogout}>
             <Icon
               name="notifications"
@@ -106,14 +98,6 @@ const Home = ({ navigation }) => {
               style={styles.filterIcon}
             />
           </TouchableOpacity>
-        </View>
-
-        {/* Location */}
-        <View style={styles.location}>
-
-          <Icon name="location-on" size={24} color="#007ACC" style={styles.icon} />
-          <Text style={styles.locationText}>Deliver to JK - Thoothukudi 628004</Text>
-        </View>
 
         {/* Categories Section */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
@@ -151,7 +135,6 @@ const Home = ({ navigation }) => {
           </View>
         </ScrollView>
       </ScrollView>
-      <MenuBar />
     </View>
   );
 };
