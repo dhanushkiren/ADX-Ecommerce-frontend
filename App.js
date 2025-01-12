@@ -18,11 +18,15 @@ import SplashScreen from "./src/screens/SplashScreen.js";
 import SearchBar from "./src/components/SearchBar.js";
 import CartScreen from "./src/screens/CartScreen";
 import { StyleSheet, Image } from "react-native";
-import { Provider as ReduxStoreProvider, useDispatch, useSelector } from "react-redux";
+import {
+  Provider as ReduxStoreProvider,
+  useDispatch,
+  useSelector,
+} from "react-redux";
 import { store } from "./src/redux/store";
-import { retrieveData } from "./src/utils/asyncStorage.js";
+import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
 import { loginSuccess } from "./src/redux/auth/authSlice.js";
-import { homeRequest } from `"./src/redux/home/homeSlice"`; // Updated import for homeRequest
+import { homeRequest } from "./src/redux/home/homeSlice"; // Updated import for homeRequest
 
 const Stack = createNativeStackNavigator();
 
@@ -33,7 +37,7 @@ function MyStack() {
   const homeLoading = useSelector((state) => state.home.loading); // Get loading status for home
   const products = useSelector((state) => state.home.products); // Get products from home state
   const homeError = useSelector((state) => state.home.error); // Get error state for home
-  
+
   console.log("dk token :::", token);
   console.log("Products from Redux :::", products);
 
@@ -50,14 +54,14 @@ function MyStack() {
     checkAuth();
   }, [dispatch]);
 
-  useEffect(() => {
-    // Fetch home products once user is logged in
-    if (token) {
-      dispatch(homeRequest(token)); // Pass token to fetch products
-    }
-  }, [dispatch, token]);
+  // useEffect(() => {
+  //   // Fetch home products once user is logged in
+  //   if (token) {
+  //     dispatch(homeRequest(token)); // Pass token to fetch products
+  //   }
+  // }, [dispatch, token]);
 
-  if (loading || homeLoading) {
+  if (loading) {
     // Show a splash screen or placeholder while checking token or fetching products
     return <SplashScreen />;
   }

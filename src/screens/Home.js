@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductsRequest } from `"../redux/home/homeSlice"`; // Import the action
+import { fetchProductsRequest } from "../redux/home/homeSlice"; // Import the action
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { categories, products } from "../utils/data";
@@ -26,9 +26,8 @@ const Home = ({ navigation }) => {
   const { products, loading, error } = useSelector((state) => state.home);
 
   useEffect(() => {
-    // Dispatch action to fetch products when the component mounts
     dispatch(fetchProductsRequest());
-  }, [dispatch]);
+  }, []);
 
   const goToProductPage = (product) => {
     navigation.navigate("Product", { product });
@@ -152,6 +151,7 @@ const Home = ({ navigation }) => {
           </View>
         </ScrollView>
       </ScrollView>
+      <MenuBar />
     </View>
   );
 };
