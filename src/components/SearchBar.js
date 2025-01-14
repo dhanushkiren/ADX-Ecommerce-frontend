@@ -93,7 +93,7 @@ const SearchBar = ({ routeName }) => {
         <View style={styles.searchInput}  >
           <Icon name="search" size={24} color="#ccc" style={styles.icon} />
           <TextInput
-          // onPress={() => navigation.navigate("SearchResults", { recentSearches })}
+            onPress={() => navigation.navigate("SearchResults", { recentSearches })}
             placeholder="Search products..."
             placeholderTextColor="#aaa"
             value={searchQuery}
