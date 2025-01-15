@@ -1,6 +1,6 @@
 import { takeEvery, call, put } from "redux-saga/effects";
 import axios from "../../utils/axios";
-import { fetchProductsRequest, fetchProductsSuccess, fetchProductsFailure } from `"./homeSlice"`;
+import { fetchProductsRequest, fetchProductsSuccess, fetchProductsFailure } from "./homeSlice";
 import { apiConfig } from "../../utils/apiConfig";
 
 // Worker Saga for fetching products

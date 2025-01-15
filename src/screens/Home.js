@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import SearchIcon from "../../assets/search.png";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
@@ -11,30 +12,19 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-} from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProductsRequest } from `"../redux/home/homeSlice"`; // Import the action
+} from "react-native"; 
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
-import { categories, products } from "../utils/data";
-
-
+import { fetchProductsRequest } from "../redux/home/homeSlice";
+import { PaperProvider, Card } from 'react-native-paper';
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
-
-  // Select the products, loading, and error from the Redux store
   const { products, loading, error } = useSelector((state) => state.home);
 
   useEffect(() => {
-    // Dispatch action to fetch products when the component mounts
+    // Dispatch action to fetch products
     dispatch(fetchProductsRequest());
   }, [dispatch]);
-
-  const goToProductPage = (product) => {
-    navigation.navigate("Product", { product });
-  };
-
-
 
   const handleLogout = () => {
     Alert.alert(
@@ -45,13 +35,8 @@ const Home = ({ navigation }) => {
         {
           text: "Logout",
           onPress: () => {
-            // Clear token from local storage
             clearAsyncStorage();
-
-            // Dispatch Redux action to reset auth state
             dispatch(logout());
-
-            // Navigate to login screen
             navigation.replace("login");
           },
         },
@@ -60,31 +45,36 @@ const Home = ({ navigation }) => {
     );
   };
 
-  const categories = [
-    { name: "Mobiles", image: "https://m.media-amazon.com/images/I/81XmCGfKlWL._AC_UL480_QL65_.jpg" },
-    { name: "Beauty", image: "https://m.media-amazon.com/images/I/51aiuoKu5HL._AC_UL480_FMwebp_QL65_.jpg" },
-    { name: "Fashion", image: "https://m.media-amazon.com/images/I/71mX4WATh-L._AC_UL480_FMwebp_QL65_.jpg" },
-    { name: "SkinCare", image: "https://m.media-amazon.com/images/I/71Epv8aPEoL._AC_UL480_FMwebp_QL65_.jpg" },
-    { name: "Dress", image: "https://m.media-amazon.com/images/I/71X5DF+c+gL._AC_UL480_FMwebp_QL65_.jpg" },
-  ];
+  const renderProducts = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color="#7041EE" />;
+    }
 
-  // Handle loading state
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#7041EE" />
-      </View>
-    );
-  }
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
 
-  // Handle error state
-  if (error) {
     return (
-      <View style={styles.container}>
-        <Text style={{ color: "red", textAlign: "center" }}>Error: {error}</Text>
-      </View>
+      <>
+        {products.map((product, index) => (
+          <Card style={{ margin: 20 }}>
+            <Card.Title
+              title={product.name}
+            />
+            <Card.Cover
+            style={{padding:10}}
+              source={{
+                uri:product.imageUrl,
+              }}
+            />
+            <Card.Content>
+              <Text>{product.description}</Text>
+            </Card.Content>
+          </Card>
+        ))}
+    </>
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -113,44 +103,14 @@ const Home = ({ navigation }) => {
         <View style={styles.location}>
 
           <Icon name="location-on" size={24} color="#007ACC" style={styles.icon} />
-          <Text style={styles.locationText}>Deliver to JK - Thoothukudi 628004</Text>
-        </View>
-
-        {/* Categories Section */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
-
-          {categories.map((category, index) => (
-            <View key={index} style={styles.category}>
-              <Image source={{ uri: category.image }} style={styles.categoryImage} />
-              <Text>{category.name}</Text>
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Promo Section */}
-        <View style={styles.promo}>
-          <Image source={require("../../assets/Banner.png")} style={styles.promoImage} />
+          <Text style={styles.locationText}>
+            Deliver to JK - Thoothukudi 628004
+          </Text>
         </View>
 
         {/* Products Section */}
         <Text style={styles.sectionTitle}>Deals for you</Text>
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.productsScroll}>
-          <View style={styles.products}>
-            {products.map((product, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.productCard}
-                onPress={() => goToProductPage(product)}
-              >
-                <Image source={{ uri: product.image }} style={styles.productImage} />
-                <View style={styles.productDetails}>
-                  <Text style={styles.productName}>{product.name}</Text>
-                  <Text style={styles.productPrice}>{product.price}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
+        {renderProducts()}
       </ScrollView>
     </View>
   );
@@ -203,91 +163,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
-
-  },
-  categoriesScroll: {
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  category: {
-    alignItems: "center",
-    marginRight: 20,
-  },
-  categoryImage: {
-    width: 100,
-    height: 95,
-    borderRadius: 5,
-  },
-  promo: {
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  promoImage: {
-    width: "95%",
-    height: 150,
-    borderRadius: 10,
-  },
-  productsScroll: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
-  products: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  productCard: {
-    width: "48%",
-    marginBottom: 15,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  productImage: {
-    width: "100%",
-    height: 150,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  productDetails: {
-    padding: 10,
-    alignItems: "center",
-  },
-  productName: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  productPrice: {
-    fontSize: 14,
-    color: "#7041EE",
-  },
-
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#6200ea",
-    padding: 10,
-},
-  filterIcon: {
-    marginLeft: 10,
-    alignSelf: "center",
   },
   locationText: {
     fontSize: 14,
     color: "#fff",
     marginLeft: 10,
-
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginVertical: 10,
+    paddingHorizontal: 10,
+  },
+  products: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  product: {
+    width: "48%",
+    marginBottom: 15,
+    alignItems: "center",
+  },
+  productImage: {
+    width: 170,
+    height: 150,
+    borderRadius: 10,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
   },
 });
 

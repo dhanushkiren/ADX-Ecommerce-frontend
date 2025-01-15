@@ -1,6 +1,6 @@
 // src/redux/rootReducer.js
 import authReducer from "./auth/authSlice";
-import homeReducer from `"./home/homeSlice"`;  // Import homeReducer
+import homeReducer from "./home/homeSlice";  // Import homeReducer
 
 const rootReducer = {
   auth: authReducer,
