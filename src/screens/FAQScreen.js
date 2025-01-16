@@ -3,7 +3,7 @@ import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-nati
 import { FontAwesome } from '@expo/vector-icons';
 import { faqData } from '../utils/data';
 
-const FAQScreen = () => {
+const FAQScreen = ({ navigation }) => {
   const [faqs, setFaqs] = useState(
     faqData.map((faq) => ({ ...faq, isOpen: false }))
   );
@@ -19,8 +19,12 @@ const FAQScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>FAQ</Text>
-      </View>
+  <TouchableOpacity onPress={() => navigation.goBack()}>
+    <FontAwesome name="arrow-left" size={24} color="#2C2929" style={styles.backIcon} />
+  </TouchableOpacity>
+  <Text style={styles.headerText}>FAQ</Text>
+</View>
+
       {faqs.map((faq, index) => (
         <View key={index} style={styles.faqContainer}>
           <TouchableOpacity onPress={() => handleToggle(index)}>
@@ -44,17 +48,20 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#fff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingVertical: 5,
+    paddingHorizontal: 5,
     marginBottom: 15,
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2C2929',
-    textAlign: 'left',
-    paddingHorizontal: 10
+    marginLeft: 10,
+    paddingHorizontal:1,
+    paddingVertical:20,
+    marginTop: 20,
   },
   faqContainer: {
     marginBottom: 15,
@@ -84,6 +91,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 5,
   },
+  backIcon: {
+    marginRight: 0,
+    paddingHorizontal: 10,
+    marginTop: 20,
+  },
+  
 });
 
 export default FAQScreen;
