@@ -25,7 +25,6 @@ import SearchBar from "./src/components/SearchBar.js";
 import CartScreen from "./src/screens/CartScreen";
 import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
-import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
 
@@ -73,7 +72,7 @@ function MyStack() {
     
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
-        initialRouteName="history"
+        initialRouteName="menu"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
