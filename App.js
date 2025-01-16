@@ -27,9 +27,9 @@ import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { homeRequest } from "./src/redux/home/homeSlice"; // Updated import for homeRequest
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
+import UserDashboard from "./src/screens/UserDashboard";  // Import User Dashboard screen
 
 const Stack = createNativeStackNavigator();
-
 
 function MyStack() {
   const [loading, setLoading] = useState(true); // Add loading state
@@ -43,7 +43,6 @@ function MyStack() {
   console.log("Products from Redux :::", products);
 
   useEffect(() => {
-    // clearAsyncStorage();
     const checkAuth = async () => {
       const storedToken = await retrieveData("token");
       console.log("Stored token::", storedToken);
@@ -56,45 +55,34 @@ function MyStack() {
     checkAuth();
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   // Fetch home products once user is logged in
-  //   if (token) {
-  //     dispatch(homeRequest(token)); // Pass token to fetch products
-  //   }
-  // }, [dispatch, token]);
-
   if (loading) {
-    // Show a splash screen or placeholder while checking token or fetching products
     return <SplashScreen />;
   }
 
   return (
-    
-      <Stack.Navigator
-        // initialRouteName={token ? "home" : "login"}
-
-        initialRouteName={token ? "menu" : "login"}
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="menu" component={MenuBar} />
-        <Stack.Screen name="searchlist" component={ProductScreen} />
-        <Stack.Screen name="splash" component={SplashScreen} />
-        <Stack.Screen name="faq" component={FAQScreen} />
-        <Stack.Screen name="home" component={Home} />
-        <Stack.Screen name="payment" component={PaymentPage} />
-        <Stack.Screen name="product" component={ProductPage} />
-        <Stack.Screen name="profile" component={EditProfile} />
-        <Stack.Screen name="login" component={LoginScreen} />
-        <Stack.Screen name="register" component={RegisterScreen} />
-        <Stack.Screen name="search" component={SearchBar} />
-        <Stack.Screen name="cart" component={CartScreen} />
-        <Stack.Screen name="Confirm Order" component={ConfirmOrder} />
-        <Stack.Screen name="Order Checkout" component={Placeorder} />
-        <Stack.Screen name="Orders" component={Orderscreencomponent} />
-        <Stack.Screen name="history" component={Orderhistorycomponent} />
-        <Stack.Screen name="SearchResults" component={SearchResults} />
-      </Stack.Navigator>
-    
+    <Stack.Navigator
+      initialRouteName={token ? "menu" : "login"}
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="menu" component={MenuBar} />
+      <Stack.Screen name="searchlist" component={ProductScreen} />
+      <Stack.Screen name="splash" component={SplashScreen} />
+      <Stack.Screen name="faq" component={FAQScreen} />
+      <Stack.Screen name="home" component={Home} />
+      <Stack.Screen name="payment" component={PaymentPage} />
+      <Stack.Screen name="product" component={ProductPage} />
+      <Stack.Screen name="profile" component={EditProfile} />
+      <Stack.Screen name="login" component={LoginScreen} />
+      <Stack.Screen name="register" component={RegisterScreen} />
+      <Stack.Screen name="search" component={SearchBar} />
+      <Stack.Screen name="cart" component={CartScreen} />
+      <Stack.Screen name="Confirm Order" component={ConfirmOrder} />
+      <Stack.Screen name="Order Checkout" component={Placeorder} />
+      <Stack.Screen name="Orders" component={Orderscreencomponent} />
+      <Stack.Screen name="history" component={Orderhistorycomponent} />
+      <Stack.Screen name="SearchResults" component={SearchResults} />
+      <Stack.Screen name="UserDashboard" component={UserDashboard} />
+    </Stack.Navigator>
   );
 }
 
