@@ -12,10 +12,13 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { prodCategories, filterData, searchProducts } from "../utils/data";
+import { useRoute } from "@react-navigation/native";
 
 const { height } = Dimensions.get("window");
 
 const ProductScreen = () => {
+  const route = useRoute();
+  console.log("dk route",route.name);
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState("");
@@ -80,7 +83,7 @@ const ProductScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity>
           <Icon name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
@@ -101,19 +104,19 @@ const ProductScreen = () => {
         <Text style={styles.locationText}>
           Deliver to Zeus, Chennai - 600028
         </Text>
-      </View>
+      </View> */}
       <FlatList
         data={searchProducts}
         keyExtractor={(item) => item.id}
         renderItem={renderProduct}
       />
-      <View style={styles.bottomNavigation}>
+      {/* <View style={styles.bottomNavigation}>
         <Icon name="home" size={28} color="#fff" />
         <Icon name="person" size={28} color="#fff" />
         <Icon name="wallet" size={28} color="#fff" />
         <Icon name="shopping-cart" size={28} color="#fff" />
         <Icon name="menu" size={28} color="#fff" />
-      </View>
+      </View> */}
 
       {(isSortVisible || isFilterVisible) && (
         <TouchableWithoutFeedback
@@ -125,6 +128,8 @@ const ProductScreen = () => {
           <View style={styles.dimmedBackground} />
         </TouchableWithoutFeedback>
       )}
+
+{/* // For sortBy option  // */}
 
       {isSortVisible && (
         <Animated.View
@@ -207,7 +212,7 @@ const ProductScreen = () => {
           </View>
         </Animated.View>
       )}
-
+{/* // for filter option // */}
       {isFilterVisible && (
         <Animated.View
           style={[
@@ -280,6 +285,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -306,6 +312,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 5,
   },
+
+
   locationText: {
     padding: 5,
     backgroundColor: "#8D67F1",
@@ -409,6 +417,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     zIndex: 10,
   },
+
+
   animatedModal: {
     position: "absolute",
     bottom: 0,

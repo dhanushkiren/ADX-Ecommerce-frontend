@@ -3,7 +3,7 @@ import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-nati
 import { FontAwesome } from '@expo/vector-icons';
 import { faqData } from '../utils/data';
 
-const FAQScreen = () => {
+const FAQScreen = ({ navigation }) => {
   const [faqs, setFaqs] = useState(
     faqData.map((faq) => ({ ...faq, isOpen: false }))
   );
@@ -19,7 +19,7 @@ const FAQScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-  <TouchableOpacity onPress={() => console.log('Back button pressed')}>
+  <TouchableOpacity onPress={() => navigation.goBack()}>
     <FontAwesome name="arrow-left" size={24} color="#2C2929" style={styles.backIcon} />
   </TouchableOpacity>
   <Text style={styles.headerText}>FAQ</Text>
