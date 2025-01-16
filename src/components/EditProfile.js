@@ -137,7 +137,7 @@ const EditProfile = ({ navigation }) => {
                 <View style={{ alignItems: "center", marginVertical: 25 }}>
                     <TouchableOpacity onPress={handleImageSelection}>
                         <Image
-                            source={selectedImage ? { uri: selectedImage } : require('./pic.png')}
+                            source={selectedImage ? { uri: selectedImage } : require('../../assets/user-pic.svg')}
                             style={{
                                 height: 170,
                                 width: 170,

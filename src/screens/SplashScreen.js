@@ -1,5 +1,5 @@
 import { Image, StyleSheet, View } from "react-native";
-import Icon from "../../assets/favicon.png";
+import Icon from "../../assets/favicon.svg";
 
 export default function SplashScreen() {
   return (

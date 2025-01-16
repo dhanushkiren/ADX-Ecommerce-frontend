@@ -205,9 +205,9 @@ export const searchProducts = [
   // Product Page
 
   export const productImages = [
-    require("../../assets/images/1.webp"),
-    require("../../assets/images/2.webp"),
-    require("../../assets/images/3.webp"),
+    require("../../assets/images/1.svg"),
+    require("../../assets/images/2.svg"),
+    require("../../assets/images/3.svg"),
   ];
   
   export const productDetails = {
@@ -282,48 +282,48 @@ export const searchProducts = [
     },
   ];
 
-  //Orders/Orderscreencomponent5
+  //Orders/Orderscreencomponent
 
   export const prodImages = [
-    require('../../assets/yellow.png'),
-    require('../../assets/orange.png'),
-    require('../../assets/red.png'),
-    require('../../assets/violet.png'),
-    require('../../assets/green.png'),
+    require('../../assets/yellow.svg'),
+    require('../../assets/orange.svg'),
+    require('../../assets/red.svg'),
+    require('../../assets/violet.svg'),
+    require('../../assets/green.svg'),
   ];
   
   export const orderData = [
     {
       id: 1,
-      image: require('../../assets/cat food.png'),
+      image: require('../../assets/cat food.svg'),
       title: 'Arriving tomorrow by 10 PM',
       status: 'Dispatched',
       isStatusHighlighted: true,
     },
     {
       id: 2,
-      image: require('../../assets/milk.png'),
+      image: require('../../assets/milk.svg'),
       title: 'Chemist At Play Exfoliating Face Scrub',
       status: 'Delivered 3 December',
       isStatusHighlighted: false,
     },
     {
       id: 3,
-      image: require('../../assets/oats.png'),
+      image: require('../../assets/oats.svg'),
       title: 'Purepet Adult Dry Cat Food',
       status: 'Delivered 1 November',
       isStatusHighlighted: false,
     },
     {
       id: 4,
-      image: require('../../assets/lotion.png'),
+      image: require('../../assets/lotion.svg'),
       title: 'Body Lotion',
       status: 'Delivered 1 August',
       isStatusHighlighted: false,
     },
     {
       id: 5,
-      image: require('../../assets/sunscreen.png'),
+      image: require('../../assets/sunscreen.svg'),
       title: 'Sunscreen',
       status: 'Delivered 1 April',
       isStatusHighlighted: false,

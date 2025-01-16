@@ -1,5 +1,5 @@
 import React from "react";
-import SearchIcon from "../../assets/search.png";
+import SearchIcon from "../../assets/search.svg";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   View,
@@ -103,7 +103,7 @@ const Home = ({ navigation }) => {
         {/* Promo Section */}
         <View style={styles.promo}>
           <Image
-            source={require("../../assets/Banner.png")}
+            source={require("../../assets/Banner.svg")}
             style={styles.promoImage}
           />
         </View>
