@@ -10,21 +10,22 @@ import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
 import Orderscreencomponent from "./src/screens/orders/Orderscreencomponent";
 import Orderhistorycomponent from "./src/screens/orders/Orderhistorycomponent";
-import FAQScreen from "./src/screens/FAQScreen";
-import ProductScreen from "./src/screens/searchlist.js";
-import Home from "./src/screens/Home.js";
-import SplashScreen from "./src/screens/SplashScreen.js";
-import SearchBar from "./src/components/SearchBar.js";
-import CartScreen from "./src/screens/CartScreen";
+import { StyleSheet, Image } from "react-native";
 import {
   Provider as ReduxStoreProvider,
   useDispatch,
   useSelector,
 } from "react-redux";
 import { store } from "./src/redux/store";
+import FAQScreen from "./src/screens/FAQScreen";
+import ProductScreen from "./src/screens/searchlist.js";
+import Home from "./src/screens/Home.js";
+import SplashScreen from "./src/screens/SplashScreen.js";
+import SearchBar from "./src/components/SearchBar.js";
+import CartScreen from "./src/screens/CartScreen";
+import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
 import { loginSuccess } from "./src/redux/auth/authSlice.js";
-import { homeRequest } from "./src/redux/home/homeSlice"; // Updated import for homeRequest
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
 
@@ -40,7 +41,6 @@ function MyStack() {
   const homeError = useSelector((state) => state.home.error); // Get error state for home
 
   console.log("dk token :::", token);
-  console.log("Products from Redux :::", products);
 
   useEffect(() => {
     // clearAsyncStorage();
@@ -55,6 +55,7 @@ function MyStack() {
 
     checkAuth();
   }, [dispatch]);
+
 
   // useEffect(() => {
   //   // Fetch home products once user is logged in
@@ -71,11 +72,10 @@ function MyStack() {
   return (
     
       <Stack.Navigator
-        // initialRouteName={token ? "home" : "login"}
-
         initialRouteName={token ? "menu" : "login"}
         screenOptions={{ headerShown: false }}
       >
+        {/* Define your screens */}
         <Stack.Screen name="menu" component={MenuBar} />
         <Stack.Screen name="searchlist" component={ProductScreen} />
         <Stack.Screen name="splash" component={SplashScreen} />
@@ -107,3 +107,4 @@ export default function App() {
     </ReduxStoreProvider>
   );
 }
+
