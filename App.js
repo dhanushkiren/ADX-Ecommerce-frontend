@@ -72,7 +72,8 @@ function MyStack() {
   return (
     
       <Stack.Navigator
-        initialRouteName={token ? "menu" : "login"}
+        // initialRouteName={token ? "home" : "login"}
+        initialRouteName="history"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}

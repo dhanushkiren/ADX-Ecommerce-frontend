@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import SearchIcon from "../../assets/search.png";
+import SearchIcon from "../../assets/search.svg";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
   View,
