@@ -53,7 +53,7 @@ const Home = ({ navigation }) => {
         <Card.Content>
           <Text style={styles.productTitle}>{item.name}</Text>
           <Text style={styles.productDescription}>{item.description}</Text>
-          
+        
         </Card.Content>
       </Card>
     </View>
