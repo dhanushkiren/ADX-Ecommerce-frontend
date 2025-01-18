@@ -82,30 +82,6 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
-          <Image source={SearchIcon} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search Tradezy.in"
-            placeholderTextColor="#aaa"
-          />
-        </View>
-        <TouchableOpacity onPress={handleLogout}>
-          <Icon
-            name="notifications"
-            size={24}
-            color="#fff"
-            style={styles.filterIcon}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.location}>
-        <Icon name="location-on" size={24} color="#007ACC" />
-        <Text style={styles.locationText}>Deliver to JK - Thoothukudi 628004</Text>
-      </View>
-
       <Text style={styles.sectionTitle}>Deals for you</Text>
       {renderProducts()}
     </View>
