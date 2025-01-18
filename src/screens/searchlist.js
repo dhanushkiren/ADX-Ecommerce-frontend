@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: "hidden",
-    zIndex: 11,
+    zIndex:20,
   },
   modalContent: {
     padding: 20,
