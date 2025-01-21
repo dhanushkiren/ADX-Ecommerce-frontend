@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import {
     View, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,
     FlatList, Alert
@@ -46,16 +46,17 @@ const EditProfile = ({ navigation }) => {
     };
 
     const [selectedImage, setSelectedImage] = useState("");
-    const [name, setName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [address1, setAddress1] = useState("");
     const [address2, setAddress2] = useState("");
     const [address3, setAddress3] = useState("");
     const [country, setCountry] = useState("");
-    const [state, setState] = useState("");
+    const [mobileNumber, setMobileNumber] = useState("");
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [countryModalVisible, setCountryModalVisible] = useState(false); 
+    const [countryModalVisible, setCountryModalVisible] = useState(false);
 
     const handleImageSelection = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -70,15 +71,8 @@ const EditProfile = ({ navigation }) => {
         }
     };
 
-    const handleDateChange = (event, selectedDate) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            setDateOfBirth(selectedDate);
-        }
-    };
-
     const handleUpdateProfile = () => {
-        if (!name || !email || !address1 || !country || !state || !dateOfBirth) {
+        if (!firstName || !lastName || !email || !address1 || !country || !mobileNumber || !dateOfBirth) {
             Alert.alert(
                 "Incomplete Form",
                 "Please fill in all the required fields.",
@@ -88,13 +82,14 @@ const EditProfile = ({ navigation }) => {
         }
 
         console.log({
-            name,
+            firstName,
+            lastName,
             email,
             address1,
             address2,
             address3,
             country,
-            state,
+            mobileNumber,
             dateOfBirth: dateOfBirth.toISOString(),
             selectedImage
         });
@@ -107,16 +102,11 @@ const EditProfile = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: COLORS.white,
-            paddingHorizontal: 22
-        }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white, paddingHorizontal: 22 }}>
             <View style={{
                 marginHorizontal: 12,
                 flexDirection: "row",
                 justifyContent: "center",
-                
             }}>
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
@@ -137,7 +127,7 @@ const EditProfile = ({ navigation }) => {
                 <View style={{ alignItems: "center", marginVertical: 25 }}>
                     <TouchableOpacity onPress={handleImageSelection}>
                         <Image
-                            source={selectedImage ? { uri: selectedImage } : require('./pic.png')}
+                            source={selectedImage ? { uri: selectedImage } : require('../../assets/user-pic.svg')}
                             style={{
                                 height: 170,
                                 width: 170,
@@ -161,7 +151,7 @@ const EditProfile = ({ navigation }) => {
                 </View>
 
                 <View>
-                    {["Name", "Email", "Address 1", "Address 2", "Address 3", "Country", "State"].map((field, index) => (
+                    {["First Name", "Last Name", "Email", "Mobile Number", "Address 1", "Address 2", "Address 3", "Country"].map((field, index) => (
                         <View key={index} style={{ marginBottom: 12 }}>
                             <Text style={{ ...FONTS.h4 }}>{field}</Text>
                             <View style={{
@@ -180,20 +170,21 @@ const EditProfile = ({ navigation }) => {
                                     </TouchableOpacity>
                                 ) : (
                                     <TextInput
-                                        value={
-                                            field === "Name" ? name :
+                                        value={field === "First Name" ? firstName :
+                                            field === "Last Name" ? lastName :
                                                 field === "Email" ? email :
-                                                    field === "Address 1" ? address1 :
-                                                        field === "Address 2" ? address2 :
-                                                            field === "Address 3" ? address3 : state
-                                        }
+                                                    field === "Mobile Number" ? mobileNumber :
+                                                        field === "Address 1" ? address1 :
+                                                            field === "Address 2" ? address2 :
+                                                                field === "Address 3" ? address3 : state}
                                         onChangeText={text => {
-                                            if (field === "Name") setName(text);
+                                            if (field === "First Name") setFirstName(text);
+                                            else if (field === "Last Name") setLastName(text);
                                             else if (field === "Email") setEmail(text);
+                                            else if (field === "Mobile Number") setMobileNumber(text);
                                             else if (field === "Address 1") setAddress1(text);
                                             else if (field === "Address 2") setAddress2(text);
                                             else if (field === "Address 3") setAddress3(text);
-                                            else if (field === "State") setState(text);
                                         }}
                                         placeholder={`Enter your ${field.toLowerCase()}`}
                                         style={{ fontSize: 16 }}
@@ -227,7 +218,10 @@ const EditProfile = ({ navigation }) => {
                                 value={dateOfBirth || new Date()}
                                 mode="date"
                                 display="default"
-                                onChange={handleDateChange}
+                                onChange={(event, selectedDate) => {
+                                    setShowDatePicker(false);
+                                    setDateOfBirth(selectedDate || dateOfBirth);
+                                }}
                             />
                         )}
                     </View>

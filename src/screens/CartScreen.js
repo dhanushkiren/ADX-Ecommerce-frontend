@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 
 const CartPage = () => {
-  const basePrice = 249; 
-  const discount = 13; 
+  const basePrice = 249;
+  const discount = 13;
   const deliveryCharges = 58;
-  const deliveryDate = "Jan 12, Sun"; 
+  const deliveryDate = "Jan 12, Sun";
 
-  
   const calculateTotal = (quantity) => {
     const priceAfterDiscount = basePrice - discount;
     return priceAfterDiscount * quantity + deliveryCharges;
@@ -41,12 +41,27 @@ const CartPage = () => {
       {/* Product Details */}
       <View style={styles.productContainer}>
         <Image
-          source={require("../../assets/images/Shamboo.webp")}
+          source={require("../../assets/shamboo.svg")}
           style={styles.productImage}
         />
         <View style={styles.productDetails}>
           <Text style={styles.productTitle}>Kesh King Organic Onion Shampoo</Text>
           <Text style={styles.productSubtitle}>200 ml</Text>
+          <Text style={styles.productDescription}>
+    Kesh King Organic Onion Shampoo is enriched with natural ingredients like onion and aloe vera, 
+    helping reduce hair fall and promoting hair growth.
+   </Text>
+  
+          {/* Rating Section */}
+          <View style={styles.ratingContainer}>
+            {/* Render stars */}
+            <Icon name="star" size={14} color="green" />
+            <Icon name="star" size={14} color="green" />
+            <Icon name="star" size={14} color="green" />
+            <Icon name="star" size={14} color="green" />
+            <Icon name="star-half-empty" size={14} color="green" />
+            <Text style={styles.ratingText}> 4.2</Text>
+          </View>
           <Text style={styles.productPrice}>₹{basePrice}</Text>
           <Text style={styles.productOffer}>15% off</Text>
           <View style={styles.quantityContainer}>
@@ -121,6 +136,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     fontFamily: 'Roboto',
+    paddingTop: 15,
   },
   productContainer: {
     flexDirection: 'row',
@@ -144,6 +160,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#555',
     marginVertical: 4,
+  },
+  productDescription: {
+    fontSize: 14,
+    color: '#555',
+    marginVertical: 6,
+    lineHeight: 20,
+  },
+  
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 4,
+  },
+  ratingText: {
+    fontSize: 14,
+    color: 'green',
+    marginLeft: 8,
   },
   productPrice: {
     fontSize: 18,

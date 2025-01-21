@@ -1,109 +1,45 @@
 import React from 'react';
-import { View, Text, TextInput, ScrollView,Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import productImage from '../../../assets/yellow.png';
-import productImage1 from '../../../assets/orange.png';
-import productImage2 from '../../../assets/red.png';
-import productImage3 from '../../../assets/violet.png';
-import productImage4 from '../../../assets/green.png'
-import OrderImage from '../../../assets/cat food.png'
-import OrderImage1 from '../../../assets/milk.png'
-import OrderImage2 from '../../../assets/oats.png'
-import OrderImage3 from '../../../assets/lotion.png'
-import OrderImage4 from '../../../assets/sunscreen.png'
-import SearchIcon from '../../../assets/searchicon.png'
+import { prodImages, orderData } from '../../utils/data'; 
 
-const orderData = [
-  {
-    id: 1,
-    image: OrderImage,
-    title: 'Arriving tomorrow by 10 PM',
-    status: 'Dispatched',
-    isStatusHighlighted: true, // Custom field for highlighting specific text
-  },
-  {
-    id: 2,
-    image: OrderImage1,
-    title: 'Chemist At Play Exfoliating Face Scrub',
-    status: 'Delivered 3 December',
-    isStatusHighlighted: false,
-  },
-  {
-    id: 3,
-    image: OrderImage2,
-    title: 'Purepet Adult Dry Cat Food',
-    status: 'Delivered 1 November',
-    isStatusHighlighted: false,
-  },
-  {
-    id: 4,
-    image: OrderImage3,
-    title: 'Body Lotion',
-    status: 'Delivered 1 August',
-    isStatusHighlighted: false,
-  },
-  {
-    id: 5,
-    image: OrderImage4,
-    title: 'Sunscreen',
-    status: 'Delivered 1 April',
-    isStatusHighlighted: false,
-  },
-];
 const Orderscreencomponent = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-
-         <View style={styles.sectionHeader}>
-      {/* Background Image */}
-      <Image 
-        source={require('../../../assets/image.png')} // Replace with your local image path
-        style={styles.backgroundImage}
-      />
-      
-      {/* Overlay Content */}
-      <View style={styles.overlayContent}>
-        <Text style={styles.sectionTitle}>Your Orders</Text>
-      </View>
-    </View>
-
-    <View style={styles.section}>
-  {/* Header Row */}
-  <View style={styles.headerRow}>
-    <Text style={styles.sectionTitle}>Buy Again</Text>
-    <TouchableOpacity>
-    <Text style={styles.link}>See More</Text>
-    </TouchableOpacity>
-  </View>
-
-  {/* Horizontal ScrollView */}
-  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-    <Image source={productImage} style={styles.productImage} />
-    <Image source={productImage1} style={styles.productImage} />
-    <Image source={productImage2} style={styles.productImage} />
-    <Image source={productImage3} style={styles.productImage} />
-    <Image source={productImage4} style={styles.productImage} />
-  </ScrollView>
-</View>
+        <View style={styles.sectionHeader}>
+          <Image 
+            source={require('../../../assets/image.svg')} // Replace with your local image path
+            style={styles.backgroundImage}
+          />
+          <View style={styles.overlayContent}>
+            <Text style={styles.sectionTitle}>Your Orders</Text>
+          </View>
+        </View>
 
         <View style={styles.section}>
-        <View style={styles.headerRow}>
-      <Text style={styles.sectionTitle}>Past Three Months</Text>
-      </View>
+          <View style={styles.headerRow}>
+            <Text style={styles.sectionTitle}>Buy Again</Text>
+            <TouchableOpacity>
+              <Text style={styles.link}>See More</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {prodImages.map((image, index) => (
+              <Image key={index} source={image} style={styles.productImage} />
+            ))}
+          </ScrollView>
+        </View>
 
-   
-       {orderData.map((order) => (
+        <View style={styles.section}>
+          <View style={styles.headerRow}>
+            <Text style={styles.sectionTitle}>Past Three Months</Text>
+          </View>
+          {orderData.map((order) => (
             <View key={order.id} style={styles.orderItem}>
               <Image source={order.image} style={styles.orderImage} />
               <View style={styles.textContainer}>
-                <Text
-                  style={
-                    order.isStatusHighlighted
-                      ? [styles.orderStatus, { color: 'green' }] // Highlight if specified
-                      : styles.orderTitle
-                  }
-                >
+                <Text style={order.isStatusHighlighted ? [styles.orderStatus, { color: 'green' }] : styles.orderTitle}>
                   {order.title}
                 </Text>
                 <Text>{order.status}</Text>
@@ -113,16 +49,16 @@ const Orderscreencomponent = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           ))}
-    </View>
+        </View>
 
-        <TouchableOpacity style={styles.viewMoreButton}   onPress={() => navigation.navigate('history')}>
-          <Text style={styles.viewMoreText}
-        > View More </Text>
+        <TouchableOpacity style={styles.viewMoreButton} onPress={() => navigation.navigate('history')}>
+          <Text style={styles.viewMoreText}> View More </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
