@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import SearchIcon from "../../assets/search.svg";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
@@ -6,22 +7,25 @@ import {
   Text,
   TextInput,
   Image,
-  ScrollView,
+  FlatList,
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
-import { useDispatch } from "react-redux";
-import { categories, products } from "../utils/data";
+import { fetchProductsRequest } from "../redux/home/homeSlice";
+import { Card } from "react-native-paper";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.home);
 
-  const goToProductPage = (category) => {
-    navigation.navigate("Product", { category });
-  };
+  useEffect(() => {
+    // Dispatch action to fetch products
+    dispatch(fetchProductsRequest());
+  }, [dispatch]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -32,13 +36,8 @@ const Home = ({ navigation }) => {
         {
           text: "Logout",
           onPress: () => {
-            // Clear token from local storage
             clearAsyncStorage();
-
-            // Dispatch Redux action to reset auth state
             dispatch(logout());
-
-            // Navigate to login screen
             navigation.replace("login");
           },
         },
@@ -47,86 +46,44 @@ const Home = ({ navigation }) => {
     );
   };
 
+  const renderProductItem = ({ item }) => (
+    <View style={styles.productCardContainer}>
+      <Card style={styles.productCard}>
+        <Card.Cover style={styles.productImage} source={{ uri: item.imageUrl }} />
+        <Card.Content>
+          <Text style={styles.productTitle}>{item.name}</Text>
+          <Text style={styles.productDescription}>{item.description}</Text>
+          
+        </Card.Content>
+      </Card>
+    </View>
+  );
+
+  const renderProducts = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color="#7041EE" />;
+    }
+
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+
+    return (
+      <FlatList
+        data={products}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderProductItem}
+        numColumns={2}
+        contentContainerStyle={styles.productListContainer}
+        columnWrapperStyle={styles.productRow}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.searchContainer}>
-            <Image source={SearchIcon} style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search Tradezy.in"
-              placeholderTextColor="#aaa"
-            />
-          </View>
-          <TouchableOpacity onPress={handleLogout}>
-            <Icon
-              name="notifications"
-              size={24}
-              color="#fff"
-              style={styles.filterIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Location */}
-        <View style={styles.location}>
-          <Icon
-            name="location-on"
-            size={24}
-            color="#007ACC"
-            style={styles.icon}
-          />
-          <Text style={styles.locationText}>
-            Deliver to JK - Thoothukudi 628004
-          </Text>
-        </View>
-        
-        {/* Horizontal Categories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesScroll}
-        >
-          {categories.map((category, index) => (
-            <View key={index} style={styles.category}>
-              <Image
-                source={{ uri: category.image }}
-                style={styles.categoryImage}
-              />
-              <Text>{category.name}</Text>
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Promo Section */}
-        <View style={styles.promo}>
-          <Image
-            source={require("../../assets/Banner.svg")}
-            style={styles.promoImage}
-          />
-        </View>
-
-        {/* Vertical Products Section */}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={styles.productsScroll}
-        >
-          <Text style={styles.sectionTitle}>Deals for you</Text>
-          <View style={styles.products}>
-            {products.map((product, index) => (
-              <View key={index} style={styles.product}>
-                <Image
-                  source={{ uri: product.image }}
-                  style={styles.productImage}
-                />
-                <Text>{product.name}</Text>
-              </View>
-            ))}
-          </View>
-        </ScrollView>
-      </ScrollView>
+      <Text style={styles.sectionTitle}>Deals for you</Text>
+      {renderProducts()}
     </View>
   );
 };
@@ -135,7 +92,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
-    paddingTop: 30,
   },
   header: {
     flexDirection: "row",
@@ -164,78 +120,58 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
-  iconGroup: {
-    flexDirection: "row",
-  },
-  icon: {
-    fontSize: 18,
-    color: "#fff",
-    marginLeft: 3,
-  },
   location: {
     padding: 15,
     backgroundColor: "#8D67F1",
-    fontSize: 14,
-    paddingBottom: 20,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
     width: "100%",
-  },
-  categoriesScroll: {
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  category: {
-    alignItems: "center",
-    marginRight: 20,
-  },
-  categoryImage: {
-    width: 100,
-    height: 95,
-    borderRadius: 5,
-  },
-  promo: {
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  promoImage: {
-    width: "95%",
-    height: 150,
-    borderRadius: 10,
-  },
-  productsScroll: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
-  products: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  product: {
-    width: "48%",
-    marginBottom: 15,
-    alignItems: "center",
-  },
-  productImage: {
-    width: 170,
-    height: 150,
-    borderRadius: 10,
-  },
-  filterIcon: {
-    marginLeft: 10,
-    alignSelf: "center",
   },
   locationText: {
     fontSize: 14,
     color: "#fff",
     marginLeft: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginVertical: 10,
+    paddingHorizontal: 10,
+  },
+  productListContainer: {
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+  },
+  productRow: {
+    justifyContent: "space-between",
+  },
+  productCardContainer: {
+    flex: 1,
+    margin: 5,
+  },
+  productCard: {
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  productImage: {
+    height: 150,
+    resizeMode: "contain",
+  },
+  productTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginTop: 5,
+  },
+  productDescription: {
+    fontSize: 10,
+    color: "gray",
+    marginTop:10,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
   },
 });
 
