@@ -94,6 +94,7 @@ function MyStack() {
         <Stack.Screen name="Orders" component={Orderscreencomponent} />
         <Stack.Screen name="history" component={Orderhistorycomponent} />
         <Stack.Screen name="SearchResults" component={SearchResults} />
+        <Stack.Screen name="settings" component={Settings}/>
       </Stack.Navigator>
     
   );
