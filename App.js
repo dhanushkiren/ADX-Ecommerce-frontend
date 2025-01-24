@@ -27,7 +27,8 @@ import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
-
+import UserDashboard from "./src/screens/UserDashboard";
+import ChatBot from "./src/screens/ChatBot.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -94,7 +95,8 @@ function MyStack() {
         <Stack.Screen name="Orders" component={Orderscreencomponent} />
         <Stack.Screen name="history" component={Orderhistorycomponent} />
         <Stack.Screen name="SearchResults" component={SearchResults} />
-       
+        <Stack.Screen name="UserDashboard" component={UserDashboard} />
+        <Stack.Screen name="ChatBot" component={ChatBot} />
       </Stack.Navigator>
     
   );
