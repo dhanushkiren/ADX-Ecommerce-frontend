@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -12,34 +13,39 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { prodCategories, filterData, searchProducts } from "../utils/data";
+import { prodCategories, filterData } from "../utils/data";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import { setSearchQuery, fetchSearchResultsStart } from "../redux/search/searchSlice"; // Import actions
 
 const { height } = Dimensions.get("window");
 
 const SearchBar = ({ routeName }) => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
+
+  // Access Redux state for search query
+  const searchQuery = useSelector((state) => state.search.searchQuery);
   const [recentSearches, setRecentSearches] = useState([]);
 
-
   const handleSearch = (text) => {
-    setSearchQuery(text);
-    // if (onSearch) {
-    //   onSearch(text); // Trigger the search callback if provided
-    // }
+    // Dispatch the action to set search query in Redux store
+    dispatch(setSearchQuery(text));
   };
+
   const handleSearchSubmit = () => {
     if (searchQuery.trim()) {
-      const updatedRecentSearches = [searchQuery, ...recentSearches.filter((item) => item !== searchQuery)];
+      const updatedRecentSearches = [
+        searchQuery,
+        ...recentSearches.filter((item) => item !== searchQuery),
+      ];
       setRecentSearches(updatedRecentSearches);
+      // Dispatch action to trigger search (filter/sort as needed)
+      dispatch(fetchSearchResultsStart({ searchQuery }));
       navigation.navigate("product", { searchQuery }); // Navigate to the product screen
     }
   };
-  
-  console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -90,10 +96,9 @@ const SearchBar = ({ routeName }) => {
           <Icon name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         
-        <View style={styles.searchInput}  >
+        <View style={styles.searchInput}>
           <Icon name="search" size={24} color="#ccc" style={styles.icon} />
           <TextInput
-          // onPress={() => navigation.navigate("SearchResults", { recentSearches })}
             placeholder="Search products..."
             placeholderTextColor="#aaa"
             value={searchQuery}
@@ -101,23 +106,14 @@ const SearchBar = ({ routeName }) => {
             onSubmitEditing={handleSearchSubmit}
           />
         </View>
+
         {routeName === "product" && (
           <View style={styles.iconsContainer}>
             <TouchableOpacity onPress={openFilterModal}>
-              <Icon
-                name="filter-list"
-                size={26}
-                color="#fff"
-                style={styles.icon}
-              />
+              <Icon name="filter-list" size={26} color="#fff" style={styles.icon} />
             </TouchableOpacity>
             <TouchableOpacity onPress={openSortModal}>
-              <Icon
-                name="swap-vert"
-                size={26}
-                color="#fff"
-                style={styles.icon}
-              />
+              <Icon name="swap-vert" size={26} color="#fff" style={styles.icon} />
             </TouchableOpacity>
           </View>
         )}
@@ -290,6 +286,7 @@ const SearchBar = ({ routeName }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
