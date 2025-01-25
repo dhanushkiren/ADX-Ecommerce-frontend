@@ -1,32 +1,39 @@
-import { takeEvery, call, put } from "redux-saga/effects";
+import { takeEvery, call, put } from "redux-saga/effects"; 
 import axios from "../../utils/axios";
-import {
-     addToCartRequest,
-     addToCartSuccess, 
-     addToCartFailure, 
-     viewCartRequest, 
-     viewCartSuccess, 
-     viewCartFailure, 
-     deleteCartItemRequest, 
-     deleteCartItemSuccess, 
-     deleteCartItemFailure, 
-     clearCartRequest, 
-     clearCartSuccess, 
-     clearCartFailure 
-    } from "./cartSlice";
 import { apiConfig } from "../../utils/apiConfig";
+import {
+  addToCartRequest,
+  addToCartSuccess,
+  addToCartFailure,
+  viewCartRequest,
+  viewCartSuccess,
+  viewCartFailure,
+  deleteCartItemRequest,
+  deleteCartItemSuccess,
+  deleteCartItemFailure,
+  clearCartRequest,
+  clearCartSuccess,
+  clearCartFailure,
+} from "./cartSlice";
 
-// Worker Saga for adding item to cart
+// Worker Saga for adding an item to the cart
 function* addToCartSaga(action) {
   const { userId, productData } = action.payload;
+  console.log(action.payload);
   try {
-    const response = yield axios.post(apiConfig.addToCart(userId), productData);
-    if (response.status === 200) {
-      yield put(addToCartSuccess(response.data));
-    } else {
-      yield put(addToCartFailure("Failed to add item to cart"));
-    }
+    const response = yield call(axios.post, apiConfig.addToCart(userId), productData);
+    yield put(
+      addToCartSuccess({
+        id: response.data.id,
+        quantity: response.data.quantity,
+        productName: response.data.productName,
+        price: response.data.price,
+      })
+    );
+    // Refresh cart items after adding
+    yield put(viewCartRequest({ userId }));
   } catch (error) {
+    console.error(error);
     yield put(addToCartFailure(error?.response?.data?.message || "Failed to add item to cart"));
   }
 }
@@ -35,43 +42,35 @@ function* addToCartSaga(action) {
 function* viewCartSaga(action) {
   const { userId } = action.payload;
   try {
-    const response = yield axios.get(apiConfig.viewCart(userId));
-    if (response.status === 200) {
-      yield put(viewCartSuccess(response.data));
-    } else {
-      yield put(viewCartFailure("Failed to retrieve cart items"));
-    }
+    const response = yield call(axios.get, apiConfig.viewCart(userId));
+    console.log("API response", response);
+    yield put(viewCartSuccess(response.data));
   } catch (error) {
+    console.error(error);
     yield put(viewCartFailure(error?.response?.data?.message || "Failed to retrieve cart items"));
   }
 }
 
-// Worker Saga for deleting item from cart
+// Worker Saga for deleting an item from the cart
 function* deleteCartItemSaga(action) {
-  const { userId, itemId } = action.payload;
+  const { itemId } = action.payload; // Updated: userId is not required
   try {
-    const response = yield axios.delete(apiConfig.deleteCartItem(userId, itemId));
-    if (response.status === 200) {
-      yield put(deleteCartItemSuccess(itemId));
-    } else {
-      yield put(deleteCartItemFailure("Failed to delete item from cart"));
-    }
+    yield call(axios.delete, apiConfig.deleteCartItem(itemId));
+    yield put(deleteCartItemSuccess(itemId));
   } catch (error) {
+    console.error(error);
     yield put(deleteCartItemFailure(error?.response?.data?.message || "Failed to delete item from cart"));
   }
 }
 
-// Worker Saga for clearing cart
+// Worker Saga for clearing the cart
 function* clearCartSaga(action) {
   const { userId } = action.payload;
   try {
-    const response = yield axios.delete(apiConfig.clearCart);
-    if (response.status === 200) {
-      yield put(clearCartSuccess());
-    } else {
-      yield put(clearCartFailure("Failed to clear the cart"));
-    }
+    yield call(axios.delete, apiConfig.clearCart(userId)); // Include userId in the endpoint
+    yield put(clearCartSuccess());
   } catch (error) {
+    console.error(error);
     yield put(clearCartFailure(error?.response?.data?.message || "Failed to clear the cart"));
   }
 }

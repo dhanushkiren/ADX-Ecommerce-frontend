@@ -4,7 +4,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { View, StyleSheet } from "react-native";
 import Home from "../screens/Home";
 import EditProfile from "./EditProfile";
-import CartPage from "../screens/CartScreen";
+import CartPage from "../screens/CartPage";
 import MenuOptions from "../screens/MenuOptions";
 import ProductScreen from "../screens/searchlist";
 import SearchBar from "../components/SearchBar";

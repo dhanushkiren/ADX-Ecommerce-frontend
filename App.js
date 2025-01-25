@@ -15,7 +15,8 @@ import ProductScreen from "./src/screens/searchlist.js";
 import Home from "./src/screens/Home.js";
 import SplashScreen from "./src/screens/SplashScreen.js";
 import SearchBar from "./src/components/SearchBar.js";
-import CartScreen from "./src/screens/CartScreen";
+import CartPage from "./src/screens/CartPage.js";
+
 import {
   Provider as ReduxStoreProvider,
   useDispatch,
@@ -73,7 +74,7 @@ function MyStack() {
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
 
-        initialRouteName={token ? "menu" : "login"}
+        initialRouteName="cart"
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="menu" component={MenuBar} />
@@ -87,7 +88,7 @@ function MyStack() {
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="search" component={SearchBar} />
-        <Stack.Screen name="cart" component={CartScreen} />
+        <Stack.Screen name="cart" component={CartPage} />
         <Stack.Screen name="Confirm Order" component={ConfirmOrder} />
         <Stack.Screen name="Order Checkout" component={Placeorder} />
         <Stack.Screen name="Orders" component={Orderscreencomponent} />
