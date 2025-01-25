@@ -1,4 +1,3 @@
-// src/redux/rootSaga.js
 import { all, fork } from "redux-saga/effects";
 import { watchAuthSaga } from "./auth/authSaga";
 import { watchHomeSaga } from "./home/homeSaga";  // Import watchHomeSaga

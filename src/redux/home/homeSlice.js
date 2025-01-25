@@ -30,3 +30,4 @@ const homeSlice = createSlice({
 export const { fetchProductsRequest, fetchProductsSuccess, fetchProductsFailure } = homeSlice.actions;
 const homeReducer = homeSlice.reducer;
 export default homeReducer;
+
