@@ -6,17 +6,54 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Share,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
 import { productImages, productDetails } from "../utils/data"; // Adjust the import path accordingly
 
 export default function ProductPage({ navigation }) {
+  // Function to generate shareable content
+  const generateShareableContent = (product) => {
+    return `🌟 *${product.title}* 🌟
+
+🔥 ${product.bestsellerTag || "Limited Offer!"}
+💸 Price: ~${product.originalPrice}~ 👉 ${product.discountedPrice}
+
+📦 ${product.deliveryInfo}
+🛒 ${product.orderInfo}
+
+👉 Check it out here: ${product.link || "https://example.com"}
+    `;
+  };
+
+  // Share function
+  const onShare = async () => {
+    try {
+      const shareMessage = generateShareableContent(productDetails); // Use the generated content
+      const result = await Share.share({
+        message: shareMessage,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("Shared with activity type: ", result.activityType);
+        } else {
+          console.log("Shared successfully");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("Share dismissed");
+      }
+    } catch (error) {
+      console.error("Error sharing product:", error.message);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('TabHome')}>
+        <TouchableOpacity onPress={() => navigation.navigate("TabHome")}>
           <Icon name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.iconContainer}>
@@ -38,13 +75,17 @@ export default function ProductPage({ navigation }) {
       {/* Product Info */}
       <Text style={styles.productTitle}>{productDetails.title}</Text>
       <Text style={styles.discountText}>
-        {productDetails.discountText} <Text style={styles.originalPrice}>{productDetails.originalPrice}</Text> {productDetails.discountedPrice}
+        {productDetails.discountText}{" "}
+        <Text style={styles.originalPrice}>{productDetails.originalPrice}</Text>{" "}
+        {productDetails.discountedPrice}
       </Text>
 
       {/* Heart and Share Icons */}
       <View style={styles.iconRow}>
         <Icon name="heart-outline" size={24} color="red" />
-        <Icon name="share-outline" size={24} color="black" style={styles.shareIcon} />
+        <TouchableOpacity onPress={onShare}>
+          <Icon name="share-outline" size={24} color="black" style={styles.shareIcon} />
+        </TouchableOpacity>
       </View>
 
       {/* Order Info */}
@@ -52,7 +93,9 @@ export default function ProductPage({ navigation }) {
 
       {/* Seller Info */}
       <Text style={styles.sellerTitle}>{productDetails.sellerInfo.title}</Text>
-      <Text style={styles.sellerProductTitle}>{productDetails.sellerInfo.productTitle}</Text>
+      <Text style={styles.sellerProductTitle}>
+        {productDetails.sellerInfo.productTitle}
+      </Text>
       <Text style={styles.rating}>{productDetails.sellerInfo.rating}</Text>
 
       {/* Offer Section */}
@@ -61,7 +104,9 @@ export default function ProductPage({ navigation }) {
 
       {/* EMI Section */}
       {productDetails.emiInfo.map((emi, index) => (
-        <Text key={index} style={styles.emiText}>{emi}</Text>
+        <Text key={index} style={styles.emiText}>
+          {emi}
+        </Text>
       ))}
 
       {/* Buttons */}
@@ -94,13 +139,12 @@ export default function ProductPage({ navigation }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: '#f9f9f9',
     paddingTop: 27,
-
   },
   header: {
     flexDirection: "row",
@@ -180,13 +224,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#6200ee",
   },
-
-  offerDiscount: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#d50000",
-  },
-
   deliveryInfo: {
     margin: 10,
     color: "green",
@@ -194,10 +231,6 @@ const styles = StyleSheet.create({
   emiText: {
     margin: 10,
     color: "gray",
-  },
-  link: {
-    color: "#6200ee",
-    textDecorationLine: "underline",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -223,11 +256,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: "bold",
-  },
-
-  buttonSubText: {
-    fontSize: 12,
-    color: "gray",
   },
   tableHeading: {
     margin: 10,
@@ -269,6 +297,4 @@ const styles = StyleSheet.create({
   rightCell: {
     backgroundColor: "#ffffff",
   },
-
-
 });
