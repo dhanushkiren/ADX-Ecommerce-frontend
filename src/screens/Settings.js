@@ -22,7 +22,6 @@ const SettingsPage = () => {
         <TextInput style={styles.searchBar} placeholder="Search" placeholderTextColor="gray" />
         <Ionicons name="menu" size={24} color="white" />
       </View>
-
       {/* Title */}
       <Text style={styles.title}>Settings</Text>
 
@@ -31,8 +30,8 @@ const SettingsPage = () => {
         <Ionicons name="notifications-outline" size={24} color="black" />
         <Text style={styles.optionText}>Notification</Text>
         <Switch
-          trackColor={{ false: '#ccc', true: '#8e44ad' }}
-          thumbColor={isNotificationEnabled ? '#ffffff' : '#ffffff'}
+          trackColor={{ false: '#ccc', true: 'blue' }}
+          thumbColor={isNotificationEnabled ? '#ffffff' : 'black'}
           ios_backgroundColor="#ccc"
           onValueChange={toggleSwitch}
           value={isNotificationEnabled}
@@ -69,7 +68,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#8e44ad',
+    backgroundColor: 'blue',
     padding: 10,
     justifyContent: 'space-between',
   },
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#8e44ad',
+    backgroundColor: 'blue',
     paddingVertical: 10,
     position: 'absolute',
     bottom: 0,
