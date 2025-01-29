@@ -84,15 +84,8 @@ const editProfileSlice = createSlice({
         ...updatedData,
         image: truncatedImage // Log truncated image to avoid long string output
       });
-    
-      // Check image type and handle base64 data if necessary
-      if (updatedData.image && typeof updatedData.image === 'string' && updatedData.image.length > 50) {
-        console.log("Updated Profile Image (Base64):", `${updatedData.image.slice(0, 50)}... [truncated]`);
-      } else {
-        console.log("Updated Profile Image:", updatedData.image);
-      }
-      
-    },
+      console.log("Updated Profile Image:", updatedData.image);
+      },
     
     updateProfileFailure: (state, action) => {
       state.loading = false;
@@ -120,10 +113,7 @@ const editProfileSlice = createSlice({
       }
       state.isProfileModified = false;
     },
-    updateDateOfBirth: (state, action) => {
-      state.date_of_birth = action.payload; // Expecting YYYY-MM-DD string
-      state.isProfileModified = true; // Mark as modified
-    },
+    
   },
 });
 
@@ -136,7 +126,7 @@ export const {
   updateProfileFailure,
   checkProfileChanges,
   resetProfileModification,
-  updateDateOfBirth, // Export new action
+  
 } = editProfileSlice.actions;
 
 export default editProfileSlice.reducer;

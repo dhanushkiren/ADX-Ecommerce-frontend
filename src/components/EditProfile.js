@@ -191,6 +191,7 @@ const EditProfile = ({ route, navigation }) => {
   };
   
   const formatDateForBackend = (date) => moment(date).format('DD/MM/YYYY');
+
   const handleUpdateProfile = () => {
     const validationError = validateProfileData();
     if (validationError) {
@@ -214,7 +215,7 @@ const EditProfile = ({ route, navigation }) => {
       country: country || "",
       mobile: mobile || "",
       date_of_birth: formattedDateOfBirth,
-      image: image || profile.image || "", // Handle missing image case
+      image: image || profile.image || "",
     };
   
     if (!isEqual(profile, profileData)) {
@@ -227,47 +228,68 @@ const EditProfile = ({ route, navigation }) => {
       formData.append("country", profileData.country);
       formData.append("mobile", profileData.mobile);
       formData.append("date_of_birth", profileData.date_of_birth);
-  
-      // Handle image
-      if (profileData.image) {
-        let imageFile;
-        if (profileData.image === profile.image) {
-          // Convert Base64 to File for unchanged image
-          const base64String = profileData.image;
-          const byteCharacters = atob(base64String.split(",")[1]);
-          const byteNumbers = Array.from(byteCharacters, char => char.charCodeAt(0));
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: "image/jpeg" });
-  
-          imageFile = {
-            uri: URL.createObjectURL(blob),
-            type: "image/jpeg",
-            name: "profileImage.jpg",
-          };
-        } else {
-          // Use modified image directly
+
+      if (profile.image || image) {
+        if (profile.image && profile.image === image) {
+          // Case 1: Fetched image not modified
+          if (profile.image.startsWith("data:image")) {
+            try {
+              // Convert base64 to File
+              const base64String = profile.image.split(",")[1];
+              const byteCharacters = atob(base64String);
+              const byteNumbers = Array.from(byteCharacters, (char) => char.charCodeAt(0));
+              const byteArray = new Uint8Array(byteNumbers);
+              const blob = new Blob([byteArray], { type: "image/jpeg" });
+      
+              // Create a new File object from the Blob (using file name and type)
+              const imageName = "profileImage.jpg";
+              const imageFile = new File([blob], imageName, { type: "image/jpeg" });
+      
+              // Append the file to FormData
+              formData.append("image", imageFile);
+            } catch (error) {
+              console.error("Error converting base64 to File:", error);
+            }
+          } else if (profile.image.startsWith("http")) {
+            // Handle HTTP URL case for unmodified image
+            const imageFile = {
+              uri: profile.image,
+              type: "image/jpeg",
+              name: profile.image.split("/").pop() || "profileImage.jpg",
+            };
+            formData.append("image", imageFile);
+          } else {
+            console.error("Invalid image format for unmodified profile image.");
+          }
+        } else if (image) {
+          // Case 2: Fetched image modified
           const imageUri = image;
-          const imageName = imageUri.split("/").pop();
-          imageFile = {
+          const imageName = imageUri.split("/").pop() || "profileImage.jpg";
+          const imageFile = {
             uri: imageUri,
             type: "image/jpeg",
             name: imageName,
           };
+          formData.append("image", imageFile);
         }
-  
-        formData.append("image", imageFile);
       } else {
-        formData.append("image", ""); // Handle no image case
+        // Case 3: Fetched image is null
+        formData.append("image", ""); // Send empty image
       }
-  
+      
+      // Log formData to see the content before the request
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value instanceof File ? value.name : value.uri || "Invalid");
+      }
+      
       dispatch(updateProfileRequest({ id: profileData.id, profileData: formData }));
+      
     } else {
       Alert.alert("No Changes", "No modifications detected.");
     }
   };
   
 
-  
   if (loading) {
     return <Text>Loading...</Text>;
   }

@@ -35,6 +35,8 @@ function* fetchProfileSaga(action) {
     const apiEndpoint = apiConfig.getProfile(userId);
     console.log("API Endpoint:", apiEndpoint);
 
+     // API CALL FOR GET
+     
     const response = yield call(() => axios.get(apiEndpoint));
     
 
@@ -75,6 +77,9 @@ function* updateProfileSaga(action) {
     console.log("API Endpoint for Update:", apiEndpoint);
 
     console.log("Making API Call to Update Profile...");
+
+    //API CALL FOR PUT
+
     const response = yield call(() =>
       axios.put(apiEndpoint, profileData, {
         headers: { "Content-Type": "multipart/form-data" },
