@@ -5,19 +5,32 @@ const OTPResetScreen = () => {
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+91'); // Default to India (+91)
   const [otp, setOtp] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState(''); // Store the generated OTP
   const [password, setPassword] = useState('');
   const [step, setStep] = useState(1);
 
+  // Function to generate a random 6-digit OTP
+  const otpGenerator = (digit) => {
+    let num = '0123456789';
+    let otp = '';
+    for (let i = 0; i < digit; i++) {
+      otp += num[Math.floor(Math.random() * num.length)];
+    }
+    return otp;
+  };
+
   // Simulate sending OTP
   const sendOTP = () => {
-    // Simulate a successful OTP send
+    const newOtp = otpGenerator(6); // Generate 6-digit OTP
+    setGeneratedOtp(newOtp);
+    console.log('Generated OTP:', newOtp); // Simulating SMS
     Alert.alert('OTP Sent', 'Check console for OTP (simulating SMS)');
     setStep(2);
   };
 
   // Simulate verifying OTP
   const verifyOTP = () => {
-    if (otp === '123456') { // Simulating correct OTP for testing
+    if (otp === generatedOtp) { 
       Alert.alert('Success', 'OTP Verified');
       setStep(3);
     } else {
@@ -32,6 +45,7 @@ const OTPResetScreen = () => {
     setPhone('');
     setOtp('');
     setPassword('');
+    setGeneratedOtp(''); // Clear OTP after reset
   };
 
   return (
@@ -97,20 +111,20 @@ const OTPResetScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',  // Center vertically
-    alignItems: 'center',      // Center horizontally
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f5f5f5',
   },
   box: {
-    width: 350,  // Increased width to make the box larger
-    padding: 30, // Increased padding for better spacing inside the box
+    width: 350,
+    padding: 30,
     backgroundColor: 'white',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 5, // For Android shadow
+    elevation: 5,
   },
   title: {
     fontSize: 18,
