@@ -41,7 +41,7 @@ const CartPage = () => {
       {/* Product Details */}
       <View style={styles.productContainer}>
         <Image
-          source={require("../../assets/images/Shamboo.webp")}
+          source={require("../../assets/shamboo.svg")}
           style={styles.productImage}
         />
         <View style={styles.productDetails}>
