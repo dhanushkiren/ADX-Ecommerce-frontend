@@ -53,6 +53,7 @@ const MenuBar = () => {
         <Tab.Screen
           name="Profile"
           options={{ tabBarLabel: "Profile", headerShown: false }}
+           initialParams={{ userId: 1 }}
         >
           {props => (
             <>
