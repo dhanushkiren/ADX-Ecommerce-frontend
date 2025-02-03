@@ -1,6 +1,15 @@
 // MenuOptions.js (Modified with User Dashboard option)
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,9 +45,16 @@ const MenuOptions = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.option}
-            onPress={() => navigation.navigate("UserDashboard")} // New option
+            onPress={() => navigation.navigate("UserDashboard")}
           >
             <Text style={styles.optionText}>User Dashboard</Text>
+          </TouchableOpacity>
+          {/* New Customer Support Button */}
+          <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("ChatBot")} // Navigate to ChatBot screen
+          >
+            <Text style={styles.optionText}>Customer Support</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
