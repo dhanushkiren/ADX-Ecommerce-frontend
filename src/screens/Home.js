@@ -19,6 +19,7 @@ import { fetchProductsRequest } from "../redux/home/homeSlice";
 import { Card } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 
+
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.home);
@@ -50,6 +51,7 @@ const Home = ({ navigation }) => {
   const renderProductItem = ({ item }) => (
     <View style={styles.productCardContainer}>
       <Card style={styles.productCard}>
+
         <Card.Cover
           style={styles.productImage}
           source={{ uri: item.imageUrl }}
@@ -57,6 +59,7 @@ const Home = ({ navigation }) => {
         <Card.Content>
           <Text style={styles.productTitle}>{item.name}</Text>
           <Text style={styles.productDescription}>{item.description}</Text>
+
         </Card.Content>
       </Card>
     </View>
@@ -84,6 +87,7 @@ const Home = ({ navigation }) => {
   };
 
   return (
+
     <>
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>Deals for you</Text>
