@@ -10,3 +10,4 @@ export const apiConfig = {
   fetchProduct: (query) => `/api/products/search?query=${encodeURIComponent(query)}`
 
 };
+
