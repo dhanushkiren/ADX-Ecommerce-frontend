@@ -30,8 +30,8 @@ import SearchResults from "./src/screens/SearchResults.js";
 import UserDashboard from "./src/screens/UserDashboard";
 import ChatBot from "./src/screens/ChatBot.js";
 
-const Stack = createNativeStackNavigator();
 
+const Stack = createNativeStackNavigator();
 
 function MyStack() {
   const [loading, setLoading] = useState(true); // Add loading state
@@ -44,7 +44,6 @@ function MyStack() {
   console.log("dk token :::", token);
 
   useEffect(() => {
-    // clearAsyncStorage();
     const checkAuth = async () => {
       const storedToken = await retrieveData("token");
       console.log("Stored token::", storedToken);
@@ -57,7 +56,6 @@ function MyStack() {
     checkAuth();
   }, [dispatch]);
 
-
   // useEffect(() => {
   //   // Fetch home products once user is logged in
   //   if (token) {
@@ -65,13 +63,12 @@ function MyStack() {
   //   }
   // }, [dispatch, token]);
 
+
   if (loading) {
-    // Show a splash screen or placeholder while checking token or fetching products
     return <SplashScreen />;
   }
 
-  return (
-    
+  return (    
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
         initialRouteName="menu"
@@ -98,7 +95,7 @@ function MyStack() {
         <Stack.Screen name="UserDashboard" component={UserDashboard} />
         <Stack.Screen name="ChatBot" component={ChatBot} />
       </Stack.Navigator>
-    
+
   );
 }
 
