@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { prodImages, orderData } from '../../utils/data'; // Adjust the path as necessary
+import { prodImages, orderData } from '../../utils/data'; 
 
 const Orderscreencomponent = ({ navigation }) => {
   return (
@@ -9,7 +9,7 @@ const Orderscreencomponent = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.sectionHeader}>
           <Image 
-            source={require('../../../assets/image.png')} // Replace with your local image path
+            source={require('../../../assets/image.svg')} // Replace with your local image path
             style={styles.backgroundImage}
           />
           <View style={styles.overlayContent}>

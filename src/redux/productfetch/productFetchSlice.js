@@ -1,4 +1,3 @@
-
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -7,27 +6,27 @@ const initialState = {
   error: null,
 };
 
-const homeSlice = createSlice({
-  name: "home",
+const productFetchSlice = createSlice({
+  name: "productFetch",
   initialState,
   reducers: {
-    fetchProductsRequest: (state) => {
+    productFetchRequest: (state) => {
       state.loading = true;
       state.error = null;
     },
-    fetchProductsSuccess: (state, action) => {
+    productFetchSuccess: (state, action) => {
       console.log("Products fetched:", action.payload);
       state.products = action.payload;
       state.loading = false;
     },
-    fetchProductsFailure: (state, action) => {
+    productFetchFailure: (state, action) => {
       state.error = action.payload;
       state.loading = false;
     },
   },
 });
 
-export const { fetchProductsRequest, fetchProductsSuccess, fetchProductsFailure } = homeSlice.actions;
-const homeReducer = homeSlice.reducer;
-export default homeReducer;
 
+export const { productFetchRequest, productFetchSuccess, productFetchFailure } = productFetchSlice.actions;
+const productFetchReducer = productFetchSlice.reducer;
+export default productFetchReducer;
