@@ -5,6 +5,7 @@ import { watchHomeSaga } from "./home/homeSaga";  // Import watchHomeSaga
 import { watchCartSaga } from "./cart/cartSaga";
 import { watchUpdateProfile } from "./editprofile/saga";
 import { watchFetchProfile } from "./editprofile/saga";
+import { watchProductFetch } from "./productfetch/productFetchSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -13,6 +14,7 @@ export default function* rootSaga() {
     fork(watchCartSaga),
     fork(watchUpdateProfile),
     fork(watchFetchProfile),
+    fork(watchProductFetch),
   ]);
 }
 

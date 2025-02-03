@@ -27,22 +27,27 @@ import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
+import SmallMenu from "./src/components/SmallMenu.js";
+import { useNavigationState } from '@react-navigation/native';
+
+import UserDashboard from "./src/screens/UserDashboard";
+import ChatBot from "./src/screens/ChatBot.js";
+
 
 const Stack = createNativeStackNavigator();
-
 
 function MyStack() {
   const [loading, setLoading] = useState(true); // Add loading state
   const dispatch = useDispatch(); // Dispatch action
   const token = useSelector((state) => state.auth.token); // Select token from Redux state
-  const homeLoading = useSelector((state) => state.home.loading); // Get loading status for home
-  const products = useSelector((state) => state.home.products); // Get products from home state
-  const homeError = useSelector((state) => state.home.error); // Get error state for home
+  
+
+  const navigationState = useNavigationState(state => state); // Get current navigation state
+  const currentScreen = navigationState?.routes[navigationState.index]?.name; // Get current screen name
 
   console.log("dk token :::", token);
 
   useEffect(() => {
-    // clearAsyncStorage();
     const checkAuth = async () => {
       const storedToken = await retrieveData("token");
       console.log("Stored token::", storedToken);
@@ -63,13 +68,13 @@ function MyStack() {
   //   }
   // }, [dispatch, token]);
 
+
   if (loading) {
-    // Show a splash screen or placeholder while checking token or fetching products
     return <SplashScreen />;
   }
 
-  return (
-    
+
+  return (    
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
         initialRouteName="menu"
@@ -93,8 +98,15 @@ function MyStack() {
         <Stack.Screen name="Orders" component={Orderscreencomponent} />
         <Stack.Screen name="history" component={Orderhistorycomponent} />
         <Stack.Screen name="SearchResults" component={SearchResults} />
+        <Stack.Screen name="UserDashboard" component={UserDashboard} />
+        <Stack.Screen name="ChatBot" component={ChatBot} />
       </Stack.Navigator>
-    
+
+
+      {/* Conditionally render SmallMenu based on the screen */}
+      {!['login', 'register'].includes(currentScreen) && <SmallMenu />}
+    </>
+
   );
 }
 
