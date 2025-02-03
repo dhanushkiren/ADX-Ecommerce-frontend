@@ -80,7 +80,8 @@ function MyStack() {
   }
 
 
-  return (    
+  return (   
+    <> 
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
 
