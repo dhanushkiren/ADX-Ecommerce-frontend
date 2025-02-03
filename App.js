@@ -27,6 +27,9 @@ import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
+import SmallMenu from "./src/components/SmallMenu.js";
+import { useNavigationState } from '@react-navigation/native';
+
 import UserDashboard from "./src/screens/UserDashboard";
 import ChatBot from "./src/screens/ChatBot.js";
 
@@ -37,9 +40,10 @@ function MyStack() {
   const [loading, setLoading] = useState(true); // Add loading state
   const dispatch = useDispatch(); // Dispatch action
   const token = useSelector((state) => state.auth.token); // Select token from Redux state
-  const homeLoading = useSelector((state) => state.home.loading); // Get loading status for home
-  const products = useSelector((state) => state.home.products); // Get products from home state
-  const homeError = useSelector((state) => state.home.error); // Get error state for home
+  
+
+  const navigationState = useNavigationState(state => state); // Get current navigation state
+  const currentScreen = navigationState?.routes[navigationState.index]?.name; // Get current screen name
 
   console.log("dk token :::", token);
 
@@ -56,6 +60,7 @@ function MyStack() {
     checkAuth();
   }, [dispatch]);
 
+
   // useEffect(() => {
   //   // Fetch home products once user is logged in
   //   if (token) {
@@ -67,6 +72,7 @@ function MyStack() {
   if (loading) {
     return <SplashScreen />;
   }
+
 
   return (    
       <Stack.Navigator
@@ -95,6 +101,11 @@ function MyStack() {
         <Stack.Screen name="UserDashboard" component={UserDashboard} />
         <Stack.Screen name="ChatBot" component={ChatBot} />
       </Stack.Navigator>
+
+
+      {/* Conditionally render SmallMenu based on the screen */}
+      {!['login', 'register'].includes(currentScreen) && <SmallMenu />}
+    </>
 
   );
 }

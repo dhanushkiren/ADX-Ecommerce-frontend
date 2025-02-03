@@ -5,6 +5,6 @@ export const apiConfig = {
   viewCart: (userId) => `cart/${userId}`,
   deleteCartItem: (userId, itemId) => `cart/${userId}/${itemId}`,
   clearCart: `cart/clear`,
-
+  fetchProduct: (query) => `/api/products/search?query=${encodeURIComponent(query)}`
 };
 
