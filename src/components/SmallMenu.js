@@ -9,7 +9,7 @@ const SmallMenu = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.menuItem}
-        onPress={() => navigation.navigate("menu")}
+        onPress={() => navigation.navigate("home")}
       >
         <MaterialCommunityIcons name="home" size={30} color="#fff" />
         <Text style={styles.menuLabel}>Home</Text>
@@ -37,7 +37,7 @@ const SmallMenu = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.menuItem}
-        onPress={() => navigation.navigate("Menu")}
+        onPress={() => navigation.navigate("UserDashboard")}
       >
         <MaterialCommunityIcons name="menu" size={30} color="#fff" />
         <Text style={styles.menuLabel}>Menu</Text>

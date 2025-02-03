@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
-import cart from "./CartScreen";
 import { productImages, productDetails } from "../utils/data"; 
 
 export default function ProductPage({ navigation }) {

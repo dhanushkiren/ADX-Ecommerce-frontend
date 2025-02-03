@@ -89,6 +89,7 @@ const Home = ({ navigation }) => {
   return (
 
     <>
+    <SearchBar />
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>Deals for you</Text>
         {renderProducts()}

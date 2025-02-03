@@ -22,7 +22,7 @@ const { height } = Dimensions.get("window");
 
 const ProductScreen = ({ route }) => {
 
-  const { searchQuery } = route.params;
+  const { searchQuery } = route.params || '';
 
   // const route = useRoute();
   // console.log("dk route",route.name);

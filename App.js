@@ -8,6 +8,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import PaymentPage from "./src/screens/PaymentPage.js";
 import ProductPage from "./src/screens/ProductPage";
+import CartPage from "./src/screens/CartPage.js";
 import Orderscreencomponent from "./src/screens/orders/Orderscreencomponent";
 import Orderhistorycomponent from "./src/screens/orders/Orderhistorycomponent";
 import { StyleSheet, Image } from "react-native";
@@ -22,14 +23,7 @@ import ProductScreen from "./src/screens/searchlist.js";
 import Home from "./src/screens/Home.js";
 import SplashScreen from "./src/screens/SplashScreen.js";
 import SearchBar from "./src/components/SearchBar.js";
-import CartPage from "./src/screens/CartPage.js";
-
-import {
-  Provider as ReduxStoreProvider,
-  useDispatch,
-  useSelector,
-} from "react-redux";
-import { store } from "./src/redux/store";
+import { loginSuccess } from "./src/redux/auth/authSlice.js";
 import { clearAsyncStorage, retrieveData } from "./src/utils/asyncStorage.js";
 import MenuBar from "./src/components/MenuBar.js";
 import SearchResults from "./src/screens/SearchResults.js";
@@ -80,12 +74,11 @@ function MyStack() {
   }
 
 
-  return (   
-    <> 
+  return (  
+    <>  
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
-
-        initialRouteName={token ? "menu" : "login"}
+        initialRouteName="product"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -127,4 +120,3 @@ export default function App() {
     </ReduxStoreProvider>
   );
 }
-
