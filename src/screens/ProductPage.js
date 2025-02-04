@@ -9,19 +9,22 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
-import { productImages, productDetails } from "../utils/data"; // Adjust the import path accordingly
+import cart from "./CartScreen";
+import { productImages, productDetails } from "../utils/data"; 
 
 export default function ProductPage({ navigation }) {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('TabHome')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}> 
           <Icon name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.iconContainer}>
           <Icon name="search" size={24} color="white" />
+          <TouchableOpacity onPress={() =>navigation.navigate('cart')}>
           <Icon name="cart" size={24} color="white" />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -97,10 +100,8 @@ export default function ProductPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: '#f9f9f9',
     paddingTop: 27,
-
   },
   header: {
     flexDirection: "row",
@@ -180,13 +181,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#6200ee",
   },
-
   offerDiscount: {
     marginLeft: 10,
     fontSize: 16,
     color: "#d50000",
   },
-
   deliveryInfo: {
     margin: 10,
     color: "green",
@@ -224,7 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-
   buttonSubText: {
     fontSize: 12,
     color: "gray",
@@ -269,6 +267,4 @@ const styles = StyleSheet.create({
   rightCell: {
     backgroundColor: "#ffffff",
   },
-
-
 });
