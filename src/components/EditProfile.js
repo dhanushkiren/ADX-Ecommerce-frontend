@@ -19,7 +19,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfileRequest, updateProfileRequest } from "../redux/editprofile/slice";
 import { isEqual } from "lodash";
-import { API_BASE_URL } from "../utils/constants";
 import moment from "moment";
 import ImageResizer from "react-native-image-resizer"; 
 
@@ -294,10 +293,7 @@ const EditProfile = ({ route, navigation }) => {
     return <Text>Loading...</Text>;
   }
 
-  if (!profile) {
-    return <Text>No profile data available.</Text>;
-  }
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>

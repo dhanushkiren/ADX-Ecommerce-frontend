@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,8 +9,8 @@ import {
   Alert,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { useDispatch } from "react-redux";
-import { loginRequest, loginFailure } from "../redux/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest } from "../redux/auth/authSlice";
 
 const LoginScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
@@ -18,28 +18,34 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
+  // Get Redux state
+  const { token, loginError, loading } = useSelector((state) => state.auth);
+
+  // Navigate to Register Screen
   const gotoRegister = () => {
     navigation.navigate("register");
   };
 
-  const handleLogin = async () => {
-    try {
-      // Dispatch loginRequest to update loading state
-      const userData = {
-        username,
-        password,
-      };
-      console.log("dkdk :", userData);
-
-      // Dispatch the loginRequest action with the user data
-      dispatch(loginRequest(userData));
-      navigation.navigate("menu");
-    } catch (error) {
-      // If an error occurs, you can handle it here if necessary
-      console.error("Login error:", error);
-    }
+  // Handle login action
+  const handleLogin = () => {
+    const userData = { username, password };
+    console.log("Login Data:", userData);
+    dispatch(loginRequest(userData));
   };
 
+  // Navigate to Menu screen after successful login
+  useEffect(() => {
+    if (token) {
+      navigation.navigate("menu");
+    }
+  }, [token]);
+
+  // Show error alert when login fails
+  useEffect(() => {
+    if (loginError) {
+      Alert.alert("Login Failed", loginError);
+    }
+  }, [loginError]);
 
   return (
     <View style={styles.container}>
@@ -65,18 +71,13 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+          <Text style={styles.loginButtonText}>{loading ? "Logging in..." : "Login"}</Text>
         </TouchableOpacity>
 
         <View style={styles.checkboxContainer}>
-          <CheckBox
-            checked={isChecked}
-            onPress={() => setChecked(!isChecked)}
-          />
-          <Text style={{ fontWeight: "bold", marginLeft: -15 }}>
-            Keep me signed in.
-          </Text>
+          <CheckBox checked={isChecked} onPress={() => setChecked(!isChecked)} />
+          <Text style={{ fontWeight: "bold", marginLeft: -15 }}>Keep me signed in.</Text>
           <TouchableOpacity>
             <Text style={styles.details}>Details</Text>
           </TouchableOpacity>
@@ -88,13 +89,8 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.newAccountText}>New to Tradezy?</Text>
             <View style={styles.line} />
           </View>
-          <TouchableOpacity
-            onPress={gotoRegister}
-            style={styles.createAccountButton}
-          >
-            <Text style={styles.createAccountText}>
-              Create your Tradezy account
-            </Text>
+          <TouchableOpacity onPress={gotoRegister} style={styles.createAccountButton}>
+            <Text style={styles.createAccountText}>Create your Tradezy account</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -110,13 +106,12 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.footerLink}>Help</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.copyright}>
-        © 1996-2017, Tradezy.com, Inc. or its affiliates
-      </Text>
+      <Text style={styles.copyright}>© 1996-2017, Tradezy.com, Inc. or its affiliates</Text>
     </View>
   );
 };
 
+// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -191,6 +186,7 @@ const styles = StyleSheet.create({
     color: "#4c84f5",
     fontSize: 14,
     marginLeft: 8,
+    
   },
   newAccount: {
     alignItems: "center",
