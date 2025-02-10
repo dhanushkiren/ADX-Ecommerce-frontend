@@ -7,7 +7,7 @@ export const apiConfig = {
 
   // Retrieves cart items for a specific user (GET request)
   viewCart: (userId) => `cart/${userId}`,
-  deleteCartItem: (userId, itemId) => `cart/${userId}/${itemId}`,
+  deleteCartItem: (itemId) => `cart/${itemId}`,
   clearCart: `cart/clear`,
   fetchProduct: (query) => `/api/products/search?query=${encodeURIComponent(query)}`
 };
