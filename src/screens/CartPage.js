@@ -141,30 +141,7 @@ const CartPage = () => {
         <Text style={styles.cartText}>My Cart</Text>
       </View>
 
-
-      <View style={styles.priceDetails}>
-  <Text style={styles.sectionTitle}>Price Details</Text>
-  <View style={styles.priceRow}>
-    <Text>Total Items</Text>
-    <Text>{cartItems.length}</Text>
-  </View>
-  <View style={styles.priceRow}>
-    <Text>Total Amount</Text>
-    <Text style={styles.totalAmount}>₹{calculateTotal()}</Text>
-  </View>
-</View>
-<TouchableOpacity
-  style={styles.proceedToBuyButton}
-  onPress={null} // Add functionality for Proceed to Buy
->
-  <Text style={styles.proceedToBuyText}>
-    Proceed to Buy ({selectedCount} items)
-  </Text>
-</TouchableOpacity>
-
-    
-
-      <TouchableOpacity style={styles.deselectAllButton} onPress={handleDeselectAll}>
+<TouchableOpacity style={styles.deselectAllButton} onPress={handleDeselectAll}>
         <Text style={styles.deselectAllText}>Deselect all items</Text>
       </TouchableOpacity>
 
@@ -207,10 +184,32 @@ const CartPage = () => {
               <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveItem(item)}>
                 <Text style={styles.removeText}>Remove</Text>
               </TouchableOpacity>
+              
             </View>
           </View>
         </View>
       ))}
+
+<View style={styles.priceDetails}>
+  <Text style={styles.sectionTitle}>Price Details</Text>
+  <View style={styles.priceRow}>
+    <Text>Total Items</Text>
+    <Text>{cartItems.length}</Text>
+  </View>
+  <View style={styles.priceRow}>
+    <Text>Total Amount</Text>
+    <Text style={styles.totalAmount}>₹{calculateTotal()}</Text>
+  </View>
+</View>
+<TouchableOpacity
+  style={styles.proceedToBuyButton}
+  onPress={null} // Add functionality for Proceed to Buy
+>
+  <Text style={styles.proceedToBuyText}>
+    Proceed to Buy ({selectedCount} items)
+  </Text>
+</TouchableOpacity>
+
 
      
     </ScrollView>
@@ -222,6 +221,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingBottom: 80,
   },
   header: {
     padding: 18,
