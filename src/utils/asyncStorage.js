@@ -2,9 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //store data
 export const storeData = async (key, value) => {
+  console.log("🔹 Storing Token:", `"${value}"`); // Log token before storing
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
-    // console.log(`Data stored successfully with key: ${key} ${value}`);
+    console.log(`Data stored successfully with key: ${key} ${value}`);
   } catch (error) {
     console.error("Error storing data:", error);
   }
@@ -16,12 +17,12 @@ export const retrieveData = async (key) => {
     const storedValue = await AsyncStorage.getItem(key);
     if (storedValue !== null) {
       const parsedValue = JSON.parse(storedValue);
-      // console.log(
-      //   `Data retrieved successfully with key: ${key} ${parsedValue}`,
-      // );
+       console.log(
+        `Data retrieved successfully with key: ${key} ${parsedValue}`,
+      );
       return parsedValue;
     } else {
-      // console.log(`No data found with key: ${key}`);
+       console.log(`No data found with key: ${key}`);
       return null;
     }
   } catch (error) {

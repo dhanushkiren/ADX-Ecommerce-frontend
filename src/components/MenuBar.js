@@ -53,14 +53,9 @@ const MenuBar = () => {
         <Tab.Screen
           name="Profile"
           options={{ tabBarLabel: "Profile", headerShown: false }}
-           initialParams={{ userId: 1 }}
+          component={EditProfile}
+           initialParams={{ userId: 14 }}
         >
-          {props => (
-            <>
-              <SearchBar routeName={props.route.name} />
-              <EditProfile {...props} />
-            </>
-          )}
         </Tab.Screen>
         <Tab.Screen
           name="Cart"

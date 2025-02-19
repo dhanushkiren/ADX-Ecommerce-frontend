@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import {
   View,
   Text,
@@ -6,14 +6,22 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerRequest } from '../redux/auth/authSlice'; // Import Redux action
 
 const RegisterScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { loading, registerError,resetRegisterState, registerSuccessMessage } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    firstName: '',
+    lastName: '',
+    username: '', // Change email to username
     password: '',
     confirmPassword: '',
+    mobile: '',
   });
 
   const handleInputChange = (field, value) => {
@@ -21,9 +29,9 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    const { name, email, password, confirmPassword } = formData;
+    const { firstName, lastName, username, password, confirmPassword, mobile } = formData;
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !username || !password || !confirmPassword || !mobile) {
       Alert.alert('Error', 'All fields are required.');
       return;
     }
@@ -33,31 +41,67 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
 
-    Alert.alert('Success', 'Account created successfully!');
-    navigation.navigate('Dashboard');
+    // Dispatch Redux action to handle registration
+    dispatch(registerRequest({ username, firstName, lastName, password, mobile }));
   };
 
-  const handleLoginNavigation = () => {
-    navigation.navigate('Login');
-  };
+  useEffect(() => {
+    // Log the error and success message for debugging
+    console.log("registerSuccessMessage", registerSuccessMessage);
+    console.log("registerError", registerError);
+     console.log("🔍 Navigation Object:", navigation); // Log navigation object
+
+    // Show success alert and navigate to Login
+    if (registerSuccessMessage) {
+      Alert.alert('Success', registerSuccessMessage, [
+        {
+          text: 'OK',
+          onPress: async () => {
+            console.log("Navigating to Login Screen...");
+            await clearAsyncStorage(); // Clear any saved token
+            dispatch(resetRegisterState()); // Reset Redux state after success
+            navigation.navigate('login'); // Use replace to prevent back navigation
+          },
+        },
+      ]);
+    }
+    // Show error alert when registration fails
+    if (registerError) {
+      Alert.alert('Registration Failed', registerError);
+    }
+  }, [registerSuccessMessage, registerError,resetRegisterState, navigation]); // Add error to dependencies
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>TRADEZY.in</Text>
       <View style={styles.card}>
         <Text style={styles.subtitle}>Create account</Text>
+
         <TextInput
           style={styles.input}
-          placeholder="Your name"
-          value={formData.name}
-          onChangeText={(value) => handleInputChange('name', value)}
+          placeholder="First Name"
+          value={formData.firstName}
+          onChangeText={(value) => handleInputChange('firstName', value)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Last Name"
+          value={formData.lastName}
+          onChangeText={(value) => handleInputChange('lastName', value)}
         />
         <TextInput
           style={styles.input}
           placeholder="Email"
           keyboardType="email-address"
-          value={formData.email}
-          onChangeText={(value) => handleInputChange('email', value)}
+          value={formData.username}
+          onChangeText={(value) => handleInputChange('username', value)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Mobile"
+          keyboardType="numeric"
+          value={formData.mobile}
+          onChangeText={(value) => handleInputChange('mobile', value)}
         />
         <TextInput
           style={styles.inputpass}
@@ -66,7 +110,7 @@ const RegisterScreen = ({ navigation }) => {
           value={formData.password}
           onChangeText={(value) => handleInputChange('password', value)}
         />
-        <Text style={styles.inputpasstext}>Password must be at least 6 character</Text>
+        <Text style={styles.inputpasstext}>Password must be at least 6 characters</Text>
         <TextInput
           style={styles.inputRepass}
           placeholder="Re-enter password"
@@ -74,20 +118,23 @@ const RegisterScreen = ({ navigation }) => {
           value={formData.confirmPassword}
           onChangeText={(value) => handleInputChange('confirmPassword', value)}
         />
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Create your Tradezy account</Text>
+
+        {/* Use registerError instead of error */}
+        {registerError ? <Text style={styles.errorText}>{registerError}</Text> : null}
+
+        <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
+          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Create Account</Text>}
         </TouchableOpacity>
-        
+
         <Text style={styles.agreement}>
           By creating an account, you agree to Tradezy's{' '}
           <Text style={styles.link}>Conditions of Use</Text> and{' '}
           <Text style={styles.link}>Privacy Notice</Text>.
         </Text>
-        
-     
+
         <Text style={styles.signIn}>
-          Already have an account?{' '}
-          <Text style={styles.link} onPress={handleLoginNavigation}>
+          Already have an account?{''}
+          <Text style={styles.link} onPress={() => navigation.navigate('login')}>
             Sign-in
           </Text>
         </Text>
@@ -95,16 +142,17 @@ const RegisterScreen = ({ navigation }) => {
     </View>
   );
 };
+// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8', 
+    backgroundColor: '#f8f8f8',
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   card: {
-    width: '100%', 
+    width: '100%',
     maxWidth: 400,
     backgroundColor: '#ffffff',
     borderRadius: 15,
@@ -153,7 +201,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   inputpasstext: {
-    alignSelf: 'flex-start', 
+    alignSelf: 'flex-start',
     marginBottom: 15,
     marginLeft: 10,
     fontSize: 12,
@@ -182,6 +230,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
   agreement: {
     fontSize: 12,

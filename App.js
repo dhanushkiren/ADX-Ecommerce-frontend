@@ -78,7 +78,7 @@ function MyStack() {
     <>  
       <Stack.Navigator
         // initialRouteName={token ? "home" : "login"}
-        initialRouteName="product"
+        initialRouteName="menu"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -105,7 +105,7 @@ function MyStack() {
 
 
       {/* Conditionally render SmallMenu based on the screen */}
-      {!['login', 'register'].includes(currentScreen) && <SmallMenu />}
+      {!['login', 'register','profile'].includes(currentScreen) && <SmallMenu />}
     </>
 
   );

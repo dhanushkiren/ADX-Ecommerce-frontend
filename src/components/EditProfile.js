@@ -15,13 +15,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
 import { MaterialIcons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProfileRequest, updateProfileRequest } from "../redux/editprofile/slice";
+import { fetchProfileRequest, updateProfileRequest,updateProfileSuccess } from "../redux/editprofile/slice";
 import { isEqual } from "lodash";
-import { API_BASE_URL } from "../utils/constants";
 import moment from "moment";
+import { Platform } from 'react-native';
+import {API_BASE_URL} from '../utils/constants'
 import ImageResizer from "react-native-image-resizer"; 
+import * as FileSystem from 'expo-file-system';
+import Resizer from "react-image-file-resizer";
+
 
 const COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
@@ -42,13 +46,13 @@ const FONTS = {
   body3: { fontSize: 16, fontWeight: "normal" },
 };
 
-const EditProfile = ({ route, navigation }) => {
-  const { userId } = route.params || {};
-
+const EditProfile = ({ navigation }) => {
+  const userId = useSelector((state) => state.editProfile.userId);
   const dispatch = useDispatch();
   const { originalProfile: profile, error, loading } = useSelector((state) => state.editProfile);
 
   const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Track modified image file
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,7 +62,7 @@ const EditProfile = ({ route, navigation }) => {
   const [country, setCountry] = useState("");
   const [mobile, setMobile] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [countryModalVisible, setCountryModalVisible] = useState(false);
 
   useEffect(() => {
@@ -71,7 +75,7 @@ const EditProfile = ({ route, navigation }) => {
 
   useEffect(() => {
     if (profile) {
-      console.log("Fetched image is available:", profile.image ? "Available" : "no Image Available");
+    
       setFirstName(profile.firstName || "");
       setLastName(profile.lastName || "");
       setEmail(profile.email || "");
@@ -94,32 +98,77 @@ const EditProfile = ({ route, navigation }) => {
       setCountry(profile.country || "");
       setMobile(profile.mobile || "");
       setDateOfBirth(profile.date_of_birth ? new Date(profile.date_of_birth) : null);
-  
-      // Improved Base64 image handling
-      if (profile.image) {
-       
-  
-        // Validate the Base64 string
-        const isValidBase64 = (str) => {
-          const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
-          return base64Regex.test(str);
-        };
-  
-        if (isValidBase64(profile.image)) {
-          // Generate the image URI
-          const imageUri = `data:image/jpeg;base64,${profile.image}`;
-          setImage(imageUri); // Save the URI to state
         
-        } else {
-          console.warn("Invalid Base64 string for image");
-          setImage(null); // Set a fallback if the string is invalid
-        }
+
+       // ✅ Dynamically remove '/api/' from BASE_URL
+       const BASE_URL = API_BASE_URL.endsWith("/") 
+       ? API_BASE_URL.slice(0, -1).replace("/api", "")
+       : API_BASE_URL.replace("/api", "");
+ 
+     let finalImageUrl = null;
+ 
+     // ✅ Check if the backend image is a valid base64 string
+     const isValidBase64 = (str) => {
+      const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+      return base64Regex.test(str);
+    };
+ 
+     // ✅ Check if the backend image is a valid URL (Basic Check)
+     const isValidUrl = (str) => {
+       try {
+         new URL(str);
+         return true;
+       } catch (_) {
+         return false;
+       }
+     };
+     if (profile.image && isValidBase64(profile.image)) {
+      // ✅ Valid Base64 Image
+      finalImageUrl = `data:image/jpeg;base64,${profile.image}`;
+  
+      const shortBase64 = profile.image.substring(0, 20) + "..." + profile.image.slice(-20); // Shorten Base64
+  
+      console.log("✅ Fetched image is a valid base64:", shortBase64);
+  } 
+  else if (profile.image_url && typeof profile.image_url === "string" && profile.image_url.trim() !== "") {
+      // ✅ Construct Full URL and Validate
+      const constructedUrl = `${BASE_URL}${profile.image_url.startsWith("/") ? profile.image_url : `/${profile.image_url}`}`;
+      
+      if (isValidUrl(constructedUrl)) {
+          finalImageUrl = constructedUrl;
+          console.log("✅ Fetched image is a valid URL:", finalImageUrl);
       } else {
-        console.warn("No image data available in profile");
-        setImage(null); // Set a fallback for missing image
+          console.log("❌ Invalid Image URL from backend:", profile.image_url);
+          finalImageUrl = null;
       }
-    }
-  }, [profile]);
+  } 
+  else {
+      console.log("❌ No valid image found. Using default.");
+      finalImageUrl = null;
+  }
+  
+ setImage(finalImageUrl);
+  
+  // Show shortened Base64 for console if it's Base64
+  const logImage = (finalImageUrl && typeof finalImageUrl === "string" && finalImageUrl.startsWith("data:image/jpeg;base64,"))
+    ? finalImageUrl.substring(0, 40) + "..." + finalImageUrl.slice(-20)
+    : finalImageUrl || "No Image Found";
+
+  
+  console.log("Final image after validation:", logImage);
+  }
+  
+}, [profile]);
+
+useEffect(() => {
+  console.log("🚀 Image state updated:", image);
+}, [image]);
+
+
+  const handleConfirmDate = (date) => {
+    setDatePickerVisibility(false);
+    setDateOfBirth(date);
+  };
   
 
   const handleImageSelection = async () => { 
@@ -139,41 +188,47 @@ const EditProfile = ({ route, navigation }) => {
         aspect: [4, 4],
         quality: 0.5,
       });
-      console.log(result);
+
+      console.log("🖼️ Image Picker Result:", result);
   
       if (!result.canceled) {
         const { uri } = result.assets[0];
-  
-        // Resize the image using expo-image-manipulator
-        const resizedImage = await ImageManipulator.manipulateAsync(
-          uri,
-          [{ resize: { width: 500, height: 500 } }], // Resize dimensions
-          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
-        );
-  
-        // Convert to base64 to check the image size before proceeding
-        const imageBase64 = await ImageManipulator.manipulateAsync(
-          resizedImage.uri,
-          [],
-          { base64: true }
-        );
-        console.log("Resized Image Uri:",resizedImage.uri);
-        console.log("Base64 Image Size:", imageBase64.base64.length);
 
+        let resizedImage;
+        let fileImage;
+
+        if (Platform.OS === "web") {
+          // ✅ For Web: Resize More & Convert to File
+          resizedImage = await ImageManipulator.manipulateAsync(
+            uri,
+            [{ resize: { width: 200, height: 200 } }], // Resize more for Web
+            { compress: 0.2, format: ImageManipulator.SaveFormat.JPEG }
+          );
   
-        const maxSize = 1000000; // 1MB max size (adjust as needed)
-        const imageSize = imageBase64.base64.length;
+          const response = await fetch(resizedImage.uri);
+          const blob = await response.blob();
+          fileImage = new File([blob], "profile.jpg", { type: "image/jpeg" });
+
+          console.log("Resized Image from WEB:",fileImage);
+
+        } else {
+          // ✅ For Mobile: Use existing logic
+          resizedImage = await ImageManipulator.manipulateAsync(
+            uri,
+            [{ resize: { width: 500, height: 500 } }],
+            { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+          );
   
-        // Check image size and ensure it's within the max size
-        if (imageSize > maxSize) {
-          Alert.alert("Image is too large", "Please choose a smaller image.");
-          return;
+          fileImage = {
+            uri: resizedImage.uri,
+            type: "image/jpeg",
+            name: "profile.jpg",
+          };
         }
   
-        // Set resized image URI for use in the profile update
-        setImage(resizedImage.uri); // Set resized image URI
-      } else {
-        Alert.alert("Cancelled", "Image selection was cancelled.");
+        // ✅ Update both image and imageFile for consistency
+        setImage(resizedImage.uri);
+        setImageFile(fileImage);
       }
     } catch (err) {
       console.error("Image selection error:", err);
@@ -190,24 +245,86 @@ const EditProfile = ({ route, navigation }) => {
     return null;
   };
   
-  const formatDateForBackend = (date) => moment(date).format('DD/MM/YYYY');
+ // ✅ Corrected base64 to file conversion for MOBILE
+ const base64ToFile = async (base64String, fileName = "profile.jpg") => {
+  try {
+    if (!base64String || !base64String.startsWith("data:image")) {
+      console.error("❌ Invalid base64 string");
+      return null;
+    }
 
-  const handleUpdateProfile = () => {
+    const fileUri = FileSystem.cacheDirectory + fileName;
+
+    await FileSystem.writeAsStringAsync(fileUri, base64String.split(",")[1], {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    return {
+      uri: fileUri,
+      type: "image/jpeg",
+      name: fileName,
+    };
+  } catch (error) {
+    console.error("❌ Error converting base64 to File:", error);
+    return null;
+  }
+};
+
+ // ✅ Corrected base64 to file conversion for WEB
+ const base64ToBlob = (base64String, fileName = "profile.jpg") => {
+  try {
+    if (!base64String || !base64String.includes(",")) {
+      console.error("❌ Invalid base64 string, cannot convert.");
+      return null;
+    }
+
+    // ✅ Remove extra spaces or newlines in base64 string
+    base64String = base64String.trim().replace(/\s/g, "");
+
+    const [meta, base64Data] = base64String.split(",");
+    const mimeMatch = meta.match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : "image/jpeg"; 
+
+    // ✅ Convert base64 to binary (optimized)
+    const byteArray = Uint8Array.from(atob(base64Data), (char) => char.charCodeAt(0));
+
+    // ✅ Create a Blob and File object
+    const blob = new Blob([byteArray], { type: mime });
+
+    console.log("✅ Successfully converted base64 to Blob:", blob);
+    return new File([blob], fileName, { type: mime });
+  } catch (error) {
+    console.error("❌ Error converting base64 to Blob:", error);
+    return null;
+  }
+};
+
+
+
+const handleUpdateProfile = async () => {
+  try {
+    console.log("🚀 Starting Profile Update...");
+
     const validationError = validateProfileData();
     if (validationError) {
       Alert.alert("Validation Error", validationError);
       return;
     }
-  
+
     if (!dateOfBirth) {
       Alert.alert("Error", "Please select a date of birth.");
       return;
     }
+
+    const formattedDateOfBirth = dateOfBirth
+    ? moment(dateOfBirth).format("DD/MM/YYYY")
+    : "";
   
-    const formattedDateOfBirth = formatDateForBackend(dateOfBirth);
+  console.log("📅 Final formatted date:", formattedDateOfBirth);
   
+
     const profileData = {
-      id: userId,
+      id: Number(userId),
       firstName: firstName || "",
       lastName: lastName || "",
       email: email || "",
@@ -215,9 +332,11 @@ const EditProfile = ({ route, navigation }) => {
       country: country || "",
       mobile: mobile || "",
       date_of_birth: formattedDateOfBirth,
-      image: image || profile.image || "",
+     
     };
-  
+
+    console.log("🔍 isEqual result:", isEqual(profile, profileData));
+
     if (!isEqual(profile, profileData)) {
       const formData = new FormData();
       formData.append("id", profileData.id);
@@ -229,74 +348,75 @@ const EditProfile = ({ route, navigation }) => {
       formData.append("mobile", profileData.mobile);
       formData.append("date_of_birth", profileData.date_of_birth);
 
-      if (profile.image || image) {
-        if (profile.image && profile.image === image) {
-          // Case 1: Fetched image not modified
-          if (profile.image.startsWith("data:image")) {
-            try {
-              // Convert base64 to File
-              const base64String = profile.image.split(",")[1];
-              const byteCharacters = atob(base64String);
-              const byteNumbers = Array.from(byteCharacters, (char) => char.charCodeAt(0));
-              const byteArray = new Uint8Array(byteNumbers);
-              const blob = new Blob([byteArray], { type: "image/jpeg" });
-      
-              // Create a new File object from the Blob (using file name and type)
-              const imageName = "profileImage.jpg";
-              const imageFile = new File([blob], imageName, { type: "image/jpeg" });
-      
-              // Append the file to FormData
-              formData.append("image", imageFile);
-            } catch (error) {
-              console.error("Error converting base64 to File:", error);
-            }
-          } else if (profile.image.startsWith("http")) {
-            // Handle HTTP URL case for unmodified image
-            const imageFile = {
-              uri: profile.image,
-              type: "image/jpeg",
-              name: profile.image.split("/").pop() || "profileImage.jpg",
-            };
-            formData.append("image", imageFile);
-          } else {
-            console.error("Invalid image format for unmodified profile image.");
+      console.log("🖼️ NEW SELECTED Image File Before Appending to FormData:", imageFile);
+
+      let imageToSend = null;
+
+      if (imageFile) {
+        // ✅ If user selects a new image, use it directly
+        imageToSend = imageFile;
+      } else if (image && image.startsWith("data:image")) {
+        if (Platform.OS === "web") {
+          // ✅ Convert base64 to Blob for web
+          imageToSend = base64ToBlob(image, "profile.jpg");
+        } else {
+          // ✅ Convert base64 to file for mobile
+          imageToSend = await base64ToFile(image, "existingProfileImage.jpg");
+        }
+      }
+
+      if (imageToSend) {
+        if (Platform.OS === "web") {
+          console.log("📸 Web Image Data Before Append:", imageToSend);
+          console.log("📸 Type:", typeof imageToSend);
+          console.log("📸 Instance of Blob:", imageToSend instanceof Blob);
+          console.log("📸 Instance of File:", imageToSend instanceof File);
+          
+          if (!(imageToSend instanceof Blob || imageToSend instanceof File)) {
+            console.error("🛑 Image is NOT a valid Blob or File! Converting...");
+            imageToSend = base64ToBlob(image, "profile.jpg"); // Convert again just in case
           }
-        } else if (image) {
-          // Case 2: Fetched image modified
-          const imageUri = image;
-          const imageName = imageUri.split("/").pop() || "profileImage.jpg";
-          const imageFile = {
-            uri: imageUri,
-            type: "image/jpeg",
-            name: imageName,
-          };
-          formData.append("image", imageFile);
+      
+          formData.append("image", imageToSend, "profile.jpg"); // Ensure correct format
+        } else {
+          formData.append("image", {
+            uri: imageToSend.uri,
+            type: imageToSend.type || "image/jpeg",
+            name: imageToSend.name || "profileImage.jpg",
+          });
         }
       } else {
-        // Case 3: Fetched image is null
-        formData.append("image", ""); // Send empty image
+        console.log("🛑 No valid image found. Removing image field.");
       }
       
-      // Log formData to see the content before the request
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value instanceof File ? value.name : value.uri || "Invalid");
+
+      console.log("📦 Final FormData:");
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
       }
-      
+
+      if (formData.has("image")) {
+        console.log("✅ Image field is present in FormData:", formData.get("image"));
+      } else {
+        console.log("🛑 Image field is missing in FormData, ensuring it’s properly handled.");
+      }
+
       dispatch(updateProfileRequest({ id: profileData.id, profileData: formData }));
-      
+      console.log("✅ Dispatch Triggered Successfully!");
     } else {
       Alert.alert("No Changes", "No modifications detected.");
     }
-  };
-  
 
+  } catch (error) {
+    console.error("❌ Error in handleUpdateProfile:", error);
+    Alert.alert("Update Failed", "An unexpected error occurred.");
+  }
+};
   if (loading) {
     return <Text>Loading...</Text>;
   }
 
-  if (!profile) {
-    return <Text>No profile data available.</Text>;
-  }
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -333,31 +453,46 @@ const EditProfile = ({ route, navigation }) => {
                   <Text style={styles.textInputText}>{country || "Select Country"}</Text>
                 </TouchableOpacity>
               ) : field.isDateField ? (
-                <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePicker}>
-                  <Text style={styles.datePickerText}>
-                    {dateOfBirth ? dateOfBirth.toDateString() : "Select Date of Birth"}
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <TextInput value={field.value} onChangeText={field.onChange} style={styles.textInput} />
-              )}
-            </View>
-          ))}
-        {showDatePicker && (
-          <DateTimePicker
-            value={dateOfBirth || new Date()}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              setDateOfBirth(selectedDate || dateOfBirth);
-            }}
-          />
-        )}
+              Platform.OS === "web" ? (
+                // ✅ Web: Use native <input type="date">
+                <input
+                    type="date"
+                    value={dateOfBirth ? moment(dateOfBirth).format("YYYY-MM-DD") : ""}
+                    onChange={(e) => {
+                      const selectedDate = new Date(e.target.value); // Store as Date object
+                      console.log("Selected Date (Web - Raw):", selectedDate);
+                      setDateOfBirth(selectedDate);
+                    }}
+                    style={styles.webDateInput}
+                  />
+                ) : (
+                // ✅ Mobile: Use React Native Date Picker
+                <>
+                  <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.datePicker}>
+                    <Text style={styles.datePickerText}>
+                      {dateOfBirth ? moment(dateOfBirth).format("DD/MM/YYYY") : "Select Date of Birth"}
+                    </Text>
+                  </TouchableOpacity>
+                  <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleConfirmDate}
+                    onCancel={() => setDatePickerVisibility(false)}
+                  />
+                </>
+              )
+            ) : (
+              <TextInput value={field.value} onChangeText={field.onChange} style={styles.textInput} />
+            )}
+          </View>
+        ))}
+       
         <TouchableOpacity onPress={handleUpdateProfile} style={styles.updateButton}>
           <Text style={styles.updateButtonText}>{loading ? "Updating..." : "Update Profile"}</Text>
         </TouchableOpacity>
       </ScrollView>
+      
+
       <Modal
         visible={countryModalVisible}
         onRequestClose={() => setCountryModalVisible(false)}
@@ -366,24 +501,42 @@ const EditProfile = ({ route, navigation }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <FlatList
-              data={COUNTRIES}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setCountry(item);
-                    setCountryModalVisible(false);
-                  }}
-                  style={styles.countryItem}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
+            {Platform.OS === "web" ? (
+              <ScrollView style={{ maxHeight: 300 }} keyboardShouldPersistTaps="handled">
+                {COUNTRIES.map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => {
+                      setCountry(item);
+                      setCountryModalVisible(false);
+                    }}
+                    style={styles.countryItem}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            ) : (
+              <FlatList
+                data={COUNTRIES}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCountry(item);
+                      setCountryModalVisible(false);
+                    }}
+                    style={styles.countryItem}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            )}
           </View>
         </View>
       </Modal>
+
     </SafeAreaView>
   );
 };
@@ -401,6 +554,7 @@ const styles = StyleSheet.create({
   textInputText: { fontSize: 16, color: COLORS.black },
   datePicker: { borderWidth: 1, borderColor: COLORS.secondaryGray, borderRadius: 8, padding: 10 },
   datePickerText: { fontSize: 16, color: COLORS.black },
+  webDateInput: { backgroundColor: COLORS.white,borderWidth: 1, padding: 10, borderRadius: 8, width: "100%", fontSize: 16 },
   updateButton: { backgroundColor: COLORS.primary, paddingVertical: 15, borderRadius: 8, alignItems: "center" },
   updateButtonText: { color: COLORS.white, fontSize: 16, fontWeight: "bold" },
   modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" },
