@@ -56,7 +56,6 @@ const Home = ({ navigation }) => {
       <Card style={styles.productCard}>
         <Card.Cover
           style={styles.productImage}
-          source={{ uri: item.imageUrl || 'https://via.placeholder.com/150' }}
         />
         <Card.Content>
           <Text style={styles.productTitle}>{item.name}</Text>
