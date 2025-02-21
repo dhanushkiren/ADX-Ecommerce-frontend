@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingBottom: 80,
+    paddingBottom: 10,
   },
   header: {
     padding: 18,
@@ -393,6 +393,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#7041EE',
     borderRadius: 4,
     alignItems: 'center',
+    marginBottom: 100,
   },
   proceedToBuyText: {
     color: '#fff',
