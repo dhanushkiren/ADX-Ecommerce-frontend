@@ -49,20 +49,20 @@ const Home = ({ navigation }) => {
   };
 
   const renderProductItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.productCardContainer}
-      onPress={() => navigation.navigate("product", { product: item })}
-    >
+    <View style={styles.productCardContainer}>
       <Card style={styles.productCard}>
+
         <Card.Cover
           style={styles.productImage}
+          source={{ uri: item.imageUrl }}
         />
         <Card.Content>
           <Text style={styles.productTitle}>{item.name}</Text>
           <Text style={styles.productDescription}>{item.description}</Text>
+
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+    </View>
   );
 
   const renderProducts = () => {

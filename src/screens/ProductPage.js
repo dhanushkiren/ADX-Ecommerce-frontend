@@ -12,8 +12,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
 import { productImages, productDetails } from "../utils/data"; 
 
-export default function ProductPage({ route, navigation }) { // Added route prop
-  const { product } = route.params; 
+export default function ProductPage({ navigation }) {
   // Function to generate shareable content
   const generateShareableContent = (product) => {
     return `🌟 *${product.title}* 🌟
@@ -52,92 +51,101 @@ export default function ProductPage({ route, navigation }) { // Added route prop
 
   return (
     <ScrollView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.navigate("TabHome")}>
           <Icon name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.iconContainer}>
           <Icon name="search" size={24} color="white" />
-          <TouchableOpacity onPress={() => navigation.navigate("cart")}>
-            <Icon name="cart" size={24} color="white" />
+          <TouchableOpacity onPress={() =>navigation.navigate('cart')}>
+          <Icon name="cart" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </View>
 
-      <Image source={{ uri: product.imageUrl }} style={styles.productImage} />
+      {/* Product Image Slider */}
+      <Swiper style={styles.swiper} showsButtons={true} autoplay={true}>
+        {productImages.map((image, index) => (
+          <Image key={index} source={image} style={styles.productImage} />
+        ))}
+      </Swiper>
 
-      
-        {/* Bestseller Tag */}
+      {/* Bestseller Tag */}
       <Text style={styles.bestSellerTag}>{productDetails.bestsellerTag}</Text>
-      <View style={styles.productDetailsContainer}>
-        <Text style={styles.productTitle}>{product.name}</Text>
-        <Text style={styles.discountText}>Price: ₹{product.price}</Text>
-        <Text style={styles.orderInfo}>In-Stock: {product.stock}</Text>
-        <Text style={styles.sellerTitle}>Seller: {product.sellerName}</Text>
-        <Text style={styles.sellerTitle}>Category: {product.categoryName}</Text>
 
-        <View style={styles.iconRow}>
-          <Icon name="heart-outline" size={24} color="red" />
-          <TouchableOpacity onPress={onShare}>
-            <Icon name="share-outline" size={24} color="black" style={styles.shareIcon} />
-          </TouchableOpacity>
-        </View>
+      {/* Product Info */}
+      <Text style={styles.productTitle}>{productDetails.title}</Text>
+      <Text style={styles.discountText}>
+        {productDetails.discountText}{" "}
+        <Text style={styles.originalPrice}>{productDetails.originalPrice}</Text>{" "}
+        {productDetails.discountedPrice}
+      </Text>
 
-        {/* Order Info */}
+      {/* Heart and Share Icons */}
+      <View style={styles.iconRow}>
+        <Icon name="heart-outline" size={24} color="red" />
+        <TouchableOpacity onPress={onShare}>
+          <Icon name="share-outline" size={24} color="black" style={styles.shareIcon} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Order Info */}
       <Text style={styles.orderInfo}>{productDetails.orderInfo}</Text>
 
-        {/* Seller Info */}
-        {/* <Text style={styles.sellerTitle}>{productDetails.sellerInfo.title}</Text>
-        <Text style={styles.sellerProductTitle}>
-          {productDetails.sellerInfo.productTitle} */}
-        {/* </Text> */}
-        <Text style={styles.rating}>{productDetails.sellerInfo.rating}</Text>
+      {/* Seller Info */}
+      <Text style={styles.sellerTitle}>{productDetails.sellerInfo.title}</Text>
+      <Text style={styles.sellerProductTitle}>
+        {productDetails.sellerInfo.productTitle}
+      </Text>
+      <Text style={styles.rating}>{productDetails.sellerInfo.rating}</Text>
 
-        {/* Offer Section */}
-        <Text style={styles.offerTag}>{productDetails.offerTag}</Text>
-        <Text style={styles.deliveryInfo}>{productDetails.deliveryInfo}</Text>
+      {/* Offer Section */}
+      <Text style={styles.offerTag}>{productDetails.offerTag}</Text>
+      <Text style={styles.deliveryInfo}>{productDetails.deliveryInfo}</Text>
 
-        {/* EMI Section */}
-        {productDetails.emiInfo.map((emi, index) => (
-          <Text key={index} style={styles.emiText}>
-            {emi}
-          </Text>
-        ))}
+      {/* EMI Section */}
+      {productDetails.emiInfo.map((emi, index) => (
+        <Text key={index} style={styles.emiText}>
+          {emi}
+        </Text>
+      ))}
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.emiButton}>
-            <Text style={styles.buttonText}>Add to Cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buyNowButton}>
-            <Text style={styles.buttonText}>Buy Now</Text>
-          </TouchableOpacity>
-        </View>
+      {/* Buttons */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.emiButton}>
+          <Text style={styles.buttonText}>Add to Cart</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buyNowButton}>
+          <Text style={styles.buttonText}>Buy Now</Text>
+        </TouchableOpacity>
+      </View>
 
-         {/* Technical Details Heading */}
-        <Text style={styles.tableHeading}>Technical Details</Text>
+      {/* Technical Details Heading */}
+      <Text style={styles.tableHeading}>Technical Details</Text>
 
-        {/* Product Description Table */}
-        <View style={styles.tableContainer}>
-          {productDetails.technicalDetails.map((detail, index) => (
-            <View key={index} style={styles.tableRow}>
-              <View style={[styles.tableCellHeader, styles.leftCell]}>
-                <Text>{detail.key}</Text>
-              </View>
-              <View style={[styles.tableCell, styles.rightCell]}>
-                <Text>{detail.value}</Text>
-              </View>
+      {/* Product Description Table */}
+      <View style={styles.tableContainer}>
+        {productDetails.technicalDetails.map((detail, index) => (
+          <View key={index} style={styles.tableRow}>
+            <View style={[styles.tableCellHeader, styles.leftCell]}>
+              <Text>{detail.key}</Text>
             </View>
-          ))}
-        </View>
+            <View style={[styles.tableCell, styles.rightCell]}>
+              <Text>{detail.value}</Text>
+            </View>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: '#f9f9f9',
     paddingTop: 27,
   },
   header: {
@@ -146,32 +154,21 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#6200ee",
   },
+  cartIcon: {
+    marginLeft: 20,
+  },
   iconContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginLeft: "auto",
+  },
+  swiper: {
+    height: 300,
   },
   productImage: {
     width: "100%",
-    height: 300,
+    height: "100%",
     resizeMode: "contain",
-  },
-  productDetailsContainer: {
-    padding: 10,
-  },
-  productTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 5,
-  },
-  discountText: {
-    fontSize: 16,
-    color: "#d50000",
-    marginVertical: 5,
-  },
-  orderInfo: {
-    marginVertical: 5,
-    color: "gray",
   },
   bestSellerTag: {
     backgroundColor: "#00c853",
@@ -183,8 +180,34 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignSelf: "flex-start",
   },
-  sellerTitle: {
+  productTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    margin: 10,
+  },
+  discountText: {
+    fontSize: 16,
+    color: "#d50000",
+    marginLeft: 10,
+  },
+  originalPrice: {
+    textDecorationLine: "line-through",
+    color: "gray",
+  },
+  iconRow: {
+    flexDirection: "row",
+    marginLeft: 10,
     marginVertical: 5,
+  },
+  shareIcon: {
+    marginLeft: 20,
+  },
+  orderInfo: {
+    margin: 10,
+    color: "gray",
+  },
+  sellerTitle: {
+    margin: 10,
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -216,17 +239,10 @@ const styles = StyleSheet.create({
     margin: 10,
     color: "gray",
   },
-  iconRow: {
-    flexDirection: "row",
-    marginVertical: 10,
-  },
-  shareIcon: {
-    marginLeft: 20,
-  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 10,
+    margin: 10,
   },
   emiButton: {
     flex: 1,
@@ -248,14 +264,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  buttonSubText: {
+    fontSize: 12,
+    color: "gray",
+  },
   tableHeading: {
-    marginVertical: 10,
+    margin: 10,
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
   },
   tableContainer: {
-    marginVertical: 10,
+    margin: 10,
     borderRadius: 5,
     overflow: "hidden",
     borderColor: "#ddd",
