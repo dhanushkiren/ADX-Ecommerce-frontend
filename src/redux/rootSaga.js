@@ -1,20 +1,19 @@
-// src/redux/rootSaga.js
 import { all, fork } from "redux-saga/effects";
 import { watchAuthSaga } from "./auth/authSaga";
-import { watchHomeSaga } from "./home/homeSaga";  // Import watchHomeSaga
+import { watchHomeSaga } from "./home/homeSaga";  
 import { watchCartSaga } from "./cart/cartSaga";
-import { watchUpdateProfile } from "./editprofile/saga";
-import { watchFetchProfile } from "./editprofile/saga";
+import { watchUpdateProfile, watchFetchProfile } from "./editprofile/saga";
 import { watchProductFetch } from "./productfetch/productFetchSaga";
+import { watchConfirmOrder } from "../redux/ConfirmOrder/ConfirmOrderSaga"; 
 
 export default function* rootSaga() {
   yield all([
-    fork(watchAuthSaga),  // Fork the auth saga
-    fork(watchHomeSaga),  // Fork the home saga
+    fork(watchAuthSaga),  
+    fork(watchHomeSaga),  
     fork(watchCartSaga),
     fork(watchUpdateProfile),
     fork(watchFetchProfile),
     fork(watchProductFetch),
+    fork(watchConfirmOrder), 
   ]);
 }
-

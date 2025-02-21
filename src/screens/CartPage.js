@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector,loading } from 'react-redux';
 import {
   View,
@@ -19,6 +20,7 @@ import {
 
 const CartPage = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   
   const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
 
@@ -201,13 +203,21 @@ const CartPage = () => {
         </View>
       </View>
       <TouchableOpacity
-        style={styles.proceedToBuyButton}
-        onPress={null} // Add functionality for Proceed to Buy
-      >
-        <Text style={styles.proceedToBuyText}>
-          Proceed to Buy ({selectedCount} items)
-        </Text>
-      </TouchableOpacity>
+             style={styles.proceedToBuyButton}
+             onPress={() => {
+             const selectedProducts = cartItems.filter((item) => selectedItems[item.id]);
+             if (selectedProducts.length === 0) {
+             Alert.alert('No items selected', 'Please select at least one item to proceed.');
+             return;
+      }
+      navigation.navigate('Confirm Order', { selectedProducts });
+  }}
+>
+  <Text style={styles.proceedToBuyText}>
+    Proceed to Buy ({selectedCount} items)
+  </Text>
+</TouchableOpacity>
+
     </ScrollView>
   );
 };

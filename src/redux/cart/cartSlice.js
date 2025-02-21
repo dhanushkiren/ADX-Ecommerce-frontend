@@ -2,13 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cartItems: [],
+  selectedCartItems: [], // New field to store selected items
   loading: false,
   error: null,
   loadingItems: {}, // To track loading for individual items
-  error: null,
 };
 
-const cartSlice = createSlice({
+const cartSlice = createSlice({ 
   name: "cart",
   initialState,
   reducers: {
@@ -38,21 +38,17 @@ const cartSlice = createSlice({
       state.error = action.payload.error || "Failed to add item to cart";
     },
 
-    // Other reducers remain unchanged...
-  
-
     // View cart actions
     viewCartRequest: (state) => {
       state.loading = true;
     },
     viewCartSuccess: (state, action) => {
-      // Replace cart items with the payload
       state.cartItems = action.payload || [];
       state.loading = false;
       state.error = null;
     },
     viewCartFailure: (state, action) => {
-      state.error = action.payload || "Failed to retrieve cart items"; // Fallback error message
+      state.error = action.payload || "Failed to retrieve cart items";
       state.loading = false;
     },
 
@@ -66,7 +62,7 @@ const cartSlice = createSlice({
       state.error = null;
     },
     deleteCartItemFailure: (state, action) => {
-      state.error = action.payload || "Failed to delete item from cart"; // Fallback error message
+      state.error = action.payload || "Failed to delete item from cart";
       state.loading = false;
     },
 
@@ -76,12 +72,18 @@ const cartSlice = createSlice({
     },
     clearCartSuccess: (state) => {
       state.cartItems = [];
+      state.selectedCartItems = []; // Also clear selected items when cart is cleared
       state.loading = false;
       state.error = null;
     },
     clearCartFailure: (state, action) => {
-      state.error = action.payload || "Failed to clear the cart"; // Fallback error message
+      state.error = action.payload || "Failed to clear the cart";
       state.loading = false;
+    },
+
+    // New action to update selected cart items
+    setSelectedCartItems: (state, action) => {
+      state.selectedCartItems = action.payload;
     },
   },
 });
@@ -99,7 +101,7 @@ export const {
   clearCartRequest,
   clearCartSuccess,
   clearCartFailure,
+  setSelectedCartItems, // Exporting the new action
 } = cartSlice.actions;
 
-const cartReducer = cartSlice.reducer;
-export default cartReducer;          
+export default cartSlice.reducer;
