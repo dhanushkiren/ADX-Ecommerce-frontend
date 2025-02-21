@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+
 import {
   View,
   Text,
@@ -10,9 +11,37 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-swiper";
+
+import { useDispatch, useSelector } from "react-redux"; 
+import { productFetchRequest } from "../redux/productfetch/productFetchSlice";
+
 import { productImages, productDetails } from "../utils/data"; 
 
 export default function ProductPage({ navigation }) {
+
+  const dispatch = useDispatch();
+  
+
+  useEffect(() => {
+    dispatch(productFetchRequest());
+  }, [dispatch]);
+
+  const productDetails = useSelector((state) => state.productFetch.product);
+
+  console.log("Fetched Product:", productDetails); // Debugging
+
+  if (!productDetails) {
+    return <Text>Loading...</Text>;
+  }
+
+  return (
+    <ScrollView>
+      <Text>{productDetails.title}</Text>
+    </ScrollView>
+  );
+
+
+
   // Function to generate shareable content
   const generateShareableContent = (product) => {
     return `🌟 *${product.title}* 🌟
@@ -49,6 +78,7 @@ export default function ProductPage({ navigation }) {
     }
   };
 
+  
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
@@ -140,7 +170,6 @@ export default function ProductPage({ navigation }) {
     </ScrollView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -309,3 +338,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
 });
+
