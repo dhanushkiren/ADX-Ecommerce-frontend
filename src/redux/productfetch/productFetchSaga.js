@@ -10,11 +10,11 @@ import {
 
 function* productFetchSaga(action) {
     const query = action.payload;
-    console.log("Query:", query);
+    console.log("Query:", encodeURIComponent(query));
     
     try {
         const response = yield call(axios.get, apiConfig.fetchProduct(query));
-        console.log("Products response:", response);
+        // console.log("Products response:", response);
 
         if (response.status === 200) {
             console.log("Fetch Products Success");
@@ -26,7 +26,7 @@ function* productFetchSaga(action) {
         }
     } catch (error) {
         // Handle errors during the request
-        console.log("Error fetching products:", error);
+        console.log("Error fetching products dkk:", error);
         yield put(productFetchFailure(error?.response?.data?.message || "Fetch products failed"));
     }
 }

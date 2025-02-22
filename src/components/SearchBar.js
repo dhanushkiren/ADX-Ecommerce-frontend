@@ -40,7 +40,7 @@ const SearchBar = ({ routeName, name }) => {
     }
   };
   
-  console.log("dkdk route: ", route.name);
+  // console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);

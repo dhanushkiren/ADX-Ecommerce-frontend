@@ -19,15 +19,22 @@ import { clearAsyncStorage } from "../utils/asyncStorage";
 import { fetchProductsRequest } from "../redux/home/homeSlice";
 import SearchBar from "../components/SearchBar";
 
-
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.home);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    dispatch(fetchProductsRequest()); // Fetch products again
+    setTimeout(() => setRefreshing(false), 1000); // Stop refresh indicator
+  };
 
   useEffect(() => {
-    // Dispatch action to fetch products
-    dispatch(fetchProductsRequest());
-  }, [dispatch]);
+    if (products.length === 0) {
+      dispatch(fetchProductsRequest());
+    }
+  }, [dispatch, products]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -56,30 +63,28 @@ const Home = ({ navigation }) => {
       <Card style={styles.productCard}>
         <Card.Cover
           style={styles.productImage}
-          source={{ uri: item.imageUrl }} 
+          source={{ uri: item.imageUrl }}
           resizeMode="contain"
         />
         <Card.Content>
-        <Text style={styles.productTitle}>{item.name}</Text>
-        <Text style={styles.productDescription}>{item.sellerName}</Text>
-        <Text style={styles.productPrice}>Price: ₹{item.price}</Text>
+          <Text style={styles.productTitle}>{item.name}</Text>
+          <Text style={styles.productDescription}>{item.sellerName}</Text>
+          <Text style={styles.productPrice}>Price: ₹{item.price}</Text>
 
-        <View style={styles.buttonContainer}>
-          <Button
-            mode="contained"
-            style={styles.viewDetailsButton}
-            labelStyle={styles.buttonLabel}
-            onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
-          >
-            View
-          </Button>
-        </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              style={styles.viewDetailsButton}
+              labelStyle={styles.buttonLabel}
+              onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
+            >
+              View
+            </Button>
+          </View>
         </Card.Content>
       </Card>
     </TouchableOpacity>
   );
-
-
 
   const renderProducts = () => {
     if (loading) {
@@ -98,14 +103,15 @@ const Home = ({ navigation }) => {
         numColumns={2}
         contentContainerStyle={styles.productListContainer}
         columnWrapperStyle={styles.productRow}
+        refreshing={refreshing}
+        onRefresh={handleRefresh} // Enables pull-to-refresh
       />
     );
   };
 
   return (
-
     <>
-    <SearchBar />
+      <SearchBar />
       <View style={styles.container}>
         <Text style={styles.sectionTitle}>Deals for you</Text>
         {renderProducts()}

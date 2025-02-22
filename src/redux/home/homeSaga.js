@@ -8,7 +8,7 @@ function* fetchProductsSaga(action) {
   try {
     // Make API request
     const response = yield call(axios.get, apiConfig.getProducts);
-    console.log("Products response:", response);
+    // console.log("Products response:", response);
 
     // Check the response status
     if (response.status === 200) {
