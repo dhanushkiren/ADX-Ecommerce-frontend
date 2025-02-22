@@ -28,7 +28,10 @@ const UserDashboard = ({ navigation }) => {
         <Text style={styles.title}>ORDERS</Text>
 
         {/* Dashboard Options */}
-        <TouchableOpacity style={styles.option}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => navigation.navigate("order checkout")}
+        >
           <Text style={styles.optionText}>Order History</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>

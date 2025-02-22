@@ -95,9 +95,9 @@ function MyStack() {
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="search" component={SearchBar} />
         <Stack.Screen name="cart" component={CartPage} />
-        <Stack.Screen name="Confirm Order" component={ConfirmOrder} />
-        <Stack.Screen name="Order Checkout" component={Placeorder} />
-        <Stack.Screen name="Orders" component={Orderscreencomponent} />
+        <Stack.Screen name="confirm order" component={ConfirmOrder} />
+        <Stack.Screen name="order checkout" component={Placeorder} />
+        <Stack.Screen name="orders" component={Orderscreencomponent} />
         <Stack.Screen name="history" component={Orderhistorycomponent} />
         <Stack.Screen name="SearchResults" component={SearchResults} />
         <Stack.Screen name="UserDashboard" component={UserDashboard} />
@@ -108,7 +108,6 @@ function MyStack() {
       {/* Conditionally render SmallMenu based on the screen */}
       {!['login', 'register'].includes(currentScreen) && <SmallMenu />}
     </>
-
   );
 }
 

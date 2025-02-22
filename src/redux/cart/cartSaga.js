@@ -1,4 +1,4 @@
-import { takeEvery, call, put } from "redux-saga/effects"; 
+import { takeEvery, call, put, select } from "redux-saga/effects"; 
 import axios from "../../utils/axios";
 import { apiConfig } from "../../utils/apiConfig";
 import {
@@ -14,7 +14,11 @@ import {
   clearCartRequest,
   clearCartSuccess,
   clearCartFailure,
+  setSelectedCartItems, // Import the new action
 } from "./cartSlice";
+
+// Selector to get selectedCartItems from the state
+const getSelectedCartItems = (state) => state.cart.selectedCartItems;
 
 // Worker Saga for adding an item to the cart
 function* addToCartSaga(action) {
@@ -53,7 +57,7 @@ function* viewCartSaga(action) {
 
 // Worker Saga for deleting an item from the cart
 function* deleteCartItemSaga(action) {
-  const { itemId } = action.payload; // Updated: userId is not required
+  const { itemId } = action.payload;
   try {
     yield call(axios.delete, apiConfig.deleteCartItem(itemId));
     yield put(deleteCartItemSuccess(itemId));
@@ -67,11 +71,31 @@ function* deleteCartItemSaga(action) {
 function* clearCartSaga(action) {
   const { userId } = action.payload;
   try {
-    yield call(axios.delete, apiConfig.clearCart(userId)); // Include userId in the endpoint
+    yield call(axios.delete, apiConfig.clearCart(userId));
     yield put(clearCartSuccess());
   } catch (error) {
     console.error(error);
     yield put(clearCartFailure(error?.response?.data?.message || "Failed to clear the cart"));
+  }
+}
+
+// Worker Saga for Confirm Order to process only selected items
+function* confirmOrderSaga(action) {
+  try {
+    const selectedCartItems = yield select(getSelectedCartItems);
+    
+    if (selectedCartItems.length === 0) {
+      throw new Error("No items selected for order.");
+    }
+
+    // Process the selected items (e.g., sending them to an order API)
+    console.log("Processing selected order items:", selectedCartItems);
+    
+    
+    yield put(setSelectedCartItems([]));
+
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -81,4 +105,5 @@ export function* watchCartSaga() {
   yield takeEvery(viewCartRequest.type, viewCartSaga);
   yield takeEvery(deleteCartItemRequest.type, deleteCartItemSaga);
   yield takeEvery(clearCartRequest.type, clearCartSaga);
+  yield takeEvery("cart/confirmOrderRequest", confirmOrderSaga);
 }

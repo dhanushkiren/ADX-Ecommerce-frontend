@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,9 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Placeorder({}) {
+export default function Placeorder() {
   const [address, setAddress] = useState({
     name: 'John Doe',
     street: '123 Main St, Apt 4B',
@@ -18,40 +19,54 @@ export default function Placeorder({}) {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [newAddress, setNewAddress] = useState({ ...address });
+  const [cartItems, setCartItems] = useState([]); // Store API response
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch('http://192.168.1.3:8080/api/cart/1'); // Replace with your actual API endpoint
+      const data = await response.json();
+      setCartItems(data);
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+    }
+  };
 
   const handleSaveAddress = () => {
     setAddress(newAddress);
     setModalVisible(false);
   };
 
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <Text style={styles.headerText}>Order Checkout</Text>
-      </View> */}
-
       {/* Order Summary */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Order Summary</Text>
-        <View style={styles.itemRow}>
-          <Text style={styles.itemName}>Product Name 1</Text>
-          <Text style={styles.itemPrice}>₹500</Text>
-        </View>
-        <Text style={styles.itemQuantity}>Quantity: 1</Text>
-        <View style={styles.itemRow}>
-          <Text style={styles.itemName}>Product Name 2</Text>
-          <Text style={styles.itemPrice}>₹1000</Text>
-        </View>
-        <Text style={styles.itemQuantity}>Quantity: 2</Text>
-        <View style={styles.itemRow}>
-          <Text style={styles.itemName}>Product Name 3</Text>
-          <Text style={styles.itemPrice}>₹300</Text>
-        </View>
-        <Text style={styles.itemQuantity}>Quantity: 1</Text>
+        {cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <View key={item.id} style={styles.itemContainer}>
+              <View style={styles.itemRow}>
+                <Text style={styles.itemName}>{item.productName}</Text>
+                <Text style={styles.itemPrice}>₹{item.price}</Text>
+              </View>
+              <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
+            </View>
+          ))
+        ) : (
+          <Text>Loading...</Text>
+        )}
+
         <View style={styles.totalRow}>
           <Text style={styles.totalText}>Total:</Text>
-          <Text style={styles.totalPrice}>₹1800</Text>
+          <Text style={styles.totalPrice}>₹{calculateTotal()}</Text>
         </View>
       </View>
 
@@ -69,11 +84,11 @@ export default function Placeorder({}) {
       {/* Payment Details */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Payment Details</Text>
-        <Text style={styles.totalAmount}>Total Amount: ₹1800</Text>
+        <Text style={styles.totalAmount}>Total Amount: ₹{calculateTotal()}</Text>
       </View>
 
       {/* Place Order Button */}
-      <TouchableOpacity style={styles.placeOrderButton}>
+      <TouchableOpacity style={styles.placeOrderButton} onPress={() => navigation.navigate('payment')}>
         <Text style={styles.buttonText}>Place Order</Text>
       </TouchableOpacity>
 
@@ -87,37 +102,26 @@ export default function Placeorder({}) {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Edit Address</Text>
-
             <TextInput
               style={styles.input}
               placeholder="Name"
               value={newAddress.name}
-              onChangeText={(text) =>
-                setNewAddress((prev) => ({ ...prev, name: text }))
-              }
+              onChangeText={(text) => setNewAddress((prev) => ({ ...prev, name: text }))}
             />
             <TextInput
               style={styles.input}
               placeholder="Street"
               value={newAddress.street}
-              onChangeText={(text) =>
-                setNewAddress((prev) => ({ ...prev, street: text }))
-              }
+              onChangeText={(text) => setNewAddress((prev) => ({ ...prev, street: text }))}
             />
             <TextInput
               style={styles.input}
               placeholder="City"
               value={newAddress.city}
-              onChangeText={(text) =>
-                setNewAddress((prev) => ({ ...prev, city: text }))
-              }
+              onChangeText={(text) => setNewAddress((prev) => ({ ...prev, city: text }))}
             />
-
             <View style={styles.modalButtonContainer}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleSaveAddress}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={handleSaveAddress}>
                 <Text style={styles.modalButtonText}>Save</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -138,16 +142,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 40
-  },
-  header: {
-    backgroundColor: '#2e2e2e',
-    padding: 15,
-  },
-  headerText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    paddingTop: 40,
   },
   section: {
     backgroundColor: 'white',
@@ -163,6 +158,9 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  itemContainer: {
     marginBottom: 10,
   },
   itemRow: {
