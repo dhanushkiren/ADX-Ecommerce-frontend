@@ -10,7 +10,7 @@ export const apiConfig = {
   fetchProduct: (query) => `products/search?query=${query}`,  // Product search
   
   // ✅ Order API Endpoints
-  placeOrder: `/api/orders`,  // Create order (POST)
-  getOrderById: (orderId) => `/api/orders/${orderId}`,  // Get order by ID (GET)
-  getOrdersByUserId: (userId) => `/api/orders/user/${userId}`,  // Get all orders of a user (GET)
+  placeOrder: `orders`,  // Create order (POST)
+  getOrderById: (orderId) => `orders/${orderId}`,  // Get order by ID (GET)
+  getOrdersByUserId: (userId) => `orders/user/${userId}`,  // Get all orders of a user (GET)
 };

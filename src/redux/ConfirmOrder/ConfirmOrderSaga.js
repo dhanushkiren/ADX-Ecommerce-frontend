@@ -9,8 +9,15 @@ import {
 
 function* placeOrderSaga(action) {
   try {
-    const response = yield call(axios.post, apiConfig.placeOrder, action.payload);
-    yield put(placeOrderSuccess(response.data));
+    const response = yield call(axios.post, apiConfig.placeOrder);
+    if (response.status === 200) {
+      console.log("Fetch Products Success");
+      const orders = response.data;
+      yield put(placeOrderSuccess(orders));
+    } else {
+      console.log("Response status not 200:", response.status);
+      yield put(placeOrderFailure("Failed to place order"));
+    }
   } catch (error) {
     yield put(placeOrderFailure(error?.response?.data?.message || "Order placement failed"));
   }
