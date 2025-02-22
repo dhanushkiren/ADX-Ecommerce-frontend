@@ -7,7 +7,7 @@ export const apiConfig = {
   viewCart: (userId) => `cart/${userId}`,  // View cart items
   deleteCartItem: (userId, itemId) => `cart/${userId}/${itemId}`,  // Delete item from cart
   clearCart: `cart/clear`,  // Clear cart
-  fetchProduct: (query) => `/api/products/search?query=${encodeURIComponent(query)}`,  // Product search
+  fetchProduct: (query) => `products/search?query=${query}`,  // Product search
   
   // ✅ Order API Endpoints
   placeOrder: `/api/orders`,  // Create order (POST)

@@ -40,7 +40,7 @@ const SearchBar = ({ routeName, name }) => {
     }
   };
   
-  console.log("dkdk route: ", route.name);
+  // console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -87,10 +87,10 @@ const SearchBar = ({ routeName, name }) => {
     <View style={styles.container}>
       {/* Search Bar */}
       <View style={styles.header}>
-        <TouchableOpacity >
-          <Icon name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        
+      <TouchableOpacity onPress={() => navigation.navigate('home')}>
+  <Icon name="arrow-back" size={24} color="#fff" />
+</TouchableOpacity>
+
         <View style={styles.searchInput}  >
           <Icon name="search" size={24} color="#ccc" style={styles.icon} />
           <TextInput

@@ -45,12 +45,13 @@ function MyStack() {
   const navigationState = useNavigationState(state => state); // Get current navigation state
   const currentScreen = navigationState?.routes[navigationState.index]?.name; // Get current screen name
 
-  console.log("dk token :::", token);
+  // console.log("dk token :::", token);
 
   useEffect(() => {
     const checkAuth = async () => {
       const storedToken = await retrieveData("token");
       console.log("Stored token::", storedToken);
+      
       if (storedToken) {
         dispatch(loginSuccess({ token: storedToken }));
       }
@@ -77,8 +78,8 @@ function MyStack() {
   return (  
     <>  
       <Stack.Navigator
-        // initialRouteName={token ? "home" : "login"}
-        initialRouteName="product"
+        initialRouteName={token ? "home" : "login"}
+        // initialRouteName="product"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}

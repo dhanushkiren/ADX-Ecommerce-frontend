@@ -2,6 +2,7 @@ import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
+  Button,
   StyleSheet,
   FlatList,
   TouchableOpacity,
@@ -10,13 +11,25 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
+import { Image } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { prodCategories, filterData, searchProducts } from "../utils/data";
 import { useRoute } from "@react-navigation/native";
+
+
+
 import SearchBar from "../components/SearchBar";
 import SmallMenu from "../components/SmallMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { productFetchRequest } from "../redux/productfetch/productFetchSlice";
+
+import { useNavigation } from '@react-navigation/native';
+
+
+
+  
+
+
 
 const { height } = Dimensions.get("window");
 
@@ -24,6 +37,9 @@ const ProductScreen = ({ route }) => {
 
   const { searchQuery } = route.params || '';
 
+
+
+  
   // const route = useRoute();
   // console.log("dk route",route.name);
   const dispatch = useDispatch();
@@ -35,12 +51,18 @@ const { products, loading, error } = useSelector(state => state.productFetch);
   const sortTranslateY = useState(new Animated.Value(height))[0];
   const filterTranslateY = useState(new Animated.Value(height))[0];
   const [selectedCategory, setSelectedCategory] = useState("Brands");
+  const navigation = useNavigation();
   useEffect(() => {
     if (searchQuery) {
       console.log("Query:", searchQuery);
       dispatch(productFetchRequest(searchQuery));
     }
   }, [searchQuery]);
+
+  useEffect(() => {
+    console.log("Fetched Products:", products); // Check what data is coming
+  }, [products]);
+
 
   const openSortModal = () => {
     setSortVisible(true);
@@ -78,22 +100,30 @@ const { products, loading, error } = useSelector(state => state.productFetch);
 
   const renderProduct = ({ item }) => (
     <View style={styles.productContainer}>
-      <View style={styles.imagePlaceholder} />
+     <Image 
+  source={{ uri: item.imageUrl }} 
+  style={styles.productImage} 
+  resizeMode="contain" 
+/>
+
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{item.name}</Text>
-        <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>★ {item.rating}</Text>
-          <Text style={styles.reviews}>({item.reviews})</Text>
-        </View>
+       
         <View style={styles.priceContainer}>
           <Text style={styles.discountedPrice}>₹ {item.price}</Text>
-          <Text style={styles.originalPrice}>₹ {item.originalPrice}</Text>
+          <Text style={styles.originalPrice}>{item.originalPrice}</Text>
           <Text style={styles.discount}>{item.discount}</Text>
         </View>
         <Text style={styles.warranty}>{item.warranty}</Text>
         <TouchableOpacity style={styles.addToCartButton}>
           <Text style={styles.addToCartText}>Add to cart</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.viewDetailsButton} // Add View Details button
+        onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
+        >
+        <Text style={styles.viewDetailsText}>View Details</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -102,6 +132,7 @@ const { products, loading, error } = useSelector(state => state.productFetch);
       <>
       <SearchBar routeName={"product"} name={searchQuery} />
       <View style={styles.container}>
+   
       {/* <View style={styles.header}>
       <TouchableOpacity>
         <Icon name="arrow-back" size={24} color="#fff" />
@@ -151,6 +182,8 @@ const { products, loading, error } = useSelector(state => state.productFetch);
             { transform: [{ translateY: sortTranslateY }] },
           ]}
         >
+         
+
           <TouchableOpacity style={styles.closeButton} onPress={closeSortModal}>
             <Icon name="close" size={24} color="#6200ee" />
           </TouchableOpacity>
@@ -338,6 +371,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: "100%",
   },
+
+  productImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+
+
   productContainer: {
     flexDirection: "row",
     padding: 10,
@@ -602,6 +644,22 @@ const styles = StyleSheet.create({
     padding: 5,
     elevation: 5,
   },
+  viewDetailsButton: {
+    borderWidth: 1,
+    borderColor: "#6200ee",
+    borderRadius: 15,
+    alignItems: "center",
+    padding: 8,
+    marginTop: 5,
+    marginBottom: 5,
+    backgroundColor:"#6200ee"
+  },
+  viewDetailsText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });
+
+
 
 export default ProductScreen;
