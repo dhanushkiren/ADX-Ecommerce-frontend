@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SearchIcon from "../../assets/search.svg";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { Card, Button } from "react-native-paper";
 import {
   View,
   Text,
@@ -16,7 +17,6 @@ import {
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { fetchProductsRequest } from "../redux/home/homeSlice";
-import { Card } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 
 
@@ -49,21 +49,37 @@ const Home = ({ navigation }) => {
   };
 
   const renderProductItem = ({ item }) => (
-    <View style={styles.productCardContainer}>
+    <TouchableOpacity
+      style={styles.productCardContainer}
+      onPress={() => navigation.navigate("product", { product: item })}
+    >
       <Card style={styles.productCard}>
-
         <Card.Cover
           style={styles.productImage}
-          source={{ uri: item.imageUrl }}
+          source={{ uri: item.imageUrl }} 
+          resizeMode="contain"
         />
         <Card.Content>
-          <Text style={styles.productTitle}>{item.name}</Text>
-          <Text style={styles.productDescription}>{item.description}</Text>
+        <Text style={styles.productTitle}>{item.name}</Text>
+        <Text style={styles.productDescription}>{item.sellerName}</Text>
+        <Text style={styles.productPrice}>Price: ₹{item.price}</Text>
 
+        <View style={styles.buttonContainer}>
+          <Button
+            mode="contained"
+            style={styles.viewDetailsButton}
+            labelStyle={styles.buttonLabel}
+            onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
+          >
+            View
+          </Button>
+        </View>
         </Card.Content>
       </Card>
-    </View>
+    </TouchableOpacity>
   );
+
+
 
   const renderProducts = () => {
     if (loading) {
@@ -182,6 +198,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontSize: 16,
+  },
+  buttonContainer: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  viewDetailsButton: {
+    backgroundColor: "#7041EE",
+    paddingHorizontal: 10,
+  },
+  buttonLabel: {
+    fontSize: 12,
   },
 });
 

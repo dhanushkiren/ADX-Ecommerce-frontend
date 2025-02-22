@@ -17,6 +17,7 @@ import { prodCategories, filterData, searchProducts } from "../utils/data";
 import { useRoute } from "@react-navigation/native";
 
 
+
 import SearchBar from "../components/SearchBar";
 import SmallMenu from "../components/SmallMenu";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +51,7 @@ const { products, loading, error } = useSelector(state => state.productFetch);
   const sortTranslateY = useState(new Animated.Value(height))[0];
   const filterTranslateY = useState(new Animated.Value(height))[0];
   const [selectedCategory, setSelectedCategory] = useState("Brands");
+  const navigation = useNavigation();
   useEffect(() => {
     if (searchQuery) {
       console.log("Query:", searchQuery);
@@ -116,6 +118,12 @@ const { products, loading, error } = useSelector(state => state.productFetch);
         <TouchableOpacity style={styles.addToCartButton}>
           <Text style={styles.addToCartText}>Add to cart</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.viewDetailsButton} // Add View Details button
+        onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
+        >
+        <Text style={styles.viewDetailsText}>View Details</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -635,6 +643,20 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 5,
     elevation: 5,
+  },
+  viewDetailsButton: {
+    borderWidth: 1,
+    borderColor: "#6200ee",
+    borderRadius: 15,
+    alignItems: "center",
+    padding: 8,
+    marginTop: 5,
+    marginBottom: 5,
+    backgroundColor:"#6200ee"
+  },
+  viewDetailsText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 
