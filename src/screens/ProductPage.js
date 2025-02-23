@@ -9,11 +9,29 @@ import {
   Share,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import Swiper from "react-native-swiper";
 import { productImages, productDetails } from "../utils/data"; 
+import { useDispatch } from 'react-redux'; 
+import { addToCartRequest } from "../redux/cart/cartSlice";
 
 export default function ProductPage({ route, navigation }) { // Added route prop
   const { product } = route.params; 
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    console.log(21,product)
+    const productData = {
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      quantity: 1, // Default quantity when adding to cart
+      userId:"2",
+    };
+
+    dispatch(addToCartRequest({userId:"2",productData:productData})); // Dispatch action
+
+    Alert.alert('Success', `${product.productName} added to cart!`);
+  };
+
   // Function to generate shareable content
   const generateShareableContent = (product) => {
     return `🌟 *${product.title}* 🌟
@@ -105,7 +123,7 @@ export default function ProductPage({ route, navigation }) { // Added route prop
         ))}
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.emiButton}>
+          <TouchableOpacity style={styles.emiButton} onPress={handleAddToCart}>
             <Text style={styles.buttonText}>Add to Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buyNowButton}>

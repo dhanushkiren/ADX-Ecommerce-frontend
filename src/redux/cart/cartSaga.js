@@ -21,19 +21,26 @@ import {
 const getSelectedCartItems = (state) => state.cart.selectedCartItems;
 
 // Worker Saga for adding an item to the cart
-function* addToCartSaga(action) {
+export function* addToCartSaga(action) {
   const { userId, productData } = action.payload;
-  console.log(action.payload);
+  console.log(22,userId);
   try {
-    const response = yield call(axios.post, apiConfig.addToCart(userId), productData);
+    const response = yield call(axios.post, apiConfig.addToCart(), productData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     yield put(
       addToCartSuccess({
-        id: response.data.id,
         quantity: response.data.quantity,
         productName: response.data.productName,
+        productId:response.data.productId,
         price: response.data.price,
+        userId:response.data.userId,
       })
     );
+
     // Refresh cart items after adding
     yield put(viewCartRequest({ userId }));
   } catch (error) {
