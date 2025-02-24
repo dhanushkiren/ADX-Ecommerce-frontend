@@ -8,6 +8,7 @@ import {
   ScrollView,
   Share,
 } from "react-native";
+import { Alert } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { productImages, productDetails } from "../utils/data"; 
 import { useDispatch } from 'react-redux'; 
@@ -24,20 +25,23 @@ export default function ProductPage({ route, navigation }) { // Added route prop
       productName: product.name,
       price: product.price,
       quantity: 1, // Default quantity when adding to cart
-      userId:"2",
+
+      imageUrl: product.imageUrl,
+      userId:"1",
     };
 
-    dispatch(addToCartRequest({userId:"2",productData:productData})); // Dispatch action
+    dispatch(addToCartRequest({userId:"1",productData:productData})); // Dispatch action
 
-    Alert.alert('Success', `${product.productName} added to cart!`);
+    Alert.alert("Success", product.name + " added to cart!");
+
   };
 
   // Function to generate shareable content
   const generateShareableContent = (product) => {
-    return `🌟 *${product.title}* 🌟
+    return `🌟 ${product.title} 🌟
 
 🔥 ${product.bestsellerTag || "Limited Offer!"}
-💸 Price: ~${product.originalPrice}~ 👉 ${product.discountedPrice}
+💸 Price: ${product.originalPrice} 👉 ${product.discountedPrice}
 
 📦 ${product.deliveryInfo}
 🛒 ${product.orderInfo}

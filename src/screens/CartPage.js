@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector, loading } from "react-redux";
+
 import {
   View,
   Text,
@@ -19,19 +20,28 @@ import {
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  
-const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
+
+  const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
 
   const [selectedItems, setSelectedItems] = useState({}); // Added state for selectedItems
-  const userId = '2'; // Replace with actual user ID from context or props.
+  const userId = "1"; // Replace with actual user ID from context or props.
 
   useEffect(() => {
     if (userId) {
       dispatch(viewCartRequest({ userId }));
     }
   }, [dispatch, userId]);
-  const cartState = useSelector((state) => state.cart);
 
+
+  const handleAddToCart = (item) => {
+    dispatch(
+      addToCartRequest({
+        userId,
+        productData: { ...item, quantity: (item.quantity || 0) + 1 },
+      })
+    );
+  };
+  
   const handleIncreaseQuantity = (item) => {
     dispatch(
       addToCartRequest({
@@ -64,9 +74,6 @@ const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
       );
     }
   };
-  
- 
-  
 
   const handleBuyNow = (item) => {
     Alert.alert("Buy Now", "You have chosen to buy ${item.productName}.");
@@ -113,7 +120,7 @@ const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
           : sum,
       0
     );
-    const deliveryCharges = 58; // Fixed delivery charges.
+    const deliveryCharges = 0; // Fixed delivery charges.
     return basePrice - discount + (basePrice > 0 ? deliveryCharges : 0);
   };
 
@@ -200,6 +207,15 @@ const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
                 )}
               </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+  onPress={() => handleAddToCart(item)}
+ 
+>
+  
+</TouchableOpacity>
+
+
             <View style={styles.actionButtons}>
               <TouchableOpacity
                 style={styles.buyNowButton}
