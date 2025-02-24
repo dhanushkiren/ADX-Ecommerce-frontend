@@ -1,40 +1,41 @@
-import { createSlice } from "@reduxjs/toolkit"; 
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cartItems: [],
-  selectedCartItems: [], // New field to store selected items
+  selectedCartItems: [], // Stores selected items for order
   loading: false,
   error: null,
-  loadingItems: {}, // To track loading for individual items
+  loadingItems: {}, // Tracks loading for individual items
 };
 
-const cartSlice = createSlice({ 
+const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
     // Add to cart actions
     addToCartRequest: (state, action) => {
-      const { id } = action.payload; // Include the product ID
-      state.loadingItems[id] = true; // Mark this item as loading
+      const { id } = action.payload;
+      state.loadingItems[id] = true;
     },
     addToCartSuccess: (state, action) => {
-      const { id, quantity, productName, price } = action.payload;
-      delete state.loadingItems[id]; // Remove loading state for this item
+      const { id, quantity, productName, price, image } = action.payload;
+      delete state.loadingItems[id];
 
       const existingItemIndex = state.cartItems.findIndex((item) => item.id === id);
       if (existingItemIndex !== -1) {
         state.cartItems[existingItemIndex].quantity = quantity;
         state.cartItems[existingItemIndex].productName = productName;
         state.cartItems[existingItemIndex].price = price;
+        state.cartItems[existingItemIndex].image = image; // Ensure image is updated
       } else {
-        state.cartItems.push({ id, quantity, productName, price });
+        state.cartItems.push({ id, quantity, productName, price, image });
       }
 
       state.error = null;
     },
     addToCartFailure: (state, action) => {
-      const { id } = action.payload; // Include the product ID
-      delete state.loadingItems[id]; // Remove loading state for this item
+      const { id } = action.payload;
+      delete state.loadingItems[id];
       state.error = action.payload.error || "Failed to add item to cart";
     },
 
@@ -43,7 +44,13 @@ const cartSlice = createSlice({
       state.loading = true;
     },
     viewCartSuccess: (state, action) => {
-      state.cartItems = action.payload || [];
+      state.cartItems = action.payload.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+        productName: item.productName,
+        price: item.price,
+        image: item.image, // Ensure image is included when viewing cart
+      }));
       state.loading = false;
       state.error = null;
     },
@@ -72,7 +79,7 @@ const cartSlice = createSlice({
     },
     clearCartSuccess: (state) => {
       state.cartItems = [];
-      state.selectedCartItems = []; // Also clear selected items when cart is cleared
+      state.selectedCartItems = [];
       state.loading = false;
       state.error = null;
     },
@@ -81,9 +88,23 @@ const cartSlice = createSlice({
       state.loading = false;
     },
 
-    // New action to update selected cart items
+    // Update selected cart items
     setSelectedCartItems: (state, action) => {
       state.selectedCartItems = action.payload;
+    },
+
+    // Confirm Order actions
+    confirmOrderRequest: (state) => {
+      state.loading = true;
+    },
+    confirmOrderSuccess: (state) => {
+      state.selectedCartItems = []; // Clear selected items after order
+      state.loading = false;
+      state.error = null;
+    },
+    confirmOrderFailure: (state, action) => {
+      state.error = action.payload || "Failed to confirm order";
+      state.loading = false;
     },
   },
 });
@@ -101,7 +122,10 @@ export const {
   clearCartRequest,
   clearCartSuccess,
   clearCartFailure,
-  setSelectedCartItems, // Exporting the new action
+  setSelectedCartItems,
+  confirmOrderRequest,
+  confirmOrderSuccess,
+  confirmOrderFailure,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

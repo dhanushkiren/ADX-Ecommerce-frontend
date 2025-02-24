@@ -158,7 +158,7 @@ const CartPage = () => {
             )}
             
           </TouchableOpacity>
-          <Image source={{ uri: item.imageUrl || 'fallback_image_url' }} style={styles.productImage} />
+          <Image source={{ uri: item.image || 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/mac-card-40-studio-display-202203_FMT_WHH?wid=506&hei=472&fmt=p-jpg&qlt=95&.v=1731974953678' }} style={styles.productImage} />
           <View style={styles.productDetails}>
             <Text style={styles.productTitle}>{item.productName || 'Unnamed Product'}</Text>
             <Text style={styles.productPrice}>₹{item.price ?? 0}</Text>
@@ -203,19 +203,19 @@ const CartPage = () => {
         </View>
       </View>
       <TouchableOpacity
-             style={styles.proceedToBuyButton}
-             onPress={() => {
-             const selectedProducts = cartItems.filter((item) => selectedItems[item.id]);
-             if (selectedProducts.length === 0) {
-             Alert.alert('No items selected', 'Please select at least one item to proceed.');
-             return;
-      }
-      navigation.navigate('Confirm Order', { selectedProducts });
+        style={styles.proceedToBuyButton}
+        onPress={() => {
+        const selectedProducts = cartItems.filter((item) => selectedItems[item.id]);
+    
+        if (selectedProducts.length === 0) {
+          Alert.alert('No items selected', 'Please select at least one item to proceed.');
+          return;
+    }
+
+      navigation.navigate('Order Checkout', { products: selectedProducts });
   }}
 >
-  <Text style={styles.proceedToBuyText}>
-    Proceed to Buy ({selectedCount} items)
-  </Text>
+  <Text style={styles.buttonText}>Proceed to Checkout</Text>
 </TouchableOpacity>
 
     </ScrollView>
@@ -223,6 +223,14 @@ const CartPage = () => {
 };
 
 const styles = StyleSheet.create({
+  buttonText: {
+    color: "#fff",          // White text color
+    fontSize: 18,           // Readable font size
+    fontWeight: "bold",     // Make text bold
+    textAlign: "center",    // Center the text inside the button
+    textTransform: "uppercase", // Capitalize the text
+    letterSpacing: 1,       // Add spacing between letters for better readability
+  },
   
   container: {
     flex: 1,
