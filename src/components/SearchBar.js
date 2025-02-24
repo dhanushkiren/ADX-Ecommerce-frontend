@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Modal,
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
@@ -18,10 +19,10 @@ import { useNavigation } from "@react-navigation/native";
 
 const { height } = Dimensions.get("window");
 
-const SearchBar = ({ routeName }) => {
+const SearchBar = ({ routeName, name }) => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(name);
   const [recentSearches, setRecentSearches] = useState([]);
 
 
@@ -39,7 +40,7 @@ const SearchBar = ({ routeName }) => {
     }
   };
   
-  console.log("dkdk route: ", route.name);
+  // console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -86,14 +87,14 @@ const SearchBar = ({ routeName }) => {
     <View style={styles.container}>
       {/* Search Bar */}
       <View style={styles.header}>
-        <TouchableOpacity >
-          <Icon name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        
+      <TouchableOpacity onPress={() => navigation.navigate('home')}>
+  <Icon name="arrow-back" size={24} color="#fff" />
+</TouchableOpacity>
+
         <View style={styles.searchInput}  >
           <Icon name="search" size={24} color="#ccc" style={styles.icon} />
           <TextInput
-          // onPress={() => navigation.navigate("SearchResults", { recentSearches })}
+            onPress={() => navigation.navigate("SearchResults", { recentSearches })}
             placeholder="Search products..."
             placeholderTextColor="#aaa"
             value={searchQuery}
@@ -143,10 +144,12 @@ const SearchBar = ({ routeName }) => {
 
       {/* Sort Modal */}
       {isSortVisible && (
-        <Animated.View
+        <Modal
           style={[
             styles.animatedModal,
-            { transform: [{ translateY: sortTranslateY }] },
+            { transform: [{ translateY: sortTranslateY }],
+            zIndex: 100, // Ensure it's above other elements
+            elevation: 10, },
           ]}
         >
           <TouchableOpacity style={styles.closeButton} onPress={closeSortModal}>
@@ -221,14 +224,16 @@ const SearchBar = ({ routeName }) => {
               <Text style={styles.modalButtonText}>Show results</Text>
             </TouchableOpacity>
           </View>
-        </Animated.View>
+        </Modal>
       )}
 
       {isFilterVisible && (
-        <Animated.View
+        <Modal
           style={[
             styles.animatedModal,
-            { transform: [{ translateY: filterTranslateY }] },
+            { transform: [{ translateY: filterTranslateY }],
+            zIndex: 100, // Ensure it's above other elements
+            elevation: 10, },
           ]}
         >
           <TouchableOpacity
@@ -285,7 +290,7 @@ const SearchBar = ({ routeName }) => {
               <Text style={styles.modalButtonText}>Show results</Text>
             </TouchableOpacity>
           </View>
-        </Animated.View>
+        </Modal>
       )}
     </View>
   );
@@ -359,7 +364,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: "hidden",
-    zIndex: 11,
+    zIndex: 100, // Ensure it's above other elements
+      elevation: 10,
   },
   modalContent: {
     padding: 20,

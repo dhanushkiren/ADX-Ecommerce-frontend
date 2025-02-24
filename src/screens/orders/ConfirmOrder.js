@@ -1,125 +1,57 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { useRoute } from "@react-navigation/native";
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+  setSelectedProducts,
+  updateQuantity,
+  deleteProduct,
+  placeOrderRequest,
+} from "../../redux/ConfirmOrder/ConfirmOrderSlice.js";
 
-export default function ConfirmOrder({navigation}) {
-  const handleGoToPlaceOrder = () => {
-    // Navigate to the ConfirmOrder screen
-    navigation.navigate('Order Checkout');
-  };
-  const [products, setProducts] = useState([
-    { id: "1", name: "Product Name 1", price: 500, quantity: 1 },
-    { id: "2", name: "Product Name 2", price: 300, quantity: 1 },
-    { id: "3", name: "Product Name 3", price: 350, quantity: 1 },
-  ]);
+export default function ConfirmOrder({ navigation }) {
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { selectedProducts, subtotal } = useSelector((state) => state.confirmOrder);
 
-  const updateQuantity = (id, type) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === id
-          ? {
-              ...product,
-              quantity:
-                type === "increase"
-                  ? product.quantity + 1
-                  : product.quantity > 1
-                  ? product.quantity - 1
-                  : product.quantity,
-            }
-          : product
-      )
-    );
-  };
-  const handleDelete = (id) => {
-  setProducts((prevProducts) =>
-    prevProducts.filter((product) => product.id !== id)
-  );
-};
-const toggleCheckbox = (id) => {
-  setProducts((prevProducts) =>
-    prevProducts.map((product) =>
-      product.id === id
-        ? { ...product, checked: !product.checked }
-        : product
-    )
-  );
-};
-const calculateTotal = () => {
-  let totalQuantity = 0;
-  let subtotal = 0;
-
-  products.forEach((product) => {
-    if (product.checked) {
-      totalQuantity += product.quantity;
-      subtotal += product.quantity * product.price;
+  useEffect(() => {
+    if (Array.isArray(route.params?.selectedProducts)) {
+      dispatch(setSelectedProducts(route.params.selectedProducts));
     }
-  });
+  }, [route.params?.selectedProducts]);
+  
 
-  return { totalQuantity, subtotal };
-};
-
-const { totalQuantity, subtotal } = calculateTotal();
-
+  const handleGoToPlaceOrder = () => {
+    dispatch(placeOrderRequest({ products: selectedProducts }));
+    navigation.navigate("Order Checkout");
+  };
 
   const orderItem = ({ item }) => (
     <View style={styles.productContainer}>
-      <TouchableOpacity onPress={() => toggleCheckbox(item.id)} style={styles.checkboxContainer}>
-        <View style={[styles.checkbox, item.checked && styles.checkedCheckbox]}>
-          {item.checked && <Text style={styles.checkmark}>✔</Text>}
-        </View>
-        {/* <Text>test</Text> */}
-      </TouchableOpacity>
-      <Text style={styles.productName}>
-        {item.name}</Text>
+      <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>₹{item.price}</Text>
       <View style={styles.quantityContainer}>
-        <TouchableOpacity
-          style={styles.quantityButton}
-          onPress={() => updateQuantity(item.id, "decrease")}
-        >
+        <TouchableOpacity style={styles.quantityButton} onPress={() => dispatch(updateQuantity({ id: item.id, type: "decrease" }))}>
           <Text style={styles.buttonText}>-</Text>
         </TouchableOpacity>
         <Text style={styles.quantityText}>{item.quantity}</Text>
-        <TouchableOpacity
-          style={styles.quantityButton}
-          onPress={() => updateQuantity(item.id, "increase")}
-        >
+        <TouchableOpacity style={styles.quantityButton} onPress={() => dispatch(updateQuantity({ id: item.id, type: "increase" }))}>
           <Text style={styles.buttonText}>+</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => handleDelete(item.id)} // Call handleDelete function
-      >
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => dispatch(deleteProduct(item.id))}>
         <Text style={styles.deleteText}>🗑️</Text>
       </TouchableOpacity>
-      </View>
     </View>
   );
+  
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={products}
-        renderItem={orderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
-      <TouchableOpacity style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add More Products</Text>
-      </TouchableOpacity>
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryText}>
-          Order Summary{"\n"}Total Quantity: {totalQuantity}
-        </Text>
-        <Text style={styles.summaryText}>Subtotal: ₹{subtotal}</Text>
-      </View>
-      <TouchableOpacity style={styles.checkoutButton}onPress={handleGoToPlaceOrder}>
-        <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
+      <FlatList data={selectedProducts} renderItem={orderItem} keyExtractor={(item) => item.id.toString()} />
+      <Text>Total: ₹{subtotal}</Text>
+      <TouchableOpacity onPress={handleGoToPlaceOrder}>
+        <Text>Proceed to Checkout</Text>
       </TouchableOpacity>
     </View>
   );

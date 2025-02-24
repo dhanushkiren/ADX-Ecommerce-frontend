@@ -1,13 +1,23 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons"; // To use FontAwesome icons
+import { clearAsyncStorage } from "../utils/asyncStorage";
 
 const UserDashboard = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header with Back Button */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <FontAwesome name="arrow-left" size={24} color="#2C2929" />
         </TouchableOpacity>
         <Text style={styles.headerText}>USER DASHBOARD</Text>
@@ -16,9 +26,12 @@ const UserDashboard = ({ navigation }) => {
       {/* Content Section */}
       <View style={styles.content}>
         <Text style={styles.title}>ORDERS</Text>
-        
+
         {/* Dashboard Options */}
-        <TouchableOpacity style={styles.option}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => navigation.navigate("order checkout")}
+        >
           <Text style={styles.optionText}>Order History</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>
@@ -47,6 +60,15 @@ const UserDashboard = ({ navigation }) => {
         <TouchableOpacity style={styles.option}>
           <Text style={styles.optionText}>Refund Tracking</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={async () => {
+            await clearAsyncStorage(); // Clear AsyncStorage
+            navigation.replace("login"); // Navigate to Login screen
+          }}
+        >
+          <Text style={styles.optionText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -55,7 +77,7 @@ const UserDashboard = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#f9f9f9",
-    paddingBottom: 20,  // To provide space at the bottom when scrolling
+    paddingBottom: 20, // To provide space at the bottom when scrolling
   },
   header: {
     flexDirection: "row",

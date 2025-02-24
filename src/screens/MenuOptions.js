@@ -1,3 +1,4 @@
+// MenuOptions.js (Modified with User Dashboard option)
 import React from "react";
 import {
   View,
@@ -8,6 +9,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
+
 
 const { width, height } = Dimensions.get("window");
 

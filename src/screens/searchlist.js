@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
+  Button,
   StyleSheet,
   FlatList,
   TouchableOpacity,
@@ -10,21 +11,59 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
+import { Image } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { prodCategories, filterData, searchProducts } from "../utils/data";
 import { useRoute } from "@react-navigation/native";
 
+
+
+import SearchBar from "../components/SearchBar";
+import SmallMenu from "../components/SmallMenu";
+import { useDispatch, useSelector } from "react-redux";
+import { productFetchRequest } from "../redux/productfetch/productFetchSlice";
+
+import { useNavigation } from '@react-navigation/native';
+
+
+
+  
+
+
+
 const { height } = Dimensions.get("window");
 
-const ProductScreen = () => {
-  const route = useRoute();
-  console.log("dk route",route.name);
+const ProductScreen = ({ route }) => {
+
+  const { searchQuery } = route.params || '';
+
+
+
+  
+  // const route = useRoute();
+  // console.log("dk route",route.name);
+  const dispatch = useDispatch();
+const { products, loading, error } = useSelector(state => state.productFetch);
+
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState("");
   const sortTranslateY = useState(new Animated.Value(height))[0];
   const filterTranslateY = useState(new Animated.Value(height))[0];
   const [selectedCategory, setSelectedCategory] = useState("Brands");
+  const navigation = useNavigation();
+  useEffect(() => {
+    if (searchQuery) {
+      console.log("Query:", searchQuery);
+      dispatch(productFetchRequest(searchQuery));
+    }
+  }, [searchQuery]);
+
+  useEffect(() => {
+    console.log("Fetched Products:", products); // Check what data is coming
+  }, [products]);
+
+
   const openSortModal = () => {
     setSortVisible(true);
     Animated.timing(sortTranslateY, {
@@ -61,75 +100,80 @@ const ProductScreen = () => {
 
   const renderProduct = ({ item }) => (
     <View style={styles.productContainer}>
-      <View style={styles.imagePlaceholder} />
+     <Image 
+  source={{ uri: item.imageUrl }} 
+  style={styles.productImage} 
+  resizeMode="contain" 
+/>
+
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{item.name}</Text>
-        <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>★ {item.rating}</Text>
-          <Text style={styles.reviews}>({item.reviews})</Text>
-        </View>
+       
         <View style={styles.priceContainer}>
           <Text style={styles.discountedPrice}>₹ {item.price}</Text>
-          <Text style={styles.originalPrice}>₹ {item.originalPrice}</Text>
+          <Text style={styles.originalPrice}>{item.originalPrice}</Text>
           <Text style={styles.discount}>{item.discount}</Text>
         </View>
         <Text style={styles.warranty}>{item.warranty}</Text>
         <TouchableOpacity style={styles.addToCartButton}>
           <Text style={styles.addToCartText}>Add to cart</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.viewDetailsButton} // Add View Details button
+        onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
+        >
+        <Text style={styles.viewDetailsText}>View Details</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+      <>
+      <SearchBar routeName={"product"} name={searchQuery} />
+      <View style={styles.container}>
+   
       {/* <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View style={styles.searchInput}>
-          <Icon name="search" size={24} color="#ccc" style={styles.icon} />
-          <Text style={styles.searchInputText}>Search</Text>
-        </View>
-        <TouchableOpacity onPress={openFilterModal}>
-          <Icon name="filter-list" marginRight={5} size={26} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openSortModal}>
-          <Icon name="swap-vert" marginRight={5} size={26} color="#fff" />
-        </TouchableOpacity>
+      <TouchableOpacity>
+        <Icon name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+      <View style={styles.searchInput}>
+        <Icon name="search" size={24} color="#ccc" style={styles.icon} />
+        <Text style={styles.searchInputText}>Search</Text>
       </View>
+      <TouchableOpacity onPress={openFilterModal}>
+        <Icon name="filter-list" marginRight={5} size={26} color="#fff" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={openSortModal}>
+        <Icon name="swap-vert" marginRight={5} size={26} color="#fff" />
+      </TouchableOpacity>
+    </View>
 
-      <View style={styles.location}>
-        <Icon name="location-on" size={24} color="#fff" style={styles.icon} />
-        <Text style={styles.locationText}>
-          Deliver to Zeus, Chennai - 600028
-        </Text>
-      </View> */}
+    <View style={styles.location}>
+      <Icon name="location-on" size={24} color="#fff" style={styles.icon} />
+      <Text style={styles.locationText}>
+        Deliver to Zeus, Chennai - 600028
+      </Text>
+    </View> */}
       <FlatList
-        data={searchProducts}
+        data={products}
         keyExtractor={(item) => item.id}
         renderItem={renderProduct}
-      />
-      {/* <View style={styles.bottomNavigation}>
-        <Icon name="home" size={28} color="#fff" />
-        <Icon name="person" size={28} color="#fff" />
-        <Icon name="wallet" size={28} color="#fff" />
-        <Icon name="shopping-cart" size={28} color="#fff" />
-        <Icon name="menu" size={28} color="#fff" />
-      </View> */}
+        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No products available</Text>}
+        />
 
       {(isSortVisible || isFilterVisible) && (
         <TouchableWithoutFeedback
           onPress={() => {
-            if (isSortVisible) closeSortModal();
+            if (isSortVisible) openSortModal();
             if (isFilterVisible) closeFilterModal();
-          }}
+          } }
         >
           <View style={styles.dimmedBackground} />
         </TouchableWithoutFeedback>
       )}
 
-{/* // For sortBy option  // */}
+      {/* // For sortBy option  // */}
 
       {isSortVisible && (
         <Animated.View
@@ -138,6 +182,8 @@ const ProductScreen = () => {
             { transform: [{ translateY: sortTranslateY }] },
           ]}
         >
+         
+
           <TouchableOpacity style={styles.closeButton} onPress={closeSortModal}>
             <Icon name="close" size={24} color="#6200ee" />
           </TouchableOpacity>
@@ -149,12 +195,9 @@ const ProductScreen = () => {
             >
               <View style={styles.radioButtonContainer}>
                 <View
-                  style={
-                    selectedSortOption === "A - Z"
-                      ? styles.radioButtonSelected
-                      : styles.radioButton
-                  }
-                />
+                  style={selectedSortOption === "A - Z"
+                    ? styles.radioButtonSelected
+                    : styles.radioButton} />
                 <Text style={styles.radioButtonLabel}>A - Z</Text>
               </View>
             </TouchableOpacity>
@@ -164,12 +207,9 @@ const ProductScreen = () => {
             >
               <View style={styles.radioButtonContainer}>
                 <View
-                  style={
-                    selectedSortOption === "Z - A"
-                      ? styles.radioButtonSelected
-                      : styles.radioButton
-                  }
-                />
+                  style={selectedSortOption === "Z - A"
+                    ? styles.radioButtonSelected
+                    : styles.radioButton} />
                 <Text style={styles.radioButtonLabel}>Z - A</Text>
               </View>
             </TouchableOpacity>
@@ -179,12 +219,9 @@ const ProductScreen = () => {
             >
               <View style={styles.radioButtonContainer}>
                 <View
-                  style={
-                    selectedSortOption === "Price (Low to High)"
-                      ? styles.radioButtonSelected
-                      : styles.radioButton
-                  }
-                />
+                  style={selectedSortOption === "Price (Low to High)"
+                    ? styles.radioButtonSelected
+                    : styles.radioButton} />
                 <Text style={styles.radioButtonLabel}>Price (Low to High)</Text>
               </View>
             </TouchableOpacity>
@@ -194,12 +231,9 @@ const ProductScreen = () => {
             >
               <View style={styles.radioButtonContainer}>
                 <View
-                  style={
-                    selectedSortOption === "Price (High to Low)"
-                      ? styles.radioButtonSelected
-                      : styles.radioButton
-                  }
-                />
+                  style={selectedSortOption === "Price (High to Low)"
+                    ? styles.radioButtonSelected
+                    : styles.radioButton} />
                 <Text style={styles.radioButtonLabel}>Price (High to Low)</Text>
               </View>
             </TouchableOpacity>
@@ -212,7 +246,7 @@ const ProductScreen = () => {
           </View>
         </Animated.View>
       )}
-{/* // for filter option // */}
+      {/* // for filter option // */}
       {isFilterVisible && (
         <Animated.View
           style={[
@@ -235,7 +269,7 @@ const ProductScreen = () => {
                   style={[
                     styles.categoryItem,
                     selectedCategory === category &&
-                      styles.selectedCategoryItem,
+                    styles.selectedCategoryItem,
                   ]}
                   onPress={() => setSelectedCategory(category)}
                 >
@@ -243,7 +277,7 @@ const ProductScreen = () => {
                     style={[
                       styles.categoryText,
                       selectedCategory === category &&
-                        styles.selectedCategoryText,
+                      styles.selectedCategoryText,
                     ]}
                   >
                     {category}
@@ -277,12 +311,17 @@ const ProductScreen = () => {
         </Animated.View>
       )}
     </View>
+    <View style={styles.menuStyle}>
+    <SmallMenu />
+    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop:20,
     backgroundColor: "#f5f5f5",
   },
 
@@ -319,6 +358,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#8D67F1",
     color: "#fff",
   },
+  menuStyle:{
+    marginTop: 60,
+  },
   location: {
     padding: 5,
     backgroundColor: "#8D67F1",
@@ -329,6 +371,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: "100%",
   },
+
+  productImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+
+
   productContainer: {
     flexDirection: "row",
     padding: 10,
@@ -429,7 +480,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: "hidden",
-    zIndex: 11,
+    zIndex:20,
   },
   modalContent: {
     padding: 20,
@@ -593,6 +644,22 @@ const styles = StyleSheet.create({
     padding: 5,
     elevation: 5,
   },
+  viewDetailsButton: {
+    borderWidth: 1,
+    borderColor: "#6200ee",
+    borderRadius: 15,
+    alignItems: "center",
+    padding: 8,
+    marginTop: 5,
+    marginBottom: 5,
+    backgroundColor:"#6200ee"
+  },
+  viewDetailsText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });
+
+
 
 export default ProductScreen;

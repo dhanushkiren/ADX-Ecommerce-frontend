@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SearchIcon from "../../assets/search.svg";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { Card, Button } from "react-native-paper";
 import {
   View,
   Text,
@@ -16,16 +17,24 @@ import {
 import { logout } from "../redux/auth/authSlice";
 import { clearAsyncStorage } from "../utils/asyncStorage";
 import { fetchProductsRequest } from "../redux/home/homeSlice";
-import { Card } from "react-native-paper";
+import SearchBar from "../components/SearchBar";
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.home);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    dispatch(fetchProductsRequest()); // Fetch products again
+    setTimeout(() => setRefreshing(false), 1000); // Stop refresh indicator
+  };
 
   useEffect(() => {
-    // Dispatch action to fetch products
-    dispatch(fetchProductsRequest());
-  }, [dispatch]);
+    if (products.length === 0) {
+      dispatch(fetchProductsRequest());
+    }
+  }, [dispatch, products]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -47,16 +56,34 @@ const Home = ({ navigation }) => {
   };
 
   const renderProductItem = ({ item }) => (
-    <View style={styles.productCardContainer}>
+    <TouchableOpacity
+      style={styles.productCardContainer}
+      onPress={() => navigation.navigate("product", { product: item })}
+    >
       <Card style={styles.productCard}>
-        <Card.Cover style={styles.productImage} source={{ uri: item.imageUrl }} />
+        <Card.Cover
+          style={styles.productImage}
+          source={{ uri: item.imageUrl }}
+          resizeMode="contain"
+        />
         <Card.Content>
           <Text style={styles.productTitle}>{item.name}</Text>
-          <Text style={styles.productDescription}>{item.description}</Text>
-          
+          <Text style={styles.productDescription}>{item.sellerName}</Text>
+          <Text style={styles.productPrice}>Price: ₹{item.price}</Text>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              style={styles.viewDetailsButton}
+              labelStyle={styles.buttonLabel}
+              onPress={() => navigation.navigate("product", { product: item })} // Navigate on press
+            >
+              View
+            </Button>
+          </View>
         </Card.Content>
       </Card>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderProducts = () => {
@@ -76,15 +103,20 @@ const Home = ({ navigation }) => {
         numColumns={2}
         contentContainerStyle={styles.productListContainer}
         columnWrapperStyle={styles.productRow}
+        refreshing={refreshing}
+        onRefresh={handleRefresh} // Enables pull-to-refresh
       />
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Deals for you</Text>
-      {renderProducts()}
-    </View>
+    <>
+      <SearchBar />
+      <View style={styles.container}>
+        <Text style={styles.sectionTitle}>Deals for you</Text>
+        {renderProducts()}
+      </View>
+    </>
   );
 };
 
@@ -165,13 +197,24 @@ const styles = StyleSheet.create({
   productDescription: {
     fontSize: 10,
     color: "gray",
-    marginTop:10,
+    marginTop: 10,
   },
   errorText: {
     color: "red",
     textAlign: "center",
     marginTop: 20,
     fontSize: 16,
+  },
+  buttonContainer: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  viewDetailsButton: {
+    backgroundColor: "#7041EE",
+    paddingHorizontal: 10,
+  },
+  buttonLabel: {
+    fontSize: 12,
   },
 });
 
