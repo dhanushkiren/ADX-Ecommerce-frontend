@@ -19,17 +19,18 @@ import {
 
 const CartPage = () => {
   const dispatch = useDispatch();
-
-  const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
+  
+const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
 
   const [selectedItems, setSelectedItems] = useState({}); // Added state for selectedItems
-  const userId = "1"; // Replace with actual user ID from context or props.
+  const userId = '2'; // Replace with actual user ID from context or props.
 
   useEffect(() => {
     if (userId) {
       dispatch(viewCartRequest({ userId }));
     }
   }, [dispatch, userId]);
+  const cartState = useSelector((state) => state.cart);
 
   const handleIncreaseQuantity = (item) => {
     dispatch(
@@ -63,6 +64,9 @@ const CartPage = () => {
       );
     }
   };
+  
+ 
+  
 
   const handleBuyNow = (item) => {
     Alert.alert("Buy Now", "You have chosen to buy ${item.productName}.");
