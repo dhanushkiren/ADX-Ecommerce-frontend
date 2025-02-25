@@ -24,14 +24,13 @@ import { Platform } from 'react-native';
 import {API_BASE_URL} from '../utils/constants'
 import ImageResizer from "react-native-image-resizer"; 
 import * as FileSystem from 'expo-file-system';
-import Resizer from "react-image-file-resizer";
-
+import { retrieveData } from "../utils/asyncStorage";
 
 const COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
   "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia",
-  "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon"
 ];
+
 
 const COLORS = {
   primary: "#1f8b3b",
@@ -46,10 +45,17 @@ const FONTS = {
   body3: { fontSize: 16, fontWeight: "normal" },
 };
 
-const EditProfile = ({ navigation }) => {
-  const userId = useSelector((state) => state.editProfile.userId);
+const EditProfile = ({ route, navigation }) => {
+  // const { userId } = route.params || {};
+  const [userId, setUserId] = useState(null);
+
   const dispatch = useDispatch();
-  const { originalProfile: profile, error, loading } = useSelector((state) => state.editProfile);
+  const {
+    originalProfile: profile,
+    error,
+    loading,
+  } = useSelector((state) => state.editProfile);
+
 
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null); // Track modified image file
@@ -66,103 +72,137 @@ const EditProfile = ({ navigation }) => {
   const [countryModalVisible, setCountryModalVisible] = useState(false);
 
   useEffect(() => {
-    if (userId) {
-      dispatch(fetchProfileRequest({ userId }));
-    } else {
-      Alert.alert("Error", "User ID is required.");
-    }
-  }, [dispatch, userId]);
+    const getUserId = async () => {
+      try {
+        const storedUserId = await retrieveData("userId");
+        console.log("dkdkdk ", storedUserId);
+        if (storedUserId) {
+          setUserId(storedUserId);
+          dispatch(fetchProfileRequest({ userId: storedUserId }));
+        } else {
+          Alert.alert("Error", "User ID not found in storage.");
+        }
+      } catch (error) {
+        console.error("Error fetching userId:", error);
+        Alert.alert("Error", "Failed to load user data.");
+      }
+    };
+
+    getUserId();
+  }, [dispatch]);
 
   useEffect(() => {
-    if (profile) {
-    
-      setFirstName(profile.firstName || "");
-      setLastName(profile.lastName || "");
-      setEmail(profile.email || "");
-  
-      let addresses = [];
-      if (Array.isArray(profile.addresses)) {
-        if (profile.addresses.length === 1 && typeof profile.addresses[0] === "string" && profile.addresses[0].includes(",")) {
-          addresses = profile.addresses[0].split(",").map((addr) => addr.trim());
-        } else {
-          addresses = profile.addresses;
-        }
-      } else if (typeof profile.addresses === "string") {
-        addresses = profile.addresses.split(",").map((addr) => addr.trim());
-      }
-  
-      setAddress1(addresses[0] || "");
-      setAddress2(addresses[1] || "");
-      setAddress3(addresses[2] || "");
-  
-      setCountry(profile.country || "");
-      setMobile(profile.mobile || "");
-      setDateOfBirth(profile.date_of_birth ? new Date(profile.date_of_birth) : null);
-        
+    if (!profile) return;
 
-       // ✅ Dynamically remove '/api/' from BASE_URL
-       const BASE_URL = API_BASE_URL.endsWith("/") 
-       ? API_BASE_URL.slice(0, -1).replace("/api", "")
-       : API_BASE_URL.replace("/api", "");
- 
-     let finalImageUrl = null;
- 
-     // ✅ Check if the backend image is a valid base64 string
-     const isValidBase64 = (str) => {
-      const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
-      return base64Regex.test(str);
+    setFirstName(profile.firstName || "");
+    setLastName(profile.lastName || "");
+    setEmail(profile.email || "");
+
+    // ✅ Process addresses
+    let addresses = [];
+    if (Array.isArray(profile.addresses)) {
+        addresses = profile.addresses.length === 1 && typeof profile.addresses[0] === "string" && profile.addresses[0].includes(",") 
+            ? profile.addresses[0].split(",").map(addr => addr.trim()) 
+            : profile.addresses;
+    } else if (typeof profile.addresses === "string") {
+        addresses = profile.addresses.split(",").map(addr => addr.trim());
+    }
+
+    setAddress1(addresses[0] || "");
+    setAddress2(addresses[1] || "");
+    setAddress3(addresses[2] || "");
+    setCountry(profile.country || "");
+    setMobile(profile.mobile || "");
+    setDateOfBirth(profile.date_of_birth ? new Date(profile.date_of_birth) : null);
+
+    // ✅ Normalize BASE_URL (Remove trailing '/' or '/api/')
+    const BASE_URL = API_BASE_URL.replace(/\/$/, "").replace(/\/api$/, "");
+
+    let finalImageUrl = null;
+
+    // ✅ Helper Functions
+    const isValidBase64 = (str) => /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(str);
+
+    const constructFullUrl = (path) => {
+        return path.startsWith("http") ? path : `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
     };
- 
-     // ✅ Check if the backend image is a valid URL (Basic Check)
-     const isValidUrl = (str) => {
-       try {
-         new URL(str);
-         return true;
-       } catch (_) {
-         return false;
-       }
-     };
-     if (profile.image && isValidBase64(profile.image)) {
-      // ✅ Valid Base64 Image
-      finalImageUrl = `data:image/jpeg;base64,${profile.image}`;
-  
-      const shortBase64 = profile.image.substring(0, 20) + "..." + profile.image.slice(-20); // Shorten Base64
-  
-      console.log("✅ Fetched image is a valid base64:", shortBase64);
-  } 
-  else if (profile.image_url && typeof profile.image_url === "string" && profile.image_url.trim() !== "") {
-      // ✅ Construct Full URL and Validate
-      const constructedUrl = `${BASE_URL}${profile.image_url.startsWith("/") ? profile.image_url : `/${profile.image_url}`}`;
-      
-      if (isValidUrl(constructedUrl)) {
-          finalImageUrl = constructedUrl;
-          console.log("✅ Fetched image is a valid URL:", finalImageUrl);
-      } else {
-          console.log("❌ Invalid Image URL from backend:", profile.image_url);
-          finalImageUrl = null;
-      }
-  } 
-  else {
-      console.log("❌ No valid image found. Using default.");
-      finalImageUrl = null;
-  }
-  
- setImage(finalImageUrl);
-  
-  // Show shortened Base64 for console if it's Base64
-  const logImage = (finalImageUrl && typeof finalImageUrl === "string" && finalImageUrl.startsWith("data:image/jpeg;base64,"))
-    ? finalImageUrl.substring(0, 40) + "..." + finalImageUrl.slice(-20)
-    : finalImageUrl || "No Image Found";
 
-  
-  console.log("Final image after validation:", logImage);
-  }
-  
+    // ✅ Log API Response for Debugging
+    console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
+
+    // ✅ Image Handling
+    if (profile.image && isValidBase64(profile.image)) {
+        finalImageUrl = `data:image/jpeg;base64,${profile.image}`;
+        console.log("✅ Base64 Image Detected");
+    } else if (profile.imageUrls && typeof profile.imageUrls === "string" && profile.imageUrls.trim() !== "") {
+      const constructedUrl = constructFullUrl(profile.imageUrls);
+      console.log("🔗 Constructed Image URL:", constructedUrl);
+      finalImageUrl = constructedUrl;
+  } else {
+        console.log("❌ No valid image found. Using default.");
+    }
+
+    console.log("🔍 Final Image URL:", finalImageUrl);
+    setImage(finalImageUrl);
+
 }, [profile]);
 
+// ✅ Log Image Updates
+useEffect(() => {
+    console.log("🚀 Image state updated:", image);
+}, [image]);
+useEffect(() => {
+  if (!profile) return;
+
+  setFirstName(profile.firstName || "");
+  setLastName(profile.lastName || "");
+  setEmail(profile.email || "");
+
+  // ✅ Process addresses
+  let addresses = Array.isArray(profile.addresses)
+      ? profile.addresses
+      : typeof profile.addresses === "string"
+      ? profile.addresses.split(",").map(addr => addr.trim())
+      : [];
+
+  setAddress1(addresses[0] || "");
+  setAddress2(addresses[1] || "");
+  setAddress3(addresses[2] || "");
+  setCountry(profile.country || "");
+  setMobile(profile.mobile || "");
+  setDateOfBirth(profile.date_of_birth ? new Date(profile.date_of_birth) : null);
+
+  // ✅ Normalize BASE_URL
+  const BASE_URL = API_BASE_URL.replace(/\/$/, "").replace(/\/api$/, "");
+
+  let finalImageUrl = null;
+
+  // ✅ Helper Functions
+  const constructFullUrl = (path) => 
+      path.startsWith("http") ? path : `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+
+  // ✅ Log API Response for Debugging
+  console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
+
+  // ✅ Image Handling
+  if (profile.imageUrls && typeof profile.imageUrls === "string" && profile.imageUrls.trim() !== "") {
+      const constructedUrl = constructFullUrl(profile.imageUrls);
+      console.log("🔗 Constructed Image URL:", constructedUrl);
+      finalImageUrl = constructedUrl;
+  } else {
+      console.log("❌ No valid image found. Using default.");
+  }
+
+  setImage(finalImageUrl);
+
+}, [profile]);
+
+// ✅ Log Image Updates
 useEffect(() => {
   console.log("🚀 Image state updated:", image);
 }, [image]);
+
+
 
 
   const handleConfirmDate = (date) => {
@@ -189,7 +229,7 @@ useEffect(() => {
         quality: 0.5,
       });
 
-      console.log("🖼️ Image Picker Result:", result);
+      console.log("🖼 Image Picker Result:", result);
   
       if (!result.canceled) {
         const { uri } = result.assets[0];
@@ -348,46 +388,50 @@ const handleUpdateProfile = async () => {
       formData.append("mobile", profileData.mobile);
       formData.append("date_of_birth", profileData.date_of_birth);
 
-      console.log("🖼️ NEW SELECTED Image File Before Appending to FormData:", imageFile);
+      console.log("🖼 NEW SELECTED Image File Before Appending to FormData:", imageFile);
 
-      let imageToSend = null;
+      let imageToSend = imageFile;
 
-      if (imageFile) {
-        // ✅ If user selects a new image, use it directly
-        imageToSend = imageFile;
-      } else if (image && image.startsWith("data:image")) {
+    if (!imageFile && typeof image === "string" && image.startsWith("http")) {
+      try {
         if (Platform.OS === "web") {
-          // ✅ Convert base64 to Blob for web
-          imageToSend = base64ToBlob(image, "profile.jpg");
+          const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+          const response = await fetch(proxyUrl + image);
+          const blob = await response.blob();
+
+          imageToSend = new File([blob], "profile.jpg", { type: blob.type || "image/jpeg" });
+
         } else {
-          // ✅ Convert base64 to file for mobile
-          imageToSend = await base64ToFile(image, "existingProfileImage.jpg");
-        }
-      }
+          const fileUri = `${FileSystem.cacheDirectory}profile.jpg`;
+          const downloadedImage = await FileSystem.downloadAsync(image, fileUri);
 
-      if (imageToSend) {
-        if (Platform.OS === "web") {
-          console.log("📸 Web Image Data Before Append:", imageToSend);
-          console.log("📸 Type:", typeof imageToSend);
-          console.log("📸 Instance of Blob:", imageToSend instanceof Blob);
-          console.log("📸 Instance of File:", imageToSend instanceof File);
-          
-          if (!(imageToSend instanceof Blob || imageToSend instanceof File)) {
-            console.error("🛑 Image is NOT a valid Blob or File! Converting...");
-            imageToSend = base64ToBlob(image, "profile.jpg"); // Convert again just in case
-          }
+          imageToSend = {
+            uri: downloadedImage.uri,
+            type: "image/jpeg",
+            name: "profile.jpg",
+          };
+        }
+      } catch (error) {
+        console.error("❌ Error converting image URL to file:", error);
+      }
+    }
+
       
-          formData.append("image", imageToSend, "profile.jpg"); // Ensure correct format
-        } else {
-          formData.append("image", {
-            uri: imageToSend.uri,
-            type: imageToSend.type || "image/jpeg",
-            name: imageToSend.name || "profileImage.jpg",
-          });
-        }
+        // ✅ Append the final image file
+    if (imageToSend) {
+      if (Platform.OS === "web") {
+        formData.append("image", imageToSend);
       } else {
-        console.log("🛑 No valid image found. Removing image field.");
+        formData.append("image", {
+          uri: imageToSend.uri,
+          type: imageToSend.type || "image/jpeg",
+          name: imageToSend.name || "profileImage.jpg",
+        });
       }
+    } else {
+      console.log("🛑 No new image provided, skipping 'image' field.");
+    }
+
       
 
       console.log("📦 Final FormData:");
@@ -432,6 +476,7 @@ const handleUpdateProfile = async () => {
             <Image
                source={image ? { uri:image} : require("./pic.png")}
                style={styles.profileImage}
+               onError={(e) => console.log("❌ Image Load Error:", e.nativeEvent.error)}
             />
             <MaterialIcons name="photo-camera" size={32} color={COLORS.primary} style={styles.cameraIcon} />
           </TouchableOpacity>

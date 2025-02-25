@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerRequest } from '../redux/auth/authSlice'; // Import Redux action
 
 const RegisterScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { loading, registerError,resetRegisterState, registerSuccessMessage } = useSelector((state) => state.auth);
+  const { loading, registerError, registerSuccessMessage } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -49,27 +50,23 @@ const RegisterScreen = ({ navigation }) => {
     // Log the error and success message for debugging
     console.log("registerSuccessMessage", registerSuccessMessage);
     console.log("registerError", registerError);
-     console.log("🔍 Navigation Object:", navigation); // Log navigation object
 
-    // Show success alert and navigate to Login
+    // Check if registration was successful
     if (registerSuccessMessage) {
-      Alert.alert('Success', registerSuccessMessage, [
-        {
-          text: 'OK',
-          onPress: async () => {
-            console.log("Navigating to Login Screen...");
-            await clearAsyncStorage(); // Clear any saved token
-            dispatch(resetRegisterState()); // Reset Redux state after success
-            navigation.navigate('login'); // Use replace to prevent back navigation
-          },
-        },
-      ]);
-    }
-    // Show error alert when registration fails
-    if (registerError) {
+      if (Platform.OS === 'android' || Platform.OS === 'ios') {
+        // For mobile, show the alert first and then navigate
+        Alert.alert('Success', registerSuccessMessage, [
+          { text: 'OK', onPress: () => navigation.navigate('login') },
+        ]);
+      } else {
+        // For laptop/desktop, just navigate without alert
+        navigation.navigate('login');
+      }
+    } else if (registerError) {
+      // If registration failed, show error
       Alert.alert('Registration Failed', registerError);
     }
-  }, [registerSuccessMessage, registerError,resetRegisterState, navigation]); // Add error to dependencies
+  }, [registerSuccessMessage, registerError, navigation]); // Add error to dependencies
 
   return (
     <View style={styles.container}>
@@ -119,7 +116,7 @@ const RegisterScreen = ({ navigation }) => {
           onChangeText={(value) => handleInputChange('confirmPassword', value)}
         />
 
-        {/* Use registerError instead of error */}
+        {/* Display any registration error */}
         {registerError ? <Text style={styles.errorText}>{registerError}</Text> : null}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
@@ -142,6 +139,7 @@ const RegisterScreen = ({ navigation }) => {
     </View>
   );
 };
+
 // Styles remain unchanged
 const styles = StyleSheet.create({
   container: {

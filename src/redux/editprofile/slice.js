@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { isEqual } from "lodash";
 
 const initialState = {
-  userId : 11,
   username: "",
   firstName: "",
   lastName: "",

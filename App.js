@@ -58,7 +58,7 @@ function MyStack() {
     };
 
     checkAuth();
-  }, [dispatch]);
+  }, [dispatch,token]);
 
 
   // useEffect(() => {
@@ -77,8 +77,8 @@ function MyStack() {
   return (  
     <>  
       <Stack.Navigator
-        // initialRouteName={token ? "home" : "login"}
-        initialRouteName="menu"
+        initialRouteName={ token ? "home" : "login"}
+         //initialRouteName="profile"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -105,7 +105,7 @@ function MyStack() {
 
 
       {/* Conditionally render SmallMenu based on the screen */}
-      {!['login', 'register','profile'].includes(currentScreen) && <SmallMenu />}
+      {!['login','profile', 'register'].includes(currentScreen) && <SmallMenu />}
     </>
 
   );

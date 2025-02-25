@@ -1,3 +1,4 @@
+// LoginScreen.js
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import {
@@ -17,35 +18,29 @@ const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-
-  // Get Redux state
   const { token, loginError, loading } = useSelector((state) => state.auth);
 
-  // Navigate to Register Screen
+  useEffect(() => {
+    console.log("Token in useEffect:", token);  // Add this for debugging
+    if (token) {
+      navigation.navigate("home");
+    } else if (loginError) {
+      Alert.alert("Login Failed", loginError);
+    }
+  }, [token, loginError]);
+  
+
   const gotoRegister = () => {
     navigation.navigate("register");
   };
 
-  // Handle login action
   const handleLogin = () => {
-    const userData = { username, password };
-    console.log("Login Data:", userData);
-    dispatch(loginRequest(userData));
+    if (!username || !password) {
+      Alert.alert("Validation Error", "Please enter both username and password.");
+      return;
+    }
+    dispatch(loginRequest({ username, password }));
   };
-
-  // Navigate to Menu screen after successful login
-  useEffect(() => {
-    if (token) {
-      navigation.navigate("menu");
-    }
-  }, [token]);
-
-  // Show error alert when login fails
-  useEffect(() => {
-    if (loginError) {
-      Alert.alert("Login Failed", loginError);
-    }
-  }, [loginError]);
 
   return (
     <View style={styles.container}>
@@ -71,13 +66,21 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
-          <Text style={styles.loginButtonText}>{loading ? "Logging in..." : "Login"}</Text>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.loginButtonText}>
+            {loading ? "Logging in..." : "Login"}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.checkboxContainer}>
           <CheckBox checked={isChecked} onPress={() => setChecked(!isChecked)} />
-          <Text style={{ fontWeight: "bold", marginLeft: -15 }}>Keep me signed in.</Text>
+          <Text style={{ fontWeight: "bold", marginLeft: -15 }}>
+            Keep me signed in.
+          </Text>
           <TouchableOpacity>
             <Text style={styles.details}>Details</Text>
           </TouchableOpacity>
@@ -90,7 +93,9 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.line} />
           </View>
           <TouchableOpacity onPress={gotoRegister} style={styles.createAccountButton}>
-            <Text style={styles.createAccountText}>Create your Tradezy account</Text>
+            <Text style={styles.createAccountText}>
+              Create your Tradezy account
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -106,12 +111,13 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.footerLink}>Help</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.copyright}>© 1996-2017, Tradezy.com, Inc. or its affiliates</Text>
+      <Text style={styles.copyright}>
+        © 1996-2017, Tradezy.com, Inc. or its affiliates
+      </Text>
     </View>
   );
 };
 
-// Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -186,7 +192,6 @@ const styles = StyleSheet.create({
     color: "#4c84f5",
     fontSize: 14,
     marginLeft: 8,
-    
   },
   newAccount: {
     alignItems: "center",

@@ -50,16 +50,12 @@ const authSlice = createSlice({
       state.registerError = action.payload; // Handle error
       state.loading = false;
     },
-    resetRegisterState: (state) => {
-      state.registerSuccessMessage = null;
-      state.registerError = null;
-    },
   },
 });
 
 export const { 
   loginRequest, loginSuccess, loginFailure, logout, 
-  registerRequest, registerSuccess, registerFailure,resetRegisterState
+  registerRequest, registerSuccess, registerFailure 
 } = authSlice.actions;
 
 export default authSlice.reducer;
