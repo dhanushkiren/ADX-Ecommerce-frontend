@@ -1,4 +1,6 @@
 import { takeEvery, call, put, select } from "redux-saga/effects"; 
+
+
 import axios from "../../utils/axios";
 import { apiConfig } from "../../utils/apiConfig";
 import {
@@ -21,26 +23,19 @@ import {
 const getSelectedCartItems = (state) => state.cart.selectedCartItems;
 
 // Worker Saga for adding an item to the cart
-export function* addToCartSaga(action) {
+function* addToCartSaga(action) {
   const { userId, productData } = action.payload;
-  console.log(22,userId);
+  console.log(action.payload);
   try {
-    const response = yield call(axios.post, apiConfig.addToCart(), productData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
+    const response = yield call(axios.post, apiConfig.addToCart(userId), productData);
     yield put(
       addToCartSuccess({
+        id: response.data.id,
         quantity: response.data.quantity,
         productName: response.data.productName,
-        productId:response.data.productId,
         price: response.data.price,
-        userId:response.data.userId,
       })
     );
-
     // Refresh cart items after adding
     yield put(viewCartRequest({ userId }));
   } catch (error) {
