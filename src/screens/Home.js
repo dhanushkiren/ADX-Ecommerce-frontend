@@ -19,7 +19,6 @@ import { fetchProductsRequest } from "../redux/home/homeSlice";
 import { Card } from "react-native-paper";
 import SearchBar from "../components/SearchBar";
 
-
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.home);
@@ -29,7 +28,8 @@ const Home = ({ navigation }) => {
     dispatch(fetchProductsRequest());
   }, [dispatch]);
 
-  const handleLogout = () => {
+ /* const handleLogout = () => {
+    console.log("Logout button clicked");  // Confirm button is working
     Alert.alert(
       "Logout",
       "Are you sure you want to logout?",
@@ -37,34 +37,50 @@ const Home = ({ navigation }) => {
         { text: "Cancel", style: "cancel" },
         {
           text: "Logout",
-          onPress: () => {
-            clearAsyncStorage();
+          onPress: async () => {
+            console.log("Logout confirmed");
+            await clearAsyncStorage();  // This should clear AsyncStorage
             dispatch(logout());
-            navigation.replace("login");
+            console.log("Navigating to Login screen");
+            navigation.replace("login");  // Ensure 'Login' matches your navigator
           },
         },
       ],
       { cancelable: true }
-    );
+    );w
+  };*/
+  const handleLogout = async() => {
+    console.log('Logout initiated');
+  
+   
+  await clearAsyncStorage();           // Clear token from Redux
+  //navigation.replace("login"); 
+    console.log('Storage and Redux token cleared');
+      // Navigate to login screen
   };
+  
+  
+  
 
   const renderProductItem = ({ item }) => (
     <View style={styles.productCardContainer}>
       <Card style={styles.productCard}>
-
+    
         <Card.Cover
           style={styles.productImage}
           source={{ uri: item.imageUrl }}
+          
         />
+       
         <Card.Content>
           <Text style={styles.productTitle}>{item.name}</Text>
           <Text style={styles.productDescription}>{item.description}</Text>
-
         </Card.Content>
       </Card>
+      
     </View>
   );
-
+ 
   const renderProducts = () => {
     if (loading) {
       return <ActivityIndicator size="large" color="#7041EE" />;
@@ -87,11 +103,15 @@ const Home = ({ navigation }) => {
   };
 
   return (
-
     <>
-    <SearchBar />
+      <SearchBar />
       <View style={styles.container}>
-        <Text style={styles.sectionTitle}>Deals for you</Text>
+        <View style={styles.header}>
+          <Text style={styles.sectionTitle}>Deals for you</Text>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Icon name="logout" size={24} color="gray" />
+          </TouchableOpacity>
+        </View>
         {renderProducts()}
       </View>
     </>
@@ -106,8 +126,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 10,
-    backgroundColor: "#7041EE",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    backgroundColor: "#fff",
+  },
+  logoutButton: {
+    padding: 5,
   },
   searchContainer: {
     flexDirection: "row",
@@ -145,8 +170,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    marginVertical: 10,
-    paddingHorizontal: 10,
   },
   productListContainer: {
     paddingHorizontal: 10,

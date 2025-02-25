@@ -13,7 +13,7 @@ axios.interceptors.request.use(
     let token = await retrieveData("token");
 
     if (token && token !== "undefined") {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`; // ✅ Corrected Syntax
     }
     return config;
   },

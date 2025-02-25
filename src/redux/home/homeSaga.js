@@ -14,6 +14,7 @@ function* fetchProductsSaga(action) {
     if (response.status === 200) {
       console.log("Fetch Products Success");
       const products = response.data;
+      console.log(products);
       // Dispatch fetchProductsSuccess with the products data
       yield put(fetchProductsSuccess(products));
     } else {

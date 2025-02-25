@@ -50,16 +50,16 @@ function MyStack() {
   useEffect(() => {
     const checkAuth = async () => {
       const storedToken = await retrieveData("token");
-      console.log("Stored token::", storedToken);
+      console.log("Stored token::", storedToken); // Debug log
       if (storedToken) {
         dispatch(loginSuccess({ token: storedToken }));
       }
       setLoading(false); // Mark loading as complete
     };
-
+  
     checkAuth();
   }, [dispatch]);
-
+  
 
   // useEffect(() => {
   //   // Fetch home products once user is logged in
@@ -77,8 +77,8 @@ function MyStack() {
   return (  
     <>  
       <Stack.Navigator
-        initialRouteName={token ? "home" : "login"}
-        // initialRouteName="product"
+        initialRouteName={ token ? "home" : "login"}
+         //initialRouteName="profile"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -105,7 +105,7 @@ function MyStack() {
 
 
       {/* Conditionally render SmallMenu based on the screen */}
-      {!['login', 'register'].includes(currentScreen) && <SmallMenu />}
+      {!['login','profile', 'register'].includes(currentScreen) && <SmallMenu />}
     </>
 
   );
