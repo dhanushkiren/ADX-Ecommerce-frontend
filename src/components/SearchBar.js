@@ -11,20 +11,25 @@ import {
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { prodCategories, filterData, searchProducts } from "../utils/data";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfileRequest } from "../redux/editprofile/slice";
+import { retrieveData } from "../utils/asyncStorage";
 const { height } = Dimensions.get("window");
 
 const SearchBar = ({ routeName, name }) => {
+  const dispatch = useDispatch();
   const route = useRoute();
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState(name);
   const [recentSearches, setRecentSearches] = useState([]);
-
+  const [userId, setUserId] = useState(null);
+  const userProfile = useSelector((state) => state.editProfile.originalProfile);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -39,7 +44,39 @@ const SearchBar = ({ routeName, name }) => {
       navigation.navigate("product", { searchQuery }); // Navigate to the product screen
     }
   };
-  
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await retrieveData("userId");
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert("Error", "User ID not found in storage.");
+        }
+      } catch (error) {
+        console.error("Error fetching userId:", error);
+        Alert.alert("Error", "Failed to load user data.");
+      }
+    };
+
+    getUserId();
+  }, []);
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchProfileRequest({ userId }));
+    }
+  }, [userId, dispatch]);
+
+  // Logging for debugging
+  useEffect(() => {
+    console.log("User profile data:", userProfile);
+  }, [userProfile]);
+
+  // Handle address formatting safely
+  const userAddress =
+    userProfile?.addresses?.length > 0
+      ? userProfile.addresses.map((addr) => addr.street || "").filter(Boolean).join(", ")
+      : "No address available";
   // console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
@@ -126,9 +163,7 @@ const SearchBar = ({ routeName, name }) => {
 
       <View style={styles.location}>
         <Icon name="location-on" size={24} color="#fff" style={styles.icon} />
-        <Text style={styles.locationText}>
-          Deliver to Zeus, Chennai - 600028
-        </Text>
+        <Text style={styles.locationText}>{userAddress}</Text>
       </View>
 
       {(isSortVisible || isFilterVisible) && (

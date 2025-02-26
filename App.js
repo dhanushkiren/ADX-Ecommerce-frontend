@@ -45,7 +45,7 @@ function MyStack() {
   const navigationState = useNavigationState(state => state); // Get current navigation state
   const currentScreen = navigationState?.routes[navigationState.index]?.name; // Get current screen name
 
-  // console.log("dk token :::", token);
+   console.log("dk token :::", token);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -78,7 +78,7 @@ function MyStack() {
   return (  
     <>  
       <Stack.Navigator
-        initialRouteName={token ? "home" : "home"}
+        initialRouteName={token ? "home" : "login"}
         // initialRouteName="product"
         screenOptions={{ headerShown: false }}
       >
@@ -106,7 +106,7 @@ function MyStack() {
 
 
       {/* Conditionally render SmallMenu based on the screen */}
-      {!['login', 'register'].includes(currentScreen) && <SmallMenu />}
+      {!['login','profile', 'register'].includes(currentScreen) && <SmallMenu />}
     </>
   );
 }

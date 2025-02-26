@@ -36,23 +36,14 @@ const Home = ({ navigation }) => {
     }
   }, [dispatch, products]);
 
-  const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Logout",
-          onPress: () => {
-            clearAsyncStorage();
-            dispatch(logout());
-            navigation.replace("login");
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+  const handleLogout = async() => {
+    console.log('Logout initiated');
+  
+   
+  await clearAsyncStorage();           // Clear token from Redux
+  //navigation.replace("login"); 
+    console.log('Storage and Redux token cleared');
+      // Navigate to login screen
   };
 
   const renderProductItem = ({ item }) => (
@@ -113,7 +104,12 @@ const Home = ({ navigation }) => {
     <>
       <SearchBar />
       <View style={styles.container}>
+      <View style={styles.header}>
         <Text style={styles.sectionTitle}>Deals for you</Text>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Icon name="logout" size={24} color="gray" />
+          </TouchableOpacity>
+        </View>
         {renderProducts()}
       </View>
     </>
@@ -128,8 +124,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 10,
-    backgroundColor: "#7041EE",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    backgroundColor: "#fff",
+  },
+  logoutButton: {
+    padding: 5,
   },
   searchContainer: {
     flexDirection: "row",

@@ -33,11 +33,16 @@ export const retrieveData = async (key) => {
 export const clearAsyncStorage = async () => {
   try {
     await AsyncStorage.clear();
-    // console.log('AsyncStorage cleared successfully.');
+    console.log('AsyncStorage cleared successfully.');
   } catch (error) {
     console.error("Error clearing AsyncStorage:", error);
   }
+
+
+ 
+
 };
+
 
 // Store user ID from token
 export const storeUserIdFromToken = async (token) => {
