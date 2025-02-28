@@ -36,7 +36,7 @@ function* loginSaga(action) {
       const token = response.data.token || response.data;
       const userPassword = userData.password; // Save user-entered password
       console.log("Received Token:", token);
-      
+  
       yield call(handleTokenReceived, token);
       yield call(storeData, "token", token);
       yield call(storeData, "password", userPassword); // Store the password safely

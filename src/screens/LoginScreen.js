@@ -12,38 +12,73 @@ import {
 import { CheckBox } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "../redux/auth/authSlice";
+import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const { token, loginError, loading } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    console.log("Token in useEffect:", token);  // Add this for debugging
-    if (token) {
-      navigation.navigate("home");
-    } else if (loginError) {
-      Alert.alert("Login Failed", loginError);
-    }
-  }, [token, loginError]);
-  
+  const { loading, error, token } = useSelector((state) => state.auth);
 
   const gotoRegister = () => {
     navigation.navigate("register");
   };
 
-  const handleLogin = () => {
-    if (!username || !password) {
-      Alert.alert("Validation Error", "Please enter both username and password.");
-      return;
+  const handleLogin = async () => {
+    try {
+      if (!username || !password) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Please enter username and password",
+        });
+        return;
+      }
+
+      const userData = { username, password };
+      dispatch(loginRequest(userData));
+
+      // Check if login was successful
+      setTimeout(() => {
+        if (token) {
+          Toast.show({
+            type: "success",
+            text1: "Login Success",
+            text2: "You have successfully logged in",
+          });
+          navigation.navigate("home");
+        } else if (error) {
+          Toast.show({
+            type: "error",
+            text1: "Login Failed",
+            text2: "Server Error, Try again later",
+          });
+        }
+      }, 1000); // Wait for Redux state update
+    } catch (err) {
+      console.error("Login error:", err);
+
     }
     dispatch(loginRequest({ username, password }));
   };
 
   return (
     <View style={styles.container}>
+      {/* Toast Container */}
+      <View style={styles.toastStyle}>
+        <Toast />
+      </View>
+      {/* Back Button */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <Ionicons name="arrow-back" size={24} color="black" />
+      </TouchableOpacity>
+
       <Text style={styles.logo}>TRADEZY.in</Text>
       <StatusBar style="auto" />
 
@@ -125,6 +160,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
+  },
+  toastStyle: {
+    zIndex: 20,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 0,
   },
   card: {
     width: "100%",

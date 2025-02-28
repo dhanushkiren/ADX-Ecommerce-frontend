@@ -32,7 +32,6 @@ const CartPage = () => {
     }
   }, [dispatch, userId]);
 
-
   const handleAddToCart = (item) => {
     dispatch(
       addToCartRequest({
@@ -41,7 +40,7 @@ const CartPage = () => {
       })
     );
   };
-  
+
   const handleIncreaseQuantity = (item) => {
     dispatch(
       addToCartRequest({
@@ -135,13 +134,13 @@ const CartPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text>{error}</Text>
-      </View>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <View style={styles.errorContainer}>
+  //       <Text>{error}</Text>
+  //     </View>
+  //   );
+  // }
 
   if (Object.keys(loadingItems).length === 0 && loading) {
     return (
@@ -158,12 +157,14 @@ const CartPage = () => {
         <Text style={styles.cartText}>My Cart</Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.deselectAllButton}
-        onPress={handleDeselectAll}
-      >
-        <Text style={styles.deselectAllText}>Deselect all items</Text>
-      </TouchableOpacity>
+      {cartItems.length > 0 && (
+        <TouchableOpacity
+          style={styles.deselectAllButton}
+          onPress={handleDeselectAll}
+        >
+          <Text style={styles.deselectAllText}>Deselect all</Text>
+        </TouchableOpacity>
+      )}
 
       {cartItems.map((item) => (
         <View style={styles.productContainer} key={item.id}>
@@ -209,12 +210,8 @@ const CartPage = () => {
             </View>
 
             <TouchableOpacity
-  onPress={() => handleAddToCart(item)}
- 
->
-  
-</TouchableOpacity>
-
+              onPress={() => handleAddToCart(item)}
+            ></TouchableOpacity>
 
             <View style={styles.actionButtons}>
               <TouchableOpacity
@@ -247,7 +244,21 @@ const CartPage = () => {
       </View>
       <TouchableOpacity
         style={styles.proceedToBuyButton}
-        onPress={null} // Add functionality for Proceed to Buy
+        onPress={() => {
+          const selectedProducts = cartItems.filter(
+            (item) => selectedItems[item.id]
+          );
+
+          if (selectedProducts.length === 0) {
+            Alert.alert(
+              "No items selected",
+              "Please select at least one item to proceed."
+            );
+            return;
+          }
+
+          navigation.navigate("Order Checkout", { products: selectedProducts });
+        }}
       >
         <Text style={styles.proceedToBuyText}>
           Proceed to Buy ({selectedCount} items)
@@ -262,6 +273,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingBottom: 10,
+  },
+  deselectAllButton: {
+    alignSelf: "flex-end",
+    backgroundColor: "red",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+    marginVertical: 10,
+    marginRight: 10,
+  },
+  deselectAllText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   header: {
     padding: 18,
@@ -359,12 +384,6 @@ const styles = StyleSheet.create({
   quantityText: {
     marginHorizontal: 8,
     fontSize: 16,
-  },
-
-  deselectAllText: {
-    fontSize: 20,
-    color: "#333",
-    alignItems: "left",
   },
   deliveryContainer: {
     padding: 16,
