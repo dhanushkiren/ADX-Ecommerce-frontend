@@ -13,6 +13,6 @@ export default function* rootSaga() {
     fork(watchUpdateProfile),
     fork(watchFetchProfile),
     fork(watchProductFetch),
-    
+
   ]);
 }

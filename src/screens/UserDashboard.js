@@ -1,24 +1,34 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import { FontAwesome } from "@expo/vector-icons"; // To use FontAwesome icons
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons"; 
+import { clearAsyncStorage } from "../utils/asyncStorage";
 
 const UserDashboard = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Header with Back Button */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <FontAwesome name="arrow-left" size={24} color="#2C2929" />
         </TouchableOpacity>
         <Text style={styles.headerText}>USER DASHBOARD</Text>
       </View>
 
-      {/* Content Section */}
       <View style={styles.content}>
         <Text style={styles.title}>ORDERS</Text>
-        
-        {/* Dashboard Options */}
-        <TouchableOpacity style={styles.option}>
+
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => navigation.navigate("history")}
+        >
           <Text style={styles.optionText}>Order History</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>
@@ -47,6 +57,17 @@ const UserDashboard = ({ navigation }) => {
         <TouchableOpacity style={styles.option}>
           <Text style={styles.optionText}>Refund Tracking</Text>
         </TouchableOpacity>
+
+        {/* Logout Button - Styled as per your request */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={async () => {
+            await clearAsyncStorage();
+            navigation.replace("login");
+          }}
+        >
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -54,8 +75,9 @@ const UserDashboard = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     backgroundColor: "#f9f9f9",
-    paddingBottom: 20,  // To provide space at the bottom when scrolling
+    paddingBottom: 60,
   },
   header: {
     flexDirection: "row",
@@ -78,6 +100,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   content: {
+    flex: 1, 
     padding: 20,
   },
   title: {
@@ -95,6 +118,19 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     color: "#fff",
+  },
+  logoutButton: {
+    padding: 15,
+    borderWidth: 2,
+    borderColor: "red",
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: "red",
+    fontWeight: "bold",
   },
 });
 

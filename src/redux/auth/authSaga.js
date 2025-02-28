@@ -5,6 +5,7 @@ import { clearAsyncStorage } from "../../utils/asyncStorage";
 import { storeData } from "../../utils/asyncStorage";
 import { apiConfig } from "../../utils/apiConfig";
 import { use } from "react";
+import { handleTokenReceived } from "../../utils/asyncStorage";
 
 // Worker Saga for login
 function* loginSaga(action) {
@@ -21,6 +22,7 @@ function* loginSaga(action) {
       const token = response.data;
       // Store token in async storage
       console.log("token::", token);
+      yield call(handleTokenReceived, token);
       yield call(storeData, "token", token);
 
       // Dispatch login success action with token and user data

@@ -33,7 +33,7 @@ const LoginScreen = ({ navigation }) => {
 
       // Dispatch the loginRequest action with the user data
       dispatch(loginRequest(userData));
-      navigation.navigate("menu");
+      navigation.navigate("home");
     } catch (error) {
       // If an error occurs, you can handle it here if necessary
       console.error("Login error:", error);

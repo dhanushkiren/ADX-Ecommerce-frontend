@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function PlaceOrder({ route }) {
   // Ensure products is always an array to avoid undefined errors
@@ -15,6 +16,7 @@ export default function PlaceOrder({ route }) {
 
   // Debugging: Log the products array
   console.log("Products Data:", products);
+
 
   const [address, setAddress] = useState({
     name: 'John Doe',
@@ -24,6 +26,22 @@ export default function PlaceOrder({ route }) {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [newAddress, setNewAddress] = useState({ ...address });
+  const [cartItems, setCartItems] = useState([]); // Store API response
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch('http://192.168.1.3:8080/api/cart/1'); // Replace with your actual API endpoint
+      const data = await response.json();
+      setCartItems(data);
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+    }
+  };
 
   const handleSaveAddress = () => {
     setAddress(newAddress);
@@ -33,10 +51,12 @@ export default function PlaceOrder({ route }) {
   // Calculate total price dynamically
   const totalAmount = products.reduce((sum, item) => sum + (item.price || 0), 0);
 
+
   return (
     <ScrollView style={styles.container}>
       {/* Order Summary */}
       <View style={styles.section}>
+
       <Text style={styles.sectionTitle}>Order Summary</Text>
       {products.length > 0 ? (
       products.map((item, index) => (
@@ -86,7 +106,7 @@ export default function PlaceOrder({ route }) {
       </View>
 
       {/* Place Order Button */}
-      <TouchableOpacity style={styles.placeOrderButton}>
+      <TouchableOpacity style={styles.placeOrderButton} onPress={() => navigation.navigate('payment')}>
         <Text style={styles.buttonText}>Place Order</Text>
       </TouchableOpacity>
 
@@ -100,37 +120,26 @@ export default function PlaceOrder({ route }) {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Edit Address</Text>
-
             <TextInput
               style={styles.input}
               placeholder="Name"
               value={newAddress.name}
-              onChangeText={(text) =>
-                setNewAddress((prev) => ({ ...prev, name: text }))
-              }
+              onChangeText={(text) => setNewAddress((prev) => ({ ...prev, name: text }))}
             />
             <TextInput
               style={styles.input}
               placeholder="Street"
               value={newAddress.street}
-              onChangeText={(text) =>
-                setNewAddress((prev) => ({ ...prev, street: text }))
-              }
+              onChangeText={(text) => setNewAddress((prev) => ({ ...prev, street: text }))}
             />
             <TextInput
               style={styles.input}
               placeholder="City"
               value={newAddress.city}
-              onChangeText={(text) =>
-                setNewAddress((prev) => ({ ...prev, city: text }))
-              }
+              onChangeText={(text) => setNewAddress((prev) => ({ ...prev, city: text }))}
             />
-
             <View style={styles.modalButtonContainer}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleSaveAddress}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={handleSaveAddress}>
                 <Text style={styles.modalButtonText}>Save</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -167,6 +176,9 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  itemContainer: {
     marginBottom: 10,
   },
   itemRow: {
