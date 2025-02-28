@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditProfile from "./src/components/EditProfile";
-// import ConfirmOrder from "./src/screens/orders/ConfirmOrder";
 import Placeorder from "./src/screens/orders/Placeorder";
 import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
@@ -95,7 +94,6 @@ function MyStack() {
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="search" component={SearchBar} />
         <Stack.Screen name="cart" component={CartPage} />
-        {/* <Stack.Screen name="confirm order" component={ConfirmOrder} /> */}
         <Stack.Screen name="order checkout" component={Placeorder} />
         <Stack.Screen name="orders" component={Orderscreencomponent} />
         <Stack.Screen name="history" component={Orderhistorycomponent} />
