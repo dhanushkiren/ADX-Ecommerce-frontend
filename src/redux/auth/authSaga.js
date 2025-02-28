@@ -20,6 +20,7 @@ function* loginSaga(action) {
     if (response.status === 200) {
       console.log("Login Success");
       const token = response.data;
+      console.log("token::", token);
       // Store token in async storage
       console.log("token::", token);
       yield call(handleTokenReceived, token);

@@ -1,5 +1,5 @@
 import { Image, StyleSheet, View } from "react-native";
-import Icon from "../../assets/favicon.svg";
+import Icon from "../../assets/logo.jpeg";
 
 export default function SplashScreen() {
   return (
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "black",
   },
   image: {
     width: 100,

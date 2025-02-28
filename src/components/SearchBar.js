@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Image,
   TextInput,
   Modal,
   Animated,
@@ -87,9 +88,16 @@ const SearchBar = ({ routeName, name }) => {
     <View style={styles.container}>
       {/* Search Bar */}
       <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.navigate('home')}>
-  <Icon name="arrow-back" size={24} color="#fff" />
-</TouchableOpacity>
+        {route.name === "home" ? (
+          <Image
+            source={require("../../assets/logo1.png")}
+            style={styles.profileImage}
+          />
+        ) : (
+          <TouchableOpacity onPress={() => navigation.navigate("home")}>
+            <Icon name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
 
         <View style={styles.searchInput}  >
           <Icon name="search" size={24} color="#ccc" style={styles.icon} />
@@ -300,6 +308,12 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 15,
   },
+  profileImage:{
+    height: '70%',
+    width: '23%',
+    marginLeft: -21,
+    marginTop: 8
+  },
   iconsContainer: {
     flexDirection: "row",
     marginLeft: 10,
@@ -337,7 +351,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 40,
     marginRight: 20,
-    marginLeft: 20,
     alignItems: "center",
   },
   searchInputText: {

@@ -10,7 +10,14 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Placeorder() {
+export default function PlaceOrder({ route }) {
+  // Ensure products is always an array to avoid undefined errors
+  const { products = [] } = route.params || {};
+
+  // Debugging: Log the products array
+  console.log("Products Data:", products);
+
+
   const [address, setAddress] = useState({
     name: 'John Doe',
     street: '123 Main St, Apt 4B',
@@ -41,32 +48,43 @@ export default function Placeorder() {
     setModalVisible(false);
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
+  // Calculate total price dynamically
+  const totalAmount = products.reduce((sum, item) => sum + (item.price || 0), 0);
+
 
   return (
     <ScrollView style={styles.container}>
       {/* Order Summary */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Order Summary</Text>
-        {cartItems.length > 0 ? (
-          cartItems.map((item) => (
-            <View key={item.id} style={styles.itemContainer}>
-              <View style={styles.itemRow}>
-                <Text style={styles.itemName}>{item.productName}</Text>
-                <Text style={styles.itemPrice}>₹{item.price}</Text>
-              </View>
-              <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
-            </View>
+
+      <Text style={styles.sectionTitle}>Order Summary</Text>
+      {products.length > 0 ? (
+      products.map((item, index) => (
+        <View key={index} style={styles.itemRow}>
+          {/* Product Image */}
+          {item.image ? (
+            <Image 
+            source={{ uri: item.image}} 
+            style={styles.itemImage} 
+          />
+          
+          ) : (
+            <Text style={styles.noImageText}>No Image</Text>
+          )}
+          {/* Product Name & Price */}
+          <View style={styles.itemDetails}>
+            <Text style={styles.itemName}>{item.productName || "No Name Available"}</Text>
+            <Text style={styles.itemPrice}>₹{item.price || "0.00"}</Text>
+          </View>
+        </View>
           ))
         ) : (
-          <Text>Loading...</Text>
+          <Text style={styles.emptyCartText}>No items selected</Text>
         )}
 
         <View style={styles.totalRow}>
           <Text style={styles.totalText}>Total:</Text>
-          <Text style={styles.totalPrice}>₹{calculateTotal()}</Text>
+          <Text style={styles.totalPrice}>₹{totalAmount}</Text>
         </View>
       </View>
 
@@ -84,7 +102,7 @@ export default function Placeorder() {
       {/* Payment Details */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Payment Details</Text>
-        <Text style={styles.totalAmount}>Total Amount: ₹{calculateTotal()}</Text>
+        <Text style={styles.totalAmount}>Total Amount: ₹{totalAmount}</Text>
       </View>
 
       {/* Place Order Button */}
@@ -170,14 +188,12 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 14,
+    fontWeight: 'bold', // Added bold for better visibility
+    color: '#333',
   },
   itemPrice: {
     fontSize: 14,
-  },
-  itemQuantity: {
-    fontSize: 12,
-    color: '#777',
-    marginBottom: 10,
+    color: '#555',
   },
   totalRow: {
     flexDirection: 'row',
@@ -222,6 +238,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  emptyCartText: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#777',
+    marginVertical: 10,
   },
   modalContainer: {
     flex: 1,
@@ -272,3 +294,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+

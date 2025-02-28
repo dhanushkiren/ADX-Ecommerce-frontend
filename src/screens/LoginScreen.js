@@ -9,14 +9,17 @@ import {
   Alert,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { useDispatch } from "react-redux";
-import { loginRequest, loginFailure } from "../redux/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest } from "../redux/auth/authSlice";
+import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const { loading, error, token } = useSelector((state) => state.auth);
 
   const gotoRegister = () => {
     navigation.navigate("register");
@@ -24,25 +27,54 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      // Dispatch loginRequest to update loading state
-      const userData = {
-        username,
-        password,
-      };
-      console.log("dkdk :", userData);
+      if (!username || !password) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Please enter username and password",
+        });
+        return;
+      }
 
-      // Dispatch the loginRequest action with the user data
+      const userData = { username, password };
       dispatch(loginRequest(userData));
-      navigation.navigate("home");
-    } catch (error) {
-      // If an error occurs, you can handle it here if necessary
-      console.error("Login error:", error);
+
+      // Check if login was successful
+      setTimeout(() => {
+        if (token) {
+          Toast.show({
+            type: "success",
+            text1: "Login Success",
+            text2: "You have successfully logged in",
+          });
+          navigation.navigate("home");
+        } else if (error) {
+          Toast.show({
+            type: "error",
+            text1: "Login Failed",
+            text2: "Server Error, Try again later",
+          });
+        }
+      }, 1000); // Wait for Redux state update
+    } catch (err) {
+      console.error("Login error:", err);
     }
   };
 
-
   return (
     <View style={styles.container}>
+      {/* Toast Container */}
+      <View style={styles.toastStyle}>
+        <Toast />
+      </View>
+      {/* Back Button */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <Ionicons name="arrow-back" size={24} color="black" />
+      </TouchableOpacity>
+
       <Text style={styles.logo}>TRADEZY.in</Text>
       <StatusBar style="auto" />
 
@@ -124,6 +156,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
+  },
+  toastStyle: {
+    zIndex: 20,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 0,
   },
   card: {
     width: "100%",
