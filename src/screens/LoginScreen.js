@@ -1,5 +1,6 @@
+// LoginScreen.js
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -19,6 +20,7 @@ const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+
   const { loading, error, token } = useSelector((state) => state.auth);
 
   const gotoRegister = () => {
@@ -58,7 +60,9 @@ const LoginScreen = ({ navigation }) => {
       }, 1000); // Wait for Redux state update
     } catch (err) {
       console.error("Login error:", err);
+
     }
+    dispatch(loginRequest({ username, password }));
   };
 
   return (
@@ -97,15 +101,18 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Login</Text>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.loginButtonText}>
+            {loading ? "Logging in..." : "Login"}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.checkboxContainer}>
-          <CheckBox
-            checked={isChecked}
-            onPress={() => setChecked(!isChecked)}
-          />
+          <CheckBox checked={isChecked} onPress={() => setChecked(!isChecked)} />
           <Text style={{ fontWeight: "bold", marginLeft: -15 }}>
             Keep me signed in.
           </Text>
@@ -120,10 +127,7 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.newAccountText}>New to Tradezy?</Text>
             <View style={styles.line} />
           </View>
-          <TouchableOpacity
-            onPress={gotoRegister}
-            style={styles.createAccountButton}
-          >
+          <TouchableOpacity onPress={gotoRegister} style={styles.createAccountButton}>
             <Text style={styles.createAccountText}>
               Create your Tradezy account
             </Text>
