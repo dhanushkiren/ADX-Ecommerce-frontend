@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,30 +8,57 @@ import {
   TextInput,
   Keyboard,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
-const SearchResults = ({ navigation, route }) => {
-  const [recentSearches, setRecentSearches] = useState(route.params?.recentSearches || []);
+const SearchResults = ({ navigation }) => {
+  const [recentSearches, setRecentSearches] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
 
-  const handleSearch = () => {
-    if (searchQuery) {
+  useEffect(() => {
+    loadRecentSearches();
+  }, []);
+
+  const loadRecentSearches = async () => {
+    try {
+      const storedSearches = await AsyncStorage.getItem("recentSearches");
+      if (storedSearches) {
+        setRecentSearches(JSON.parse(storedSearches));
+      }
+    } catch (error) {
+      console.error("Error loading recent searches:", error);
+    }
+  };
+
+  const saveRecentSearches = async (searches) => {
+    try {
+      await AsyncStorage.setItem("recentSearches", JSON.stringify(searches));
+    } catch (error) {
+      console.error("Error saving recent searches:", error);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (searchQuery.trim()) {
       let updatedSearches = [...recentSearches];
       const existingIndex = updatedSearches.indexOf(searchQuery);
       if (existingIndex !== -1) {
         updatedSearches.splice(existingIndex, 1);
       }
-      updatedSearches = [searchQuery, ...updatedSearches];
+      updatedSearches = [searchQuery, ...updatedSearches.slice(0, 9)]; // Keep max 10 searches
       setRecentSearches(updatedSearches);
+      saveRecentSearches(updatedSearches);
       setSearchQuery("");
       Keyboard.dismiss();
       navigation.navigate("searchlist", { searchQuery });
     }
   };
 
-  const removeSearchItem = (item) => {
-    setRecentSearches(recentSearches.filter((search) => search !== item));
+  const removeSearchItem = async (item) => {
+    const filteredSearches = recentSearches.filter((search) => search !== item);
+    setRecentSearches(filteredSearches);
+    saveRecentSearches(filteredSearches);
   };
 
   const displayedSearches = showAll ? recentSearches : recentSearches.slice(0, 3);
@@ -46,7 +73,7 @@ const SearchResults = ({ navigation, route }) => {
           value={searchQuery}
           onChangeText={setSearchQuery}
           returnKeyType="search"
-          onSubmitEditing={handleSearch} 
+          onSubmitEditing={handleSearch}
         />
       </View>
       <FlatList
