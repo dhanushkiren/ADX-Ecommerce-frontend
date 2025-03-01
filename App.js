@@ -31,7 +31,14 @@ import { useNavigationState } from '@react-navigation/native';
 
 import UserDashboard from "./src/screens/UserDashboard";
 import ChatBot from "./src/screens/ChatBot.js";
-
+import OrderStatusComponent from "./src/screens/orders/OrderStatusComponent.js";
+import PaymentStatusComponent from "./src/screens/orders/PaymentStatusComponent.js";
+import TransactionRecordsComponent from "./src/screens/TransactionRecordsComponent.js";
+import DeliveryStatusComponent from "./src/screens/DeliveryStatusComponent.js";
+import ReceiptComponent from "./src/screens/ReceiptComponent.js";
+import RefundTrackingComponent from "./src/screens/RefundTrackingComponent.js";
+import PaymentManagerComponent from "./src/screens/PaymentManagerComponent.js";
+import AddPaymentMethodComponent from "./src/screens/AddPaymentMethodComponent.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -77,8 +84,8 @@ function MyStack() {
   return (  
     <>  
       <Stack.Navigator
-        initialRouteName={token ? "home" : "login"}
-        // initialRouteName="product"
+        //initialRouteName={token ? "home" : "login"}
+        initialRouteName="UserDashboard"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -100,6 +107,14 @@ function MyStack() {
         <Stack.Screen name="SearchResults" component={SearchResults} />
         <Stack.Screen name="UserDashboard" component={UserDashboard} />
         <Stack.Screen name="ChatBot" component={ChatBot} />
+        <Stack.Screen name="OrderStatus" component={OrderStatusComponent} />
+        <Stack.Screen name="PaymentStatus" component={PaymentStatusComponent} />
+        <Stack.Screen name="Transaction" component={TransactionRecordsComponent} />
+        <Stack.Screen name="Deliverystatus" component={DeliveryStatusComponent} />
+        <Stack.Screen name="Receipt" component={ReceiptComponent} />
+        <Stack.Screen name="Refund" component={RefundTrackingComponent} />
+        <Stack.Screen name="Paymentmanager" component={PaymentManagerComponent} />
+        <Stack.Screen name="Paymentmethod" component={AddPaymentMethodComponent} />
       </Stack.Navigator>
 
 

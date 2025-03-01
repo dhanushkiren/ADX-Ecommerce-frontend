@@ -52,31 +52,60 @@ const UserDashboard = ({ navigation }) => {
         >
           <Text style={styles.optionText}>Order History</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Order Status</Text>
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("OrderStatus")}
+          >
+        <Text style={styles.optionText}>Order Status</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Payment Status</Text>
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("PaymentStatus")}
+          >
+        <Text style={styles.optionText}>Payment Status</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Transaction Records</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Delivery Status</Text>
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Transaction")}
+          >
+        <Text style={styles.optionText}>Transaction Records</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Deliverystatus")}
+          >
+        <Text style={styles.optionText}>Delivery Status</Text>
+        </TouchableOpacity>
+      
         <Text style={styles.title}>PAYMENT OPTIONS</Text>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Payment Manager</Text>
+
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Paymentmanager")}
+          >
+        <Text style={styles.optionText}>Payment Manager</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Payment Method</Text>
+
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Paymentmethod")}
+          >
+        <Text style={styles.optionText}>Payment Method</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Receipt</Text>
+
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Receipt")}
+          >
+        <Text style={styles.optionText}>Receipt</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option}>
-          <Text style={styles.optionText}>Refund Tracking</Text>
+        
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Refund")}
+          >
+        <Text style={styles.optionText}>Refund Tracking</Text>
         </TouchableOpacity>
 
         {/* Login/Logout Button */}
