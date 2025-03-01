@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,30 @@ import {
   ScrollView,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons"; 
-import { clearAsyncStorage } from "../utils/asyncStorage";
+import { clearAsyncStorage, retrieveData } from "../utils/asyncStorage";
 
 const UserDashboard = ({ navigation }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await retrieveData("token"); // Retrieve the token
+      setIsLoggedIn(!!token); // If token exists, set isLoggedIn to true
+    };
+
+    checkToken();
+  }, []);
+
+  const handleAuthAction = async () => {
+    if (isLoggedIn) {
+      await clearAsyncStorage(); // Clear token
+      setIsLoggedIn(false); // Update state
+      navigation.replace("login"); // Redirect to login
+    } else {
+      navigation.navigate("login"); // Navigate to login
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -58,15 +79,9 @@ const UserDashboard = ({ navigation }) => {
           <Text style={styles.optionText}>Refund Tracking</Text>
         </TouchableOpacity>
 
-        {/* Logout Button - Styled as per your request */}
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={async () => {
-            await clearAsyncStorage();
-            navigation.replace("login");
-          }}
-        >
-          <Text style={styles.logoutText}>Logout</Text>
+        {/* Login/Logout Button */}
+        <TouchableOpacity style={styles.authButton} onPress={handleAuthAction}>
+          <Text style={styles.authText}>{isLoggedIn ? "Logout" : "Login"}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -119,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
   },
-  logoutButton: {
+  authButton: {
     padding: 15,
     borderWidth: 2,
     borderColor: "red",
@@ -127,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  logoutText: {
+  authText: {
     fontSize: 16,
     color: "red",
     fontWeight: "bold",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -51,8 +51,6 @@ const SearchBar = ({ routeName, name }) => {
         const storedUserId = await retrieveData("userId");
         if (storedUserId) {
           setUserId(storedUserId);
-        } else {
-          Alert.alert("Error", "User ID not found in storage.");
         }
       } catch (error) {
         console.error("Error fetching userId:", error);
@@ -77,7 +75,7 @@ const SearchBar = ({ routeName, name }) => {
   const userAddress =
     userProfile?.addresses?.length > 0
       ? userProfile.addresses.map((addr) => addr.street || "").filter(Boolean).join(", ")
-      : "No address available";
+      : false;
   // console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
@@ -168,11 +166,11 @@ const SearchBar = ({ routeName, name }) => {
           </View>
         )}
       </View>
-
+        {userAddress && (
       <View style={styles.location}>
         <Icon name="location-on" size={24} color="#fff" style={styles.icon} />
         <Text style={styles.locationText}>{userAddress}</Text>
-      </View>
+      </View>)}
 
       {(isSortVisible || isFilterVisible) && (
         <TouchableWithoutFeedback

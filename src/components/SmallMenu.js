@@ -4,7 +4,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useNavigation } from "@react-navigation/native";
 
 const SmallMenu = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -28,13 +28,7 @@ const SmallMenu = () => {
         <MaterialCommunityIcons name="cart" size={30} color="#fff" />
         <Text style={styles.menuLabel}>Cart</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.menuItem}
-        onPress={() => navigation.navigate("product")}
-      >
-        <MaterialCommunityIcons name="wallet" size={30} color="#fff" />
-        <Text style={styles.menuLabel}>Product</Text>
-      </TouchableOpacity>
+      
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => navigation.navigate("UserDashboard")}

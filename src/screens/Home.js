@@ -35,15 +35,7 @@ const Home = ({ navigation }) => {
     }
   }, [dispatch, products]);
 
-  const handleLogout = async() => {
-    console.log('Logout initiated');
-  
-   
-  await clearAsyncStorage();           // Clear token from Redux
-  //navigation.replace("login"); 
-    console.log('Storage and Redux token cleared');
-      // Navigate to login screen
-  };
+
 
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
@@ -105,9 +97,6 @@ const Home = ({ navigation }) => {
       <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.sectionTitle}>Deals for you</Text>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-            <Icon name="logout" size={24} color="gray" />
-          </TouchableOpacity>
         </View>
         {renderProducts()}
       </View>
@@ -119,6 +108,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
+    marginBottom: 50
   },
   header: {
     flexDirection: "row",
@@ -167,8 +157,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    marginVertical: 10,
-    paddingHorizontal: 10,
+    // marginVertical: 10,
+    // paddingHorizontal: 10,
   },
   productListContainer: {
     paddingHorizontal: 10,

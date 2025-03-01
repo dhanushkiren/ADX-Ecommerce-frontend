@@ -46,6 +46,7 @@ function* addToCartSaga(action) {
 // Worker Saga for viewing cart
 function* viewCartSaga(action) {
   const { userId } = action.payload;
+  console.log("viewCartSaga", action.payload);
   try {
     const response = yield call(axios.get, apiConfig.viewCart(userId));
     yield put(viewCartSuccess(response.data));

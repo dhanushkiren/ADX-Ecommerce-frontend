@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -13,13 +13,29 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { productImages, productDetails } from "../utils/data"; 
 import { useDispatch } from 'react-redux'; 
 import { addToCartRequest } from "../redux/cart/cartSlice";
+import { retrieveData } from "../utils/asyncStorage";
 
 export default function ProductPage({ route, navigation }) { // Added route prop
   const { product } = route.params; 
+  
+const [userID, setUserID] = useState(null);
+useEffect(() => {
+  const getUserId = async () => {
+    const storedUserId = await retrieveData("userId");
+    console.log("Retrieved User ID:", storedUserId);
+    setUserID(storedUserId);
+  };
+
+  getUserId();
+}, []);
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-    console.log(21,product)
+    if (!userID) {
+      Alert.alert("Login Required", "You need to log in to add products to the cart.");
+      return;
+    }
+    // console.log(21,product)
     const productData = {
       productId: product.id,
       productName: product.name,
@@ -27,10 +43,11 @@ export default function ProductPage({ route, navigation }) { // Added route prop
       quantity: 1, // Default quantity when adding to cart
 
       imageUrl: product.imageUrl,
-      userId:"1",
+      // userId:"1",
     };
 
-    dispatch(addToCartRequest({userId:"1",productData:productData})); // Dispatch action
+
+    dispatch(addToCartRequest({userId:userID,productData:productData})); // Dispatch action
 
     Alert.alert("Success", product.name + " added to cart!");
 
@@ -90,7 +107,7 @@ export default function ProductPage({ route, navigation }) { // Added route prop
 
       
         {/* Bestseller Tag */}
-      <Text style={styles.bestSellerTag}>{productDetails.bestsellerTag}</Text>
+      {/* <Text style={styles.bestSellerTag}>{productDetails.bestsellerTag}</Text> */}
       <View style={styles.productDetailsContainer}>
         <Text style={styles.productTitle}>{product.name}</Text>
         <Text style={styles.discountText}>Price: ₹{product.price}</Text>
@@ -106,25 +123,25 @@ export default function ProductPage({ route, navigation }) { // Added route prop
         </View>
 
         {/* Order Info */}
-      <Text style={styles.orderInfo}>{productDetails.orderInfo}</Text>
+      {/* <Text style={styles.orderInfo}>{productDetails.orderInfo}</Text> */}
 
         {/* Seller Info */}
         {/* <Text style={styles.sellerTitle}>{productDetails.sellerInfo.title}</Text>
         <Text style={styles.sellerProductTitle}>
           {productDetails.sellerInfo.productTitle} */}
         {/* </Text> */}
-        <Text style={styles.rating}>{productDetails.sellerInfo.rating}</Text>
+        {/* <Text style={styles.rating}>{productDetails.sellerInfo.rating}</Text> */}
 
         {/* Offer Section */}
-        <Text style={styles.offerTag}>{productDetails.offerTag}</Text>
-        <Text style={styles.deliveryInfo}>{productDetails.deliveryInfo}</Text>
+        {/* <Text style={styles.offerTag}>{productDetails.offerTag}</Text>
+        <Text style={styles.deliveryInfo}>{productDetails.deliveryInfo}</Text> */}
 
         {/* EMI Section */}
-        {productDetails.emiInfo.map((emi, index) => (
+        {/* {productDetails.emiInfo.map((emi, index) => (
           <Text key={index} style={styles.emiText}>
             {emi}
           </Text>
-        ))}
+        ))} */}
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.emiButton} onPress={handleAddToCart}>
@@ -140,7 +157,7 @@ export default function ProductPage({ route, navigation }) { // Added route prop
 
         {/* Product Description Table */}
         <View style={styles.tableContainer}>
-          {productDetails.technicalDetails.map((detail, index) => (
+          {/* {productDetails.technicalDetails.map((detail, index) => (
             <View key={index} style={styles.tableRow}>
               <View style={[styles.tableCellHeader, styles.leftCell]}>
                 <Text>{detail.key}</Text>
@@ -149,7 +166,7 @@ export default function ProductPage({ route, navigation }) { // Added route prop
                 <Text>{detail.value}</Text>
               </View>
             </View>
-          ))}
+          ))} */}
         </View>
       </View>
     </ScrollView>

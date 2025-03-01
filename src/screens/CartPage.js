@@ -17,6 +17,7 @@ import {
   deleteCartItemRequest,
   clearCartRequest,
 } from "../redux/cart/cartSlice";
+import { retrieveData } from "../utils/asyncStorage";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -24,10 +25,22 @@ const CartPage = () => {
   const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
 
   const [selectedItems, setSelectedItems] = useState({}); // Added state for selectedItems
-  const userId = "1"; // Replace with actual user ID from context or props.
+
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const storedUserId = await retrieveData("userId");
+      console.log("Retrieved User ID:", storedUserId);
+      setUserId(storedUserId);
+    };
+
+    getUserId();
+  }, []); // Replace with actual user ID from context or props.
 
   useEffect(() => {
     if (userId) {
+      console.log("dk id :", userId);
       dispatch(viewCartRequest({ userId }));
     }
   }, [dispatch, userId]);
