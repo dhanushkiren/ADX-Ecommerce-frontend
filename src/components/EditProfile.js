@@ -333,7 +333,7 @@ const EditProfile = ({ route, navigation }) => {
     };
 
     // ✅ Log API Response for Debugging
-    console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
+    // console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
 
     // ✅ Image Handling
     if (profile.image && isValidBase64(profile.image)) {
@@ -377,9 +377,7 @@ const EditProfile = ({ route, navigation }) => {
     setAddress3(addresses[2] || "");
     setCountry(profile.country || "");
     setMobile(profile.mobile || "");
-    setDateOfBirth(
-      profile.date_of_birth ? new Date(profile.date_of_birth) : null
-    );
+    setDateOfBirth(profile.date_of_birth || "");
 
     // ✅ Normalize BASE_URL
     const BASE_URL = API_BASE_URL.replace(/\/$/, "").replace(/\/api$/, "");
@@ -393,7 +391,7 @@ const EditProfile = ({ route, navigation }) => {
         : `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 
     // ✅ Log API Response for Debugging
-    console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
+    // console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
 
     // ✅ Image Handling
     if (
@@ -489,12 +487,12 @@ const EditProfile = ({ route, navigation }) => {
   };
 
   const validateProfileData = () => {
-    if (!firstName || firstName.trim() === "") return "First name is required.";
-    if (!lastName || lastName.trim() === "") return "Last name is required.";
-    if (!mobile || mobile.trim() === "") return "Mobile number is required.";
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      return "A valid email is required.";
-    }
+    // if (!firstName || firstName.trim() === "") return "First name is required.";
+    // if (!lastName || lastName.trim() === "") return "Last name is required.";
+    // if (!mobile || mobile.trim() === "") return "Mobile number is required.";
+    // if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    //   return "A valid email is required.";
+    // }
     return null; // ✅ No validation errors
   };
   const handleUpdateProfile = async () => {
@@ -507,16 +505,17 @@ const EditProfile = ({ route, navigation }) => {
         return;
       }
 
-      if (!dateOfBirth) {
-        Alert.alert("Error", "Please select a date of birth.");
-        return;
-      }
+      // if (!dateOfBirth) {
+      //   Alert.alert("Error", "Please select a date of birth.");
+      //   return;
+      // }
 
       // ✅ Convert date to backend expected format: "dd/MM/yyyy"
       const formattedDateOfBirth = moment(dateOfBirth).format("DD/MM/YYYY");
 
       // ✅ Create an array for addresses
       const addresses = [address1, address2, address3].filter(Boolean);
+      
 
       // ✅ Retrieve password from AsyncStorage
       const storedPassword = await retrieveData("password");
@@ -535,7 +534,7 @@ const EditProfile = ({ route, navigation }) => {
       formData.append("role", role || "");
       formData.append(
         "addresses",
-        addresses.length > 0 ? addresses.join(",") : ""
+        addresses.length > 0 ? addresses.join(",") : []
       );
 
       // ✅ Always send password to avoid backend resetting it
@@ -566,30 +565,31 @@ const EditProfile = ({ route, navigation }) => {
       }
 
       // ✅ Determine API URL & Method
-      const url = userId
-        ? `http://localhost:8080/api/users/${userId}`
-        : `http://localhost:8080/api/users`;
-      const method = userId ? "PUT" : "POST";
+      // const url = userId
+      //   ? `http://localhost:8080/api/users/${userId}`
+      //   : `http://localhost:8080/api/users`;
+      // const method = userId ? "PUT" : "POST";
 
-      console.log("📤 FormData Entries:");
-      for (let pair of formData.entries()) {
-        console.log("➡", pair[0], ":", pair[1]);
-      }
+      // console.log("📤 FormData Entries:");
+      // for (let pair of formData.entries()) {
+      //   console.log("➡", pair[0], ":", pair[1]);
+      // }
 
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          Authorization: `Bearer ${await retrieveData("token")}`,
-        },
-        body: formData,
-      });
+      // const response = await fetch(url, {
+      //   method: method,
+      //   headers: {
+      //     Authorization: `Bearer ${await retrieveData("token")}`,
+      //   },
+      //   body: formData,
+      // });
 
-      const textResponse = await response.text();
-      console.log("📢 Raw API Response:", textResponse);
+      // const textResponse = await response.text();
+      // console.log("📢 Raw API Response:", textResponse);
 
       try {
-        const jsonResponse = JSON.parse(textResponse);
-        console.log("✅ Converted JSON:", jsonResponse);
+        dispatch(updateProfileRequest({ id: userId, profileData: formData }));
+        // const jsonResponse = JSON.parse(textResponse);
+        // console.log("✅ Converted JSON:", jsonResponse);
         Alert.alert("Success", "Profile updated successfully!");
       } catch (error) {
         console.error("❌ JSON Parsing Error:", error);
@@ -597,7 +597,7 @@ const EditProfile = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error("❌ Error in handleUpdateProfile:", error);
-      Alert.alert("Update Failed", "An unexpected error occurred.");
+      Alert.alert(error);
     }
   };
 
@@ -698,9 +698,7 @@ const EditProfile = ({ route, navigation }) => {
                     style={styles.datePicker}
                   >
                     <Text style={styles.datePickerText}>
-                      {dateOfBirth
-                        ? moment(dateOfBirth).format("DD/MM/YYYY")
-                        : "Select Date of Birth"}
+                      {dateOfBirth}
                     </Text>
                   </TouchableOpacity>
                   <DateTimePickerModal
