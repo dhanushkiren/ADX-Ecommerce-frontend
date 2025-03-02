@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,36 +8,54 @@ import {
   TextInput,
   Keyboard,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
 const SearchResults = ({ navigation, route }) => {
-  const [recentSearches, setRecentSearches] = useState(route.params?.recentSearches || []);
+  const [recentSearches, setRecentSearches] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
 
-  const handleSearch = () => {
-    if (searchQuery) {
+  // Load recent searches from AsyncStorage when the component mounts
+  useEffect(() => {
+    const loadRecentSearches = async () => {
+      const savedSearches = await AsyncStorage.getItem("recentSearches");
+      if (savedSearches) {
+        setRecentSearches(JSON.parse(savedSearches));
+      }
+    };
+    loadRecentSearches();
+  }, []);
+
+  const handleSearch = async (query = searchQuery) => {
+    if (query.trim()) {
       let updatedSearches = [...recentSearches];
-      const existingIndex = updatedSearches.indexOf(searchQuery);
+      const existingIndex = updatedSearches.indexOf(query);
       if (existingIndex !== -1) {
         updatedSearches.splice(existingIndex, 1);
       }
-      updatedSearches = [searchQuery, ...updatedSearches];
+      updatedSearches = [query, ...updatedSearches.slice(0, 9)]; // Keep max 10 recent searches
+
       setRecentSearches(updatedSearches);
+      await AsyncStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+
       setSearchQuery("");
       Keyboard.dismiss();
-      navigation.navigate("searchlist", { searchQuery });
+      navigation.navigate("searchlist", { searchQuery: query });
     }
   };
 
-  const removeSearchItem = (item) => {
-    setRecentSearches(recentSearches.filter((search) => search !== item));
+  const removeSearchItem = async (item) => {
+    const filteredSearches = recentSearches.filter((search) => search !== item);
+    setRecentSearches(filteredSearches);
+    await AsyncStorage.setItem("recentSearches", JSON.stringify(filteredSearches));
   };
 
   const displayedSearches = showAll ? recentSearches : recentSearches.slice(0, 3);
 
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
       <View style={styles.searchBar}>
         <Ionicons name="search-outline" size={20} color="#555" style={styles.searchIcon} />
         <TextInput
@@ -46,9 +64,11 @@ const SearchResults = ({ navigation, route }) => {
           value={searchQuery}
           onChangeText={setSearchQuery}
           returnKeyType="search"
-          onSubmitEditing={handleSearch} 
+          onSubmitEditing={() => handleSearch()} 
         />
       </View>
+
+      {/* Recent Searches List */}
       <FlatList
         data={displayedSearches}
         keyExtractor={(item, index) => index.toString()}
@@ -57,7 +77,7 @@ const SearchResults = ({ navigation, route }) => {
             <View style={styles.searchItem}>
               <TouchableOpacity
                 style={{ flex: 1 }}
-                onPress={() => navigation.navigate("product", { searchQuery: item })}
+                onPress={() => handleSearch(item)}
               >
                 <Text style={styles.searchText}>{item}</Text>
               </TouchableOpacity>

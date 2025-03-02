@@ -3,14 +3,35 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
+import axios from "axios";
+import * as Linking from "expo-linking";
 
 const PaymentPage = () => {
   const [selectedOption, setSelectedOption] = useState(null);
-  const [upiMethod, setUpiMethod] = useState(null); // For UPI selection
+
+  const handleStripePayment = async () => {
+    try {
+      const response = await axios.post("http://192.168.1.2:8080/api/payment/checkout", {
+        name: "Sample Product",
+        amount: 202500, // Amount in paise (₹2025.00)
+        currency: "INR",
+        quantity: 1,
+      });
+
+      if (response.data.status === "SUCCESS") {
+        const sessionUrl = response.data.sessionUrl;
+        Linking.openURL(sessionUrl); // Open Stripe checkout in browser
+      } else {
+        Alert.alert("Payment Error", response.data.message);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Unable to process payment. Please try again.");
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -28,109 +49,34 @@ const PaymentPage = () => {
       </View>
 
       <View style={styles.paymentMethods}>
-        {/* UPI Payment */}
+        {/* Stripe Payment (Available) */}
         <View style={styles.method}>
           <TouchableOpacity
             style={styles.methodHeader}
-            onPress={() => setSelectedOption("upi")}
+            onPress={() => setSelectedOption("stripe")}
           >
-            <Text style={styles.methodHeaderText}>UPI Payment</Text>
+            <Text style={styles.methodHeaderText}>Stripe Payment</Text>
           </TouchableOpacity>
-          {selectedOption === "upi" && (
+          {selectedOption === "stripe" && (
             <View style={styles.methodBody}>
-              <TouchableOpacity
-                style={[
-                  styles.radioButton,
-                  upiMethod === "googlePay" && styles.selectedRadio,
-                ]}
-                onPress={() => setUpiMethod("googlePay")}
-              >
-                <Text style={[styles.radioText, upiMethod === "googlePay" && styles.selectedText]}>Google Pay</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.radioButton,
-                  upiMethod === "phonePe" && styles.selectedRadio,
-                ]}
-                onPress={() => setUpiMethod("phonePe")}
-              >
-                <Text style={[styles.radioText, upiMethod === "phonePe" && styles.selectedText]}>PhonePe</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.radioButton,
-                  upiMethod === "amazonPay" && styles.selectedRadio,
-                ]}
-                onPress={() => setUpiMethod("amazonPay")}
-              >
-                <Text style={[styles.radioText, upiMethod === "amazonPay" && styles.selectedText]}>Amazon Pay</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.payButton}>
-                <Text style={styles.payButtonText}>Pay ₹2025</Text>
+              <TouchableOpacity style={styles.payButton} onPress={handleStripePayment}>
+                <Text style={styles.payButtonText}>Pay with Stripe</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
 
-        {/* Credit / Debit Card */}
-        <View style={styles.method}>
-          <TouchableOpacity
-            style={styles.methodHeader}
-            onPress={() => setSelectedOption("card")}
-          >
-            <Text style={styles.methodHeaderText}>Credit / Debit Card</Text>
-          </TouchableOpacity>
-          {selectedOption === "card" && (
+        {/* Unavailable Payment Methods */}
+        {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map((method) => (
+          <View key={method} style={styles.method}>
+            <TouchableOpacity style={styles.methodHeader}>
+              <Text style={styles.methodHeaderText}>{method}</Text>
+            </TouchableOpacity>
             <View style={styles.methodBody}>
-              <TextInput
-                style={styles.input}
-                placeholder="Card Number"
-                keyboardType="numeric"
-              />
-              <TextInput style={styles.input} placeholder="Valid Thru" />
-              <TextInput
-                style={styles.input}
-                placeholder="CVV"
-                secureTextEntry={true}
-              />
-              <TouchableOpacity style={styles.payButton}>
-                <Text style={styles.payButtonText}>Pay ₹2025</Text>
-              </TouchableOpacity>
+              <Text style={styles.unavailableText}>Currently Not Available</Text>
             </View>
-          )}
-        </View>
-
-        {/* Wallets */}
-        <View style={styles.method}>
-          <TouchableOpacity
-            style={styles.methodHeader}
-            onPress={() => setSelectedOption("wallets")}
-          >
-            <Text style={styles.methodHeaderText}>Wallets</Text>
-          </TouchableOpacity>
-          {selectedOption === "wallets" && (
-            <View style={styles.methodBody}>
-              <Text>Wallet options coming soon...</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Cash on Delivery */}
-        <View style={styles.method}>
-          <TouchableOpacity
-            style={styles.methodHeader}
-            onPress={() => setSelectedOption("cod")}
-          >
-            <Text style={styles.methodHeaderText}>Cash on Delivery</Text>
-          </TouchableOpacity>
-          {selectedOption === "cod" && (
-            <View style={styles.methodBody}>
-              <TouchableOpacity style={styles.payButton}>
-                <Text style={styles.payButtonText}>Place Order</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+          </View>
+        ))}
       </View>
 
       <View style={styles.footer}>
@@ -143,6 +89,7 @@ const PaymentPage = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    marginTop: 40,
     backgroundColor: "#f9f9f9",
     flex: 1,
   },
@@ -155,10 +102,11 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 5,
     position: "absolute",
-    left: 10,
+    left: 7,
+    bottom: 1,
   },
   backButtonText: {
-    fontSize: 18,
+    fontSize: 38,
   },
   headerTitle: {
     fontSize: 18,
@@ -182,7 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  paymentMethods: {},
   method: {
     marginBottom: 15,
     backgroundColor: "white",
@@ -201,31 +148,7 @@ const styles = StyleSheet.create({
   },
   methodBody: {
     padding: 10,
-  },
-  radioButton: {
-    marginBottom: 10,
-    padding: 15,
-    backgroundColor: "#f1f1f1",
-    borderRadius: 30, // Circular shape
-    justifyContent: "center",
     alignItems: "center",
-  },
-  selectedRadio: {
-    backgroundColor: "#6a0dad", // Same as the pay button color
-  },
-  radioText: {
-    fontSize: 16,
-  },
-  selectedText: {
-    color: "white", // Text color for the selected radio button
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 10,
-    marginBottom: 10,
-    fontSize: 14,
   },
   payButton: {
     backgroundColor: "#6a0dad",
@@ -235,6 +158,11 @@ const styles = StyleSheet.create({
   },
   payButtonText: {
     color: "white",
+    fontWeight: "bold",
+  },
+  unavailableText: {
+    fontSize: 14,
+    color: "red",
     fontWeight: "bold",
   },
   footer: {

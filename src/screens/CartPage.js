@@ -18,8 +18,9 @@ import {
   clearCartRequest,
 } from "../redux/cart/cartSlice";
 import { retrieveData } from "../utils/asyncStorage";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
-const CartPage = () => {
+const CartPage = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
@@ -167,6 +168,12 @@ const CartPage = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("home")}
+          style={styles.headerIcon}
+        >
+          <Icon name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.cartText}>My Cart</Text>
       </View>
 
@@ -262,15 +269,15 @@ const CartPage = () => {
             (item) => selectedItems[item.id]
           );
 
-          if (selectedProducts.length === 0) {
-            Alert.alert(
-              "No items selected",
-              "Please select at least one item to proceed."
-            );
-            return;
-          }
+          // if (selectedProducts.length === 0) {
+          //   Alert.alert(
+          //     "No items selected",
+          //     "Please select at least one item to proceed."
+          //   );
+          //   return;
+          // }
 
-          navigation.navigate("Order Checkout", { products: selectedProducts });
+          navigation.navigate("order checkout", { products: selectedProducts });
         }}
       >
         <Text style={styles.proceedToBuyText}>
@@ -302,17 +309,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   header: {
+    flexDirection: "row", // Align arrow & text in a row
+    alignItems: "center", // Center vertically
+    justifyContent: "center", // Center text in the middle
     padding: 18,
+    paddingTop: 40,
     backgroundColor: "#7041EE",
+    position: "relative", // Needed for absolute positioning
+  },
+  headerIcon: {
+    position: "absolute",
+    left: 15, // Position the arrow on the left
+    top: 45
   },
   cartText: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
     paddingVertical: 5,
-    paddingHorizontal: 10,
     fontFamily: "Roboto",
-    paddingTop: 15,
   },
   productContainer: {
     flexDirection: "row",
