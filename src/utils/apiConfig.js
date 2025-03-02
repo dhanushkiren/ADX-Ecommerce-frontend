@@ -14,4 +14,5 @@ export const apiConfig = {
   placeOrder: `orders`,  // Create order (POST)
   getOrderById: (orderId) => `orders/${orderId}`,  // Get order by ID (GET)
   getOrdersByUserId: (userId) => `orders/user/${userId}`,  // Get all orders of a user (GET)
+  updateCart : (userId,itemId) => `cart/${userId}/update/${itemId}`
 };

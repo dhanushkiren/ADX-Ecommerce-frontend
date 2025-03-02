@@ -93,6 +93,27 @@ const cartSlice = createSlice({
       state.selectedCartItems = action.payload;
     },
 
+    updateCartItemRequest: (state, action) => {
+      const { id } = action.payload;
+      state.loadingItems[id] = true;
+    },
+    updateCartItemSuccess: (state, action) => {
+      const { id, quantity, productName, price, image } = action.payload;
+      delete state.loadingItems[id];
+
+      const existingItemIndex = state.cartItems.findIndex((item) => item.id === id);
+      if (existingItemIndex !== -1) {
+        state.cartItems[existingItemIndex] = { id, quantity, productName, price, image };
+      }
+
+      state.error = null;
+    },
+    updateCartItemFailure: (state, action) => {
+      const { id } = action.payload;
+      delete state.loadingItems[id];
+      state.error = action.payload.error || "Failed to update cart item";
+    },
+
     // Confirm Order actions
     confirmOrderRequest: (state) => {
       state.loading = true;
@@ -126,6 +147,9 @@ export const {
   confirmOrderRequest,
   confirmOrderSuccess,
   confirmOrderFailure,
+  updateCartItemRequest,
+  updateCartItemSuccess,
+  updateCartItemFailure,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

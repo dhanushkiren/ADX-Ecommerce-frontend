@@ -16,6 +16,7 @@ import {
   addToCartRequest,
   deleteCartItemRequest,
   clearCartRequest,
+  updateCartItemRequest,
 } from "../redux/cart/cartSlice";
 import { retrieveData } from "../utils/asyncStorage";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -24,6 +25,7 @@ const CartPage = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const { cartItems, loadingItems, error } = useSelector((state) => state.cart);
+  console.log("dkdk cart : ", cartItems);
 
   const [selectedItems, setSelectedItems] = useState({}); // Added state for selectedItems
 
@@ -44,7 +46,7 @@ const CartPage = ({ navigation }) => {
       console.log("dk id :", userId);
       dispatch(viewCartRequest({ userId }));
     }
-  }, [dispatch, userId]);
+  }, [userId]);
 
   const handleAddToCart = (item) => {
     dispatch(
@@ -57,9 +59,10 @@ const CartPage = ({ navigation }) => {
 
   const handleIncreaseQuantity = (item) => {
     dispatch(
-      addToCartRequest({
+      updateCartItemRequest({
         userId,
-        productData: { ...item, quantity: item.quantity + 1 },
+        itemId: item.id,
+        updatedData: { ...item, quantity: (item.quantity) + 1 },
       })
     );
   };
@@ -67,9 +70,10 @@ const CartPage = ({ navigation }) => {
   const handleDecreaseQuantity = (item) => {
     if (item.quantity > 1) {
       dispatch(
-        addToCartRequest({
+        updateCartItemRequest({
           userId,
-          productData: { ...item, quantity: item.quantity - 1 },
+          itemId: item.id,
+          updatedData: { ...item, quantity: item.quantity - 1 },
         })
       );
     } else {
