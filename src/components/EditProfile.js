@@ -432,82 +432,123 @@ const EditProfile = ({ route, navigation }) => {
   };
   // ✅ Final corrected EditProfile.js with proper address handling
 
-const handleUpdateProfile = async () => {
-  try {
-    const validationError = validateProfileData();
-    if (validationError) {
-      Alert.alert("Validation Error", validationError);
-      return;
-    }
-
-    if (!dateOfBirth) {
-      Alert.alert("Error", "Please select a date of birth.");
-      return;
-    }
-
-    const formattedDateOfBirth = moment(dateOfBirth).format("DD/MM/YYYY");
-    const addresses = [address1, address2, address3].filter(Boolean);
-    const storedPassword = await retrieveData("password");
-
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName || "");
-    formData.append("email", email);
-    formData.append("mobile", mobile);
-    formData.append("date_of_birth", formattedDateOfBirth);
-    formData.append("country", country);
-    formData.append("role", role || "");
-
-    // ✅ Correctly append addresses without joining
-    addresses.forEach((address) => {
-      formData.append("addresses", address);
-    });
-
-    formData.append("password", storedPassword || "DUMMY_PASSWORD");
-
-    if (imageFile) {
-      let fileToUpload;
-      if (Platform.OS === "web") {
-        const response = await fetch(imageFile.uri);
-        const blob = await response.blob();
-        fileToUpload = new File([blob], "profile.jpg", {
-          type: "image/jpeg",
-        });
-      } else {
-        fileToUpload = {
-          uri: imageFile.uri,
-          type: "image/jpeg",
-          name: "profile.jpg",
-        };
-      }
-      formData.append("image", fileToUpload);
-    }
-
-    const url = userId
-      ? `http://localhost:8080/api/users/${userId}`
-      : `http://localhost:8080/api/users`;
-    const method = userId ? "PUT" : "POST";
-
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        Authorization: `Bearer ${await retrieveData("token")}`,
-      },
-      body: formData,
-    });
-
-    const textResponse = await response.text();
-
+  const handleUpdateProfile = async () => {
+    console.log("🔄 Update Profile button clicked");
+  
     try {
-      const jsonResponse = JSON.parse(textResponse);
+      const validationError = validateProfileData();
+      if (validationError) {
+        console.log("❌ Validation failed:", validationError);
+        Alert.alert("Validation Error", validationError);
+        return;
+      }
+      console.log("✅ Validation passed");
+  
+      if (!dateOfBirth) {
+        Alert.alert("Error", "Please select a date of birth.");
+        return;
+      }
+  
+      const token = await retrieveData("token");
+      console.log("🔑 Token:", token);
+      if (!token) {
+        Alert.alert("Error", "User not authenticated. Please log in again.");
+        return;
+      }
+  
+      const formattedDateOfBirth = moment(dateOfBirth).format("DD/MM/YYYY");
+      const addresses = [address1, address2, address3].filter(Boolean);
+      const storedPassword = await retrieveData("password");
+  
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName || "");
+      formData.append("email", email);
+      formData.append("mobile", mobile);
+      formData.append("date_of_birth", formattedDateOfBirth);
+      formData.append("country", country);
+      formData.append("role", role || "");
+  
+      addresses.forEach((address) => {
+        formData.append("addresses", address);
+      });
+  
+      formData.append("password", storedPassword || "DUMMY_PASSWORD");
+  
+      if (imageFile) {
+        let fileToUpload;
+        if (Platform.OS === "web") {
+          const response = await fetch(imageFile.uri);
+          const blob = await response.blob();
+          fileToUpload = new File([blob], "profile.jpg", {
+            type: "image/jpeg",
+          });
+        } else {
+          fileToUpload = {
+            uri: imageFile.uri,
+            type: "image/jpeg",
+            name: "profile.jpg",
+          };
+        }
+        formData.append("image", fileToUpload);
+      }
+  
+      const url = userId
+        ? `http://localhost:8080/api/users/${userId}`
+        : `http://localhost:8080/api/users`;
+      const method = userId ? "PUT" : "POST";
+  
+      console.log(`📤 Sending ${method} request to:`, url);
+  
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log("❌ Server error response:", errorText);
+        Alert.alert(
+          "Error",
+          `Failed to update profile: ${response.status} ${response.statusText}`
+        );
+        return;
+      }
+  
+      const updatedProfile = await response.json();
+      console.log("✅ Updated profile data from response:", updatedProfile);
       Alert.alert("Success", "Profile updated successfully!");
+  
+      // ✅ Re-fetch the latest profile from backend
+      const fetchProfileResponse = await fetch(
+        `http://localhost:8080/api/users/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (!fetchProfileResponse.ok) {
+        const fetchErrorText = await fetchProfileResponse.text();
+        console.log("❌ Failed to fetch latest profile:", fetchErrorText);
+        Alert.alert("Error", "Failed to refresh profile data.");
+        return;
+      }
+  
+      const latestProfile = await fetchProfileResponse.json();
+      console.log("📢 Full refreshed profile data:", latestProfile);
+  
     } catch (error) {
-      Alert.alert("Error", "Invalid response from server.");
+      console.error("❌ Update Error:", error);
+      Alert.alert("Update Failed", "An unexpected error occurred.");
     }
-  } catch (error) {
-    Alert.alert("Update Failed", "An unexpected error occurred.");
-  }
-};
+  };
+  
 
 
   useEffect(() => {

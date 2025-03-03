@@ -27,44 +27,37 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("register");
   };
 
-  const handleLogin = async () => {
-    try {
-      if (!username || !password) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Please enter username and password",
-        });
-        return;
-      }
-
-      const userData = { username, password };
-      dispatch(loginRequest(userData));
-
-      // Check if login was successful
-      setTimeout(() => {
-        if (token) {
-          Toast.show({
-            type: "success",
-            text1: "Login Success",
-            text2: "You have successfully logged in",
-          });
-          navigation.navigate("home");
-        } else if (error) {
-          Toast.show({
-            type: "error",
-            text1: "Login Failed",
-            text2: "Server Error, Try again later",
-          });
-        }
-      }, 1000); // Wait for Redux state update
-    } catch (err) {
-      console.error("Login error:", err);
-
+  useEffect(() => {
+    if (token) {
+      Toast.show({
+        type: "success",
+        text1: "Login Success",
+        text2: "You have successfully logged in",
+      });
+      navigation.navigate("home");
+    } else if (error) {
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2: "Server Error, Try again later",
+      });
     }
-    dispatch(loginRequest({ username, password }));
-  };
+  }, [token, error]);
 
+  const handleLogin = () => {
+    if (!username || !password) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter username and password",
+      });
+      return;
+    }
+
+    const userData = { username, password };
+    dispatch(loginRequest(userData)); // Dispatch login action once
+  };
+  
   return (
     <View style={styles.container}>
       {/* Toast Container */}
