@@ -83,9 +83,8 @@ const PaymentPage = () => {
             onPress={toggleStripeDropdown}
           >
             <Text style={styles.methodHeaderText}>💳 Pay with Stripe</Text>
-            <Text style={styles.arrow}>{stripeVisible ? "▲" : "▼"}</Text>
+            
           </TouchableOpacity>
-          {selectedOption === "stripe" && (
             <View style={styles.methodBody}>
               <TouchableOpacity
                 style={styles.payButton}
@@ -94,7 +93,6 @@ const PaymentPage = () => {
                 <Text style={styles.payButtonText}>Pay with Stripe</Text>
               </TouchableOpacity>
             </View>
-          )}
         </View>
 
         {/* Unavailable Payment Methods */}
