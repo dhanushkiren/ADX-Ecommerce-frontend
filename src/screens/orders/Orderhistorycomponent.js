@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { orderHistoryData } from '../../utils/data';
+import { FontAwesome } from '@expo/vector-icons'; // Import the icon
+import { useNavigation } from '@react-navigation/native';
+import { orderHistoryData } from '../../utils/data'; // Your data file
 
 const OrderhistoryComponent = () => {
-  // Render individual order cards
+  const navigation = useNavigation();
+
   const renderOrder = ({ item }) => (
     <View style={styles.card}>
       <Text style={styles.orderId}>Order no: {item.orderId}</Text>
@@ -34,7 +37,14 @@ const OrderhistoryComponent = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>ORDER HISTORY</Text>
+      {/* Header with Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <FontAwesome name="arrow-left" size={24} color="#2C2929" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Order History</Text>
+      </View>
+
       <FlatList
         data={orderHistoryData}
         renderItem={renderOrder}
@@ -45,7 +55,6 @@ const OrderhistoryComponent = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -54,13 +63,19 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     marginBottom: 65
   },
-  title: {
-    fontSize: 20,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  backButton: {
+    padding: 10,
+  },
+  headerTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'left',
-    paddingTop: 15,
-    height: 40,
+    marginLeft: 10,
+    color: '#2C2929',
   },
   card: {
     backgroundColor: '#f9f9f9',

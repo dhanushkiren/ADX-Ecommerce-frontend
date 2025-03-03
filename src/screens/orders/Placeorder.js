@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   View,
   Text,
@@ -212,7 +213,7 @@ export default function PlaceOrder({ route }) {
       {/* Place Order Button */}
       <TouchableOpacity
         style={styles.placeOrderButton}
-        onPress={() => navigation.navigate("payment")}
+        onPress={() => navigation.navigate("payment",{ products })}
       >
         <Text style={styles.buttonText}>Place Order</Text>
       </TouchableOpacity>

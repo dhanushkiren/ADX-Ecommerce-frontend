@@ -33,7 +33,7 @@ const Home = ({ navigation }) => {
     if (products.length === 0) {
       dispatch(fetchProductsRequest());
     }
-  }, [dispatch, products]);
+  }, [dispatch]);
 
 
 
@@ -74,7 +74,11 @@ const Home = ({ navigation }) => {
     }
 
     if (error) {
+      
       return <Text style={styles.errorText}>{error}</Text>;
+    }
+    if (products.length === 0) {
+      return <Text style={styles.errorText}>NO PRODUCTS IN THE DB.</Text>;
     }
 
     return (
