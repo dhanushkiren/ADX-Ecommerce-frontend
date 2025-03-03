@@ -7,11 +7,14 @@ import {
   ScrollView,
   Modal,
   TextInput,
-
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
-
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfileRequest } from "../../redux/editprofile/slice";
+import { retrieveData } from "../../utils/asyncStorage";
 
 export default function PlaceOrder({ route }) {
   // Ensure products is always an array to avoid undefined errors
@@ -19,18 +22,21 @@ export default function PlaceOrder({ route }) {
 
   // Debugging: Log the products array
   console.log("Products Data:", products);
+  const dispatch = useDispatch();
+  
+  const [userId, setUserId] = useState(null);
+  const userProfile = useSelector((state) => state.editProfile.originalProfile);
 
   const [address, setAddress] = useState({
-    name: "John Doe",
-    street: "123 Main St, Apt 4B",
-    city: "Chennai 628002",
+    name: "",
+    street: "",
+    city: "",
   });
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [newAddress, setNewAddress] = useState({ ...address });
   const [cartItems, setCartItems] = useState([]); // Store API response
   const navigation = useNavigation();
-
+  const [isAddressEdited, setIsAddressEdited] = useState(false);
   useEffect(() => {
     fetchCartItems();
   }, []);
@@ -44,11 +50,92 @@ export default function PlaceOrder({ route }) {
       console.error("Error fetching cart items:", error);
     }
   };
-
-  const handleSaveAddress = () => {
-    setAddress(newAddress);
-    setModalVisible(false);
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await retrieveData("userId");
+        if (storedUserId) {
+          setUserId(storedUserId);
+          dispatch(fetchProfileRequest({ userId: storedUserId }));
+        }
+      } catch (error) {
+        console.error("Error fetching userId:", error);
+        Alert.alert("Error", "Failed to load user data.");
+      }
+    };
+    getUserId();
+  }, [dispatch]);
+   // ✅ Update address from profile
+   useEffect(() => {
+    if (userProfile && !isAddressEdited) {
+      setAddress({
+        name: userProfile.firstName + " " + userProfile.lastName,
+        street: userProfile.addresses?.[0] || "No street available",
+        city: userProfile.country || "No city available",
+      });
+      console.log("📦 User Profile:", userProfile);
+    }
+  }, [userProfile, isAddressEdited]);
+  const handleUpdateProfileAddress = async () => {
+    try {
+      const token = await retrieveData("token");
+      if (!token || !userId) {
+        Alert.alert("Error", "User not authenticated. Please log in again.");
+        return;
+      }
+  
+      const storedPassword = await retrieveData("password");
+  
+      // Copy existing addresses and update the first one
+      const updatedAddresses = [...(userProfile.addresses || [])];
+      updatedAddresses[0] = newAddress.street;
+  
+      const formData = new FormData();
+      formData.append("firstName", userProfile.firstName);
+      formData.append("lastName", userProfile.lastName);
+      formData.append("email", userProfile.email);
+      formData.append("mobile", userProfile.mobile);
+      formData.append("date_of_birth", userProfile.date_of_birth);
+      formData.append("country", newAddress.city);
+      formData.append("role", userProfile.role || "");
+      formData.append("password", storedPassword || "DUMMY_PASSWORD");
+  
+      // ✅ Append all addresses to keep the array intact
+      updatedAddresses.forEach((address) => {
+        formData.append("addresses", address);
+      });
+  
+      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log("❌ Address update failed:", errorText);
+        Alert.alert("Error", "Failed to update address.");
+        return;
+      }
+  
+      console.log("✅ Address updated successfully");
+      dispatch(fetchProfileRequest({ userId })); // Refresh profile data
+  
+    } catch (error) {
+      console.error("❌ Update Error:", error);
+      Alert.alert("Update Failed", "An unexpected error occurred.");
+    }
   };
+  
+  const handleSaveAddress = async () => {
+    setAddress(newAddress);
+    setIsAddressEdited(true);
+    setModalVisible(false);
+    await handleUpdateProfileAddress(); // ✅ Save to backend
+  };
+
 
   // Calculate total price dynamically
   const totalAmount = products.reduce(
@@ -106,7 +193,12 @@ export default function PlaceOrder({ route }) {
         <Text style={styles.addressText}>{address.name}</Text>
         <Text style={styles.addressText}>{address.street}</Text>
         <Text style={styles.addressText}>{address.city}</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          onPress={() => {
+            setNewAddress(address); // Pre-fill modal with current address
+            setModalVisible(true);
+          }}
+        >
           <Text style={styles.editAddress}>Edit Address</Text>
         </TouchableOpacity>
       </View>
