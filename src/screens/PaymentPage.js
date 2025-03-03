@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import * as Linking from "expo-linking";
-import { useRoute , useNavigation} from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 const PaymentPage = () => {
   const route = useRoute();
@@ -30,13 +30,12 @@ const PaymentPage = () => {
   // Handle Stripe Payment
   const handleStripePayment = async () => {
     try {
-     const response = await axios.post(`${API_BASE_URL}payment/checkout`, {
-          name: products.map((item) => item.productName).join(", "),
-          amount: totalAmount * 100, // Convert ₹ to paise
-          currency: "INR",
-          quantity: products.length,
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}payment/checkout`, {
+        name: products.map((item) => item.productName).join(", "),
+        amount: totalAmount * 100, // Convert ₹ to paise
+        currency: "INR",
+        quantity: products.length,
+      });
 
       if (response.data.status === "SUCCESS") {
         const sessionUrl = response.data.sessionUrl;
@@ -49,7 +48,6 @@ const PaymentPage = () => {
     }
   };
 
-  const navigation = useNavigation();
   const toggleStripeDropdown = () => {
     Animated.timing(animatedHeight, {
       toValue: stripeVisible ? 0 : 100,
@@ -95,25 +93,29 @@ const PaymentPage = () => {
               >
                 <Text style={styles.payButtonText}>Pay with Stripe</Text>
               </TouchableOpacity>
-            )}
-          </Animated.View>
+            </View>
+          )}
         </View>
-
 
         {/* Unavailable Payment Methods */}
 
-        {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map(
-          (method) => (
-            <View key={method} style={styles.method}>
-              <TouchableOpacity style={styles.methodHeader}>
-                <Text style={styles.methodHeaderText}>{method}</Text>
-              </TouchableOpacity>
-              <View style={styles.methodBody}>
-                <Text style={styles.unavailableText}>Currently Not Available</Text>
-              </View>
+        {[
+          "UPI Payment",
+          "Credit / Debit Card",
+          "Wallets",
+          "Cash on Delivery",
+        ].map((method) => (
+          <View key={method} style={styles.method}>
+            <TouchableOpacity style={styles.methodHeader}>
+              <Text style={styles.methodHeaderText}>{method}</Text>
+            </TouchableOpacity>
+            <View style={styles.methodBody}>
+              <Text style={styles.unavailableText}>
+                Currently Not Available
+              </Text>
             </View>
-          )
-        )}
+          </View>
+        ))}
       </View>
 
       <View style={styles.footer}>
