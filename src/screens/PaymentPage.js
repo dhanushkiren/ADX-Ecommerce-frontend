@@ -6,21 +6,37 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Animated,
 } from "react-native";
 import axios from "axios";
 import * as Linking from "expo-linking";
+import { useRoute , useNavigation} from "@react-navigation/native";
 
 const PaymentPage = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  const route = useRoute();
+  const { products = [] } = route.params || {}; // Get products data from navigation params
 
+  // Calculate total amount dynamically
+  const totalAmount = products.reduce(
+    (sum, item) => sum + (item.price || 0),
+    0
+  );
+
+  const [stripeVisible, setStripeVisible] = useState(false);
+  const animatedHeight = new Animated.Value(stripeVisible ? 100 : 0);
+
+  // Handle Stripe Payment
   const handleStripePayment = async () => {
     try {
-      const response = await axios.post("http://192.168.1.2:8080/api/payment/checkout", {
-        name: "Sample Product",
-        amount: 202500, // Amount in paise (₹2025.00)
-        currency: "INR",
-        quantity: 1,
-      });
+      const response = await axios.post(
+        "http://192.168.1.7:8080/api/payment/checkout",
+        {
+          name: products.map((item) => item.productName).join(", "),
+          amount: totalAmount * 100, // Convert ₹ to paise
+          currency: "INR",
+          quantity: products.length,
+        }
+      );
 
       if (response.data.status === "SUCCESS") {
         const sessionUrl = response.data.sessionUrl;
@@ -33,10 +49,20 @@ const PaymentPage = () => {
     }
   };
 
+  const navigation = useNavigation();
+  const toggleStripeDropdown = () => {
+    Animated.timing(animatedHeight, {
+      toValue: stripeVisible ? 0 : 100,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    setStripeVisible(!stripeVisible);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Payments</Text>
@@ -45,38 +71,44 @@ const PaymentPage = () => {
 
       <View style={styles.amountSection}>
         <Text style={styles.amountTitle}>Total Amount</Text>
-        <Text style={styles.amountValue}>₹2025</Text>
+        <Text style={styles.amountValue}>₹{totalAmount}</Text>
       </View>
 
       <View style={styles.paymentMethods}>
-        {/* Stripe Payment (Available) */}
+        {/* Stripe Payment (Dropdown) */}
         <View style={styles.method}>
           <TouchableOpacity
             style={styles.methodHeader}
-            onPress={() => setSelectedOption("stripe")}
+            onPress={toggleStripeDropdown}
           >
-            <Text style={styles.methodHeaderText}>Stripe Payment</Text>
+            <Text style={styles.methodHeaderText}>💳 Pay with Stripe</Text>
+            <Text style={styles.arrow}>{stripeVisible ? "▲" : "▼"}</Text>
           </TouchableOpacity>
-          {selectedOption === "stripe" && (
-            <View style={styles.methodBody}>
-              <TouchableOpacity style={styles.payButton} onPress={handleStripePayment}>
-                <Text style={styles.payButtonText}>Pay with Stripe</Text>
+          <Animated.View style={[styles.methodBody, { height: animatedHeight }]}>
+            {stripeVisible && (
+              <TouchableOpacity
+                style={styles.payButton}
+                onPress={handleStripePayment}
+              >
+                <Text style={styles.payButtonText}>Proceed with Stripe</Text>
               </TouchableOpacity>
-            </View>
-          )}
+            )}
+          </Animated.View>
         </View>
 
-        {/* Unavailable Payment Methods */}
-        {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map((method) => (
-          <View key={method} style={styles.method}>
-            <TouchableOpacity style={styles.methodHeader}>
-              <Text style={styles.methodHeaderText}>{method}</Text>
-            </TouchableOpacity>
-            <View style={styles.methodBody}>
-              <Text style={styles.unavailableText}>Currently Not Available</Text>
+        {/* Other Payment Methods (Currently Not Available) */}
+        {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map(
+          (method) => (
+            <View key={method} style={styles.method}>
+              <TouchableOpacity style={styles.methodHeader}>
+                <Text style={styles.methodHeaderText}>{method}</Text>
+              </TouchableOpacity>
+              <View style={styles.methodBody}>
+                <Text style={styles.unavailableText}>Currently Not Available</Text>
+              </View>
             </View>
-          </View>
-        ))}
+          )
+        )}
       </View>
 
       <View style={styles.footer}>
@@ -130,6 +162,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
+  paymentMethods: {
+    marginTop: 20,
+  },
   method: {
     marginBottom: 15,
     backgroundColor: "white",
@@ -140,30 +175,44 @@ const styles = StyleSheet.create({
   },
   methodHeader: {
     padding: 10,
-    backgroundColor: "#eee",
+    backgroundColor: "#6a0dad",
+    alignItems: "center",
+    borderRadius: 4,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   methodHeaderText: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "white",
+  },
+  arrow: {
+    fontSize: 18,
+    color: "white",
   },
   methodBody: {
-    padding: 10,
+    overflow: "hidden",
+    justifyContent: "center",
     alignItems: "center",
   },
   payButton: {
-    backgroundColor: "#6a0dad",
+    backgroundColor: "#00008B",
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 6,
+    marginTop: 10,
+    width: "90%",
     alignItems: "center",
   },
   payButtonText: {
     color: "white",
+    fontSize: 16,
     fontWeight: "bold",
   },
   unavailableText: {
     fontSize: 14,
-    color: "red",
-    fontWeight: "bold",
+    color: "#888",
+    fontStyle: "italic",
+    padding: 10,
   },
   footer: {
     marginTop: 20,
