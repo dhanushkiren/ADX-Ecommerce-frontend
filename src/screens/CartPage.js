@@ -190,8 +190,8 @@ const CartPage = ({ navigation }) => {
         </TouchableOpacity>
       )}
 
-      {cartItems.map((item) => (
-        <View style={styles.productContainer} key={item.id}>
+      {cartItems.map((item,index) => (
+      <View style={styles.productContainer} key={`${item.id}-${index}`}>
           <TouchableOpacity
             style={styles.checkbox}
             onPress={() => handleToggleSelection(item.id)}
