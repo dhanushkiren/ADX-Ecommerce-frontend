@@ -18,7 +18,7 @@ const cartSlice = createSlice({
       state.loadingItems[id] = true;
     },
     addToCartSuccess: (state, action) => {
-      const { id, quantity, productName, price, image } = action.payload;
+      const { id, quantity, productName, price, imageUrl } = action.payload;
       delete state.loadingItems[id];
 
       const existingItemIndex = state.cartItems.findIndex((item) => item.id === id);
@@ -26,9 +26,9 @@ const cartSlice = createSlice({
         state.cartItems[existingItemIndex].quantity = quantity;
         state.cartItems[existingItemIndex].productName = productName;
         state.cartItems[existingItemIndex].price = price;
-        state.cartItems[existingItemIndex].image = image; // Ensure image is updated
+        state.cartItems[existingItemIndex].imageUrl = imageUrl; // Ensure image is updated
       } else {
-        state.cartItems.push({ id, quantity, productName, price, image });
+        state.cartItems.push({ id, quantity, productName, price, imageUrl });
       }
 
       state.error = null;
@@ -49,7 +49,7 @@ const cartSlice = createSlice({
         quantity: item.quantity,
         productName: item.productName,
         price: item.price,
-        image: item.image, // Ensure image is included when viewing cart
+        imageUrl: item.imageUrl, // Ensure image is included when viewing cart
       }));
       state.loading = false;
       state.error = null;
@@ -98,12 +98,12 @@ const cartSlice = createSlice({
       state.loadingItems[id] = true;
     },
     updateCartItemSuccess: (state, action) => {
-      const { id, quantity, productName, price, image } = action.payload;
+      const { id, quantity, productName, price, imageUrl } = action.payload;
       delete state.loadingItems[id];
 
       const existingItemIndex = state.cartItems.findIndex((item) => item.id === id);
       if (existingItemIndex !== -1) {
-        state.cartItems[existingItemIndex] = { id, quantity, productName, price, image };
+        state.cartItems[existingItemIndex] = { id, quantity, productName, price, imageUrl };
       }
 
       state.error = null;
