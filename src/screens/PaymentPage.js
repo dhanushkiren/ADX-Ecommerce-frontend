@@ -9,13 +9,16 @@ import {
 } from "react-native";
 import axios from "axios";
 import * as Linking from "expo-linking";
+import { API_BASE_URL } from "../utils/constants";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 
 const PaymentPage = () => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const navigation = useNavigation(); // Initialize navigation
 
   const handleStripePayment = async () => {
     try {
-      const response = await axios.post("http://192.168.1.2:8080/api/payment/checkout", {
+      const response = await axios.post(`${API_BASE_URL}payment/checkout`, {
         name: "Sample Product",
         amount: 202500, // Amount in paise (₹2025.00)
         currency: "INR",
@@ -36,7 +39,10 @@ const PaymentPage = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()} // Go back to previous page
+        >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Payments</Text>
@@ -59,7 +65,10 @@ const PaymentPage = () => {
           </TouchableOpacity>
           {selectedOption === "stripe" && (
             <View style={styles.methodBody}>
-              <TouchableOpacity style={styles.payButton} onPress={handleStripePayment}>
+              <TouchableOpacity
+                style={styles.payButton}
+                onPress={handleStripePayment}
+              >
                 <Text style={styles.payButtonText}>Pay with Stripe</Text>
               </TouchableOpacity>
             </View>
@@ -67,16 +76,18 @@ const PaymentPage = () => {
         </View>
 
         {/* Unavailable Payment Methods */}
-        {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map((method) => (
-          <View key={method} style={styles.method}>
-            <TouchableOpacity style={styles.methodHeader}>
-              <Text style={styles.methodHeaderText}>{method}</Text>
-            </TouchableOpacity>
-            <View style={styles.methodBody}>
-              <Text style={styles.unavailableText}>Currently Not Available</Text>
+        {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map(
+          (method) => (
+            <View key={method} style={styles.method}>
+              <TouchableOpacity style={styles.methodHeader}>
+                <Text style={styles.methodHeaderText}>{method}</Text>
+              </TouchableOpacity>
+              <View style={styles.methodBody}>
+                <Text style={styles.unavailableText}>Currently Not Available</Text>
+              </View>
             </View>
-          </View>
-        ))}
+          )
+        )}
       </View>
 
       <View style={styles.footer}>
