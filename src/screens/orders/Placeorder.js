@@ -121,7 +121,7 @@ export default function PlaceOrder({ route }) {
       {/* Place Order Button */}
       <TouchableOpacity
         style={styles.placeOrderButton}
-        onPress={() => navigation.navigate("payment")}
+        onPress={() => navigation.navigate("payment",{ products })}
       >
         <Text style={styles.buttonText}>Place Order</Text>
       </TouchableOpacity>
