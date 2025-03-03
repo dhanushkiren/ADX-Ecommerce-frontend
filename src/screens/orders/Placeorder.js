@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   View,
   Text,
@@ -7,9 +8,11 @@ import {
   ScrollView,
   Modal,
   TextInput,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/MaterialIcons";
+
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native';
+
 
 export default function PlaceOrder({ route }) {
   // Ensure products is always an array to avoid undefined errors
@@ -64,24 +67,29 @@ export default function PlaceOrder({ route }) {
       </View>
       {/* Order Summary */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Order Summary</Text>
-        {products.length > 0 ? (
-          products.map((item, index) => (
-            <View key={index} style={styles.itemRow}>
-              {/* Product Image */}
-              {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.itemImage} />
-              ) : (
-                <Text style={styles.noImageText}>No Image</Text>
-              )}
-              {/* Product Name & Price */}
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>
-                  {item.productName || "No Name Available"}
-                </Text>
-                <Text style={styles.itemPrice}>₹{item.price || "0.00"}</Text>
-              </View>
-            </View>
+
+      <Text style={styles.sectionTitle}>Order Summary</Text>
+      {products.length > 0 ? (
+      products.map((item, index) => (
+        <View key={index} style={styles.itemRow}>
+          {/* Product Image */}
+          {item.imageUrl ? (
+            <Image 
+            source={{ uri: item.imageUrl}} 
+            style={styles.itemImage} 
+          />
+          
+          ) : (
+            <Text style={styles.noImageText}>No Image</Text>
+          )}
+          {/* Product Name & Price */}
+          <View style={styles.itemDetails}>
+            <Text style={styles.itemName}>{item.name || "No Name Available"}</Text>
+            <Text style={styles.selleritemName}>{item.sellerName || "No Name Available"}</Text>
+            <Text style={styles.itemPrice}>₹{item.price || "0.00"}</Text>
+          </View>
+        </View>
+
           ))
         ) : (
           <Text style={styles.emptyCartText}>No items selected</Text>
@@ -225,8 +233,20 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 14,
-    fontWeight: "bold", // Added bold for better visibility
-    color: "#333",
+    fontWeight: 'bold', 
+    color: '#333',
+  },
+  selleritemName: {
+    fontSize: 14, 
+    color: '#333',
+  },
+  itemImage: {
+    width: 50,
+    height: 50, 
+    borderRadius: 8, 
+    marginRight: 10,
+    borderWidth: 1, 
+    borderColor: '#ddd', 
   },
   itemPrice: {
     fontSize: 14,

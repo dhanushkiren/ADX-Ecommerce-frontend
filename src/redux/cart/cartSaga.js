@@ -14,7 +14,9 @@ import {
   clearCartRequest,
   clearCartSuccess,
   clearCartFailure,
-  setSelectedCartItems,
+  updateCartItemRequest,
+  updateCartItemSuccess,
+  updateCartItemFailure,
   confirmOrderRequest,
   confirmOrderSuccess,
   confirmOrderFailure,
@@ -34,6 +36,7 @@ function* addToCartSaga(action) {
         quantity: response.data.quantity,
         productName: response.data.productName,
         price: response.data.price,
+        imageUrl: response.data.imageUrl,
       })
     );
     // Refresh cart items after adding
@@ -77,6 +80,32 @@ function* clearCartSaga(action) {
   }
 }
 
+function* updateCartItemSaga(action) {
+  const { userId, itemId, updatedData } = action.payload;
+  console.log("update cart : ", updatedData);
+
+  try {
+    const response = yield call(
+      axios.put,
+      apiConfig.updateCart(userId, itemId),
+      updatedData
+    );
+    if (response.status === 200 && response.data) {
+      yield put(updateCartItemSuccess(response.data));
+    
+      // Refresh cart after update
+      yield put(viewCartRequest({ userId }));
+    }
+
+  } catch (error) {
+    yield put(
+      updateCartItemFailure({
+        id: itemId,
+        error: error?.response?.data?.message || "Failed to update cart item",
+      })
+    );
+  }
+}
 // Worker Saga for Confirm Order
 function* confirmOrderSaga(action) {
   try {
@@ -104,4 +133,5 @@ export function* watchCartSaga() {
   yield takeEvery(deleteCartItemRequest.type, deleteCartItemSaga);
   yield takeEvery(clearCartRequest.type, clearCartSaga);
   yield takeEvery(confirmOrderRequest.type, confirmOrderSaga);
+  yield takeEvery(updateCartItemRequest.type, updateCartItemSaga);
 }

@@ -72,10 +72,9 @@ const SearchBar = ({ routeName, name }) => {
   }, [userProfile]);
 
   // Handle address formatting safely
-  const userAddress =
-    userProfile?.addresses?.length > 0
-      ? userProfile.addresses.map((addr) => addr.street || "").filter(Boolean).join(", ")
-      : false;
+  const userAddress = userProfile?.addresses?.find(Boolean) || " ";
+
+
   // console.log("dkdk route: ", route.name);
 
   const [isSortVisible, setSortVisible] = useState(false);
@@ -166,11 +165,11 @@ const SearchBar = ({ routeName, name }) => {
           </View>
         )}
       </View>
-        {userAddress && (
+       
       <View style={styles.location}>
         <Icon name="location-on" size={24} color="#fff" style={styles.icon} />
         <Text style={styles.locationText}>{userAddress}</Text>
-      </View>)}
+      </View>
 
       {(isSortVisible || isFilterVisible) && (
         <TouchableWithoutFeedback

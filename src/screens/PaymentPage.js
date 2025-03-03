@@ -15,6 +15,8 @@ import { useRoute , useNavigation} from "@react-navigation/native";
 const PaymentPage = () => {
   const route = useRoute();
   const { products = [] } = route.params || {}; // Get products data from navigation params
+  const [selectedOption, setSelectedOption] = useState(null);
+  const navigation = useNavigation();
 
   // Calculate total amount dynamically
   const totalAmount = products.reduce(
@@ -28,9 +30,7 @@ const PaymentPage = () => {
   // Handle Stripe Payment
   const handleStripePayment = async () => {
     try {
-      const response = await axios.post(
-        "http://192.168.1.7:8080/api/payment/checkout",
-        {
+     const response = await axios.post(`${API_BASE_URL}payment/checkout`, {
           name: products.map((item) => item.productName).join(", "),
           amount: totalAmount * 100, // Convert ₹ to paise
           currency: "INR",
@@ -62,7 +62,10 @@ const PaymentPage = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()} // Go back to previous page
+        >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Payments</Text>
@@ -84,19 +87,21 @@ const PaymentPage = () => {
             <Text style={styles.methodHeaderText}>💳 Pay with Stripe</Text>
             <Text style={styles.arrow}>{stripeVisible ? "▲" : "▼"}</Text>
           </TouchableOpacity>
-          <Animated.View style={[styles.methodBody, { height: animatedHeight }]}>
-            {stripeVisible && (
+          {selectedOption === "stripe" && (
+            <View style={styles.methodBody}>
               <TouchableOpacity
                 style={styles.payButton}
                 onPress={handleStripePayment}
               >
-                <Text style={styles.payButtonText}>Proceed with Stripe</Text>
+                <Text style={styles.payButtonText}>Pay with Stripe</Text>
               </TouchableOpacity>
             )}
           </Animated.View>
         </View>
 
-        {/* Other Payment Methods (Currently Not Available) */}
+
+        {/* Unavailable Payment Methods */}
+
         {["UPI Payment", "Credit / Debit Card", "Wallets", "Cash on Delivery"].map(
           (method) => (
             <View key={method} style={styles.method}>
