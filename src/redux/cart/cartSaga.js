@@ -36,6 +36,7 @@ function* addToCartSaga(action) {
         quantity: response.data.quantity,
         productName: response.data.productName,
         price: response.data.price,
+        imageUrl: response.data.imageUrl,
       })
     );
     // Refresh cart items after adding
