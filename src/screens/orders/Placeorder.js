@@ -9,6 +9,8 @@ import {
   TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native';
+
 
 export default function PlaceOrder({ route }) {
   // Ensure products is always an array to avoid undefined errors
@@ -62,9 +64,9 @@ export default function PlaceOrder({ route }) {
       products.map((item, index) => (
         <View key={index} style={styles.itemRow}>
           {/* Product Image */}
-          {item.image ? (
+          {item.imageUrl ? (
             <Image 
-            source={{ uri: item.image}} 
+            source={{ uri: item.imageUrl}} 
             style={styles.itemImage} 
           />
           
@@ -73,7 +75,8 @@ export default function PlaceOrder({ route }) {
           )}
           {/* Product Name & Price */}
           <View style={styles.itemDetails}>
-            <Text style={styles.itemName}>{item.productName || "No Name Available"}</Text>
+            <Text style={styles.itemName}>{item.name || "No Name Available"}</Text>
+            <Text style={styles.selleritemName}>{item.sellerName || "No Name Available"}</Text>
             <Text style={styles.itemPrice}>₹{item.price || "0.00"}</Text>
           </View>
         </View>
@@ -188,8 +191,20 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 14,
-    fontWeight: 'bold', // Added bold for better visibility
+    fontWeight: 'bold', 
     color: '#333',
+  },
+  selleritemName: {
+    fontSize: 14, 
+    color: '#333',
+  },
+  itemImage: {
+    width: 50,
+    height: 50, 
+    borderRadius: 8, 
+    marginRight: 10,
+    borderWidth: 1, 
+    borderColor: '#ddd', 
   },
   itemPrice: {
     fontSize: 14,
