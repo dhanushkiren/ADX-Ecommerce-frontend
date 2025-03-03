@@ -147,9 +147,10 @@ useEffect(() => {
           <TouchableOpacity style={styles.emiButton} onPress={handleAddToCart}>
             <Text style={styles.buttonText}>Add to Cart</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buyNowButton}>
+          <TouchableOpacity style={styles.buyNowButton} onPress={() => navigation.navigate("order checkout", { products: [product] })}>
             <Text style={styles.buttonText}>Buy Now</Text>
           </TouchableOpacity>
+
         </View>
 
          {/* Technical Details Heading */}

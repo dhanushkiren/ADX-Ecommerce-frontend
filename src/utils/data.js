@@ -149,58 +149,58 @@
    
 //   ];
 
-//   // FAQ Page
+  // FAQ Page
 
-//   export const faqData = [
-//     {
-//       question: 'What is your return policy?',
-//       answer: 'We offer a hassle-free return policy. You can return any item within 30 days of receipt, provided it is unused and in its original packaging. For more details, visit our Returns & Refunds page.',
-//     },
-//     {
-//       question: 'How do I track my order?',
-//       answer: 'You can track your order by logging into your account, navigating to "My Orders," and selecting the order you would like to track. You will find the tracking details there.',
-//     },
-//     {
-//       question: 'Can I change my order?',
-//       answer: 'Changes to an order can be made before it is shipped. Please contact our customer support as soon as possible to update your order details.',
-//     },
-//     {
-//       question: 'How do I cancel my order?',
-//       answer: 'You can cancel your order before it is shipped. Go to "My Orders," select the order, and click "Cancel."',
-//     },
-//     {
-//       question: 'How long does delivery take?',
-//       answer: 'Delivery times depend on your location and the shipping method chosen during checkout. Standard delivery usually takes 5-7 business days.',
-//     },
-//     {
-//       question: 'How do I contact customer support?',
-//       answer: 'You can contact us via email at support@example.com or call us at 1-800-123-4567. Our support team is available 24/7.',
-//     },
-//     {
-//       question: 'What happens if an item is out of stock?',
-//       answer: 'You will be notified, and you can choose to wait for restocking or cancel the item.',
-//     },
-//     {
-//       question: 'What do I do if I receive a damaged item?',
-//       answer: 'If you receive a damaged item, please contact customer support with your order details and a photo of the damaged item. We’ll assist you with a replacement or refund.',
-//     },
-//     {
-//       question: 'What should I do if I forgot my password?',
-//       answer: 'Click on the "Forgot Password" link on the login page, enter your registered email address, and follow the instructions to reset your password.',
-//     },
-//     {
-//       question: 'What payment methods do you accept?',
-//       answer: 'We accept major credit cards, debit cards, PayPal, and other online payment methods.',
-//     },
-//     {
-//       question: 'Are my payment details secure?',
-//       answer: 'Absolutely! We use industry-standard encryption to protect your payment information and ensure a secure shopping experience.',
-//     },
-//     {
-//       question: 'How do I leave a review for a product?',
-//       answer: 'After receiving your order, you can log in to your account, go to "My Orders," and click "Write a Review" for the product you purchased.',
-//     },
-//   ];
+  export const faqData = [
+    {
+      question: 'What is your return policy?',
+      answer: 'We offer a hassle-free return policy. You can return any item within 30 days of receipt, provided it is unused and in its original packaging. For more details, visit our Returns & Refunds page.',
+    },
+    {
+      question: 'How do I track my order?',
+      answer: 'You can track your order by logging into your account, navigating to "My Orders," and selecting the order you would like to track. You will find the tracking details there.',
+    },
+    {
+      question: 'Can I change my order?',
+      answer: 'Changes to an order can be made before it is shipped. Please contact our customer support as soon as possible to update your order details.',
+    },
+    {
+      question: 'How do I cancel my order?',
+      answer: 'You can cancel your order before it is shipped. Go to "My Orders," select the order, and click "Cancel."',
+    },
+    {
+      question: 'How long does delivery take?',
+      answer: 'Delivery times depend on your location and the shipping method chosen during checkout. Standard delivery usually takes 5-7 business days.',
+    },
+    {
+      question: 'How do I contact customer support?',
+      answer: 'You can contact us via email at support@example.com or call us at 1-800-123-4567. Our support team is available 24/7.',
+    },
+    {
+      question: 'What happens if an item is out of stock?',
+      answer: 'You will be notified, and you can choose to wait for restocking or cancel the item.',
+    },
+    {
+      question: 'What do I do if I receive a damaged item?',
+      answer: 'If you receive a damaged item, please contact customer support with your order details and a photo of the damaged item. We’ll assist you with a replacement or refund.',
+    },
+    {
+      question: 'What should I do if I forgot my password?',
+      answer: 'Click on the "Forgot Password" link on the login page, enter your registered email address, and follow the instructions to reset your password.',
+    },
+    {
+      question: 'What payment methods do you accept?',
+      answer: 'We accept major credit cards, debit cards, PayPal, and other online payment methods.',
+    },
+    {
+      question: 'Are my payment details secure?',
+      answer: 'Absolutely! We use industry-standard encryption to protect your payment information and ensure a secure shopping experience.',
+    },
+    {
+      question: 'How do I leave a review for a product?',
+      answer: 'After receiving your order, you can log in to your account, go to "My Orders," and click "Write a Review" for the product you purchased.',
+    },
+  ];
 
 //   // Product Page
 
@@ -245,42 +245,42 @@
 //   };
   
 
-//   // orders/OrderhistoryComponent
+  // orders/OrderhistoryComponent
 
-//   export const orderHistoryData = [
-//     {
-//       orderId: 'A235',
-//       product: 'Philips Hair Accessory',
-//       date: '4th Nov, 2024',
-//       price: '300 ₹',
-//       rating: 3,
-//       image: 'https://m.media-amazon.com/images/I/712KKGqy-wL._SL1500_.jpg',
-//     },
-//     {
-//       orderId: 'J234',
-//       product: 'Silk saree',
-//       date: '4th May, 2024',
-//       price: '2500 ₹',
-//       rating: 1,
-//       image: 'https://m.media-amazon.com/images/I/61t5Rq80yeL._SY879_.jpg',
-//     },
-//     {
-//       orderId: 'B233',
-//       product: 'Food',
-//       date: '4th Feb, 2024',
-//       price: '900 ₹',
-//       rating: 4,
-//       image: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Pizza-3007395.jpg',
-//     },
-//     {
-//       orderId: 'A232',
-//       product: 'School bag',
-//       date: '2nd May, 2023',
-//       price: '500 ₹',
-//       rating: 5,
-//       image: 'https://m.media-amazon.com/images/I/81ctaeouDCL._SX679_.jpg',
-//     },
-//   ];
+  export const orderHistoryData = [
+    {
+      orderId: 'A235',
+      product: 'Philips Hair Accessory',
+      date: '4th Nov, 2024',
+      price: '300 ₹',
+      rating: 3,
+      image: 'https://m.media-amazon.com/images/I/712KKGqy-wL._SL1500_.jpg',
+    },
+    {
+      orderId: 'J234',
+      product: 'Silk saree',
+      date: '4th May, 2024',
+      price: '2500 ₹',
+      rating: 1,
+      image: 'https://m.media-amazon.com/images/I/61t5Rq80yeL._SY879_.jpg',
+    },
+    {
+      orderId: 'B233',
+      product: 'Food',
+      date: '4th Feb, 2024',
+      price: '900 ₹',
+      rating: 4,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Pizza-3007395.jpg',
+    },
+    {
+      orderId: 'A232',
+      product: 'School bag',
+      date: '2nd May, 2023',
+      price: '500 ₹',
+      rating: 5,
+      image: 'https://m.media-amazon.com/images/I/81ctaeouDCL._SX679_.jpg',
+    },
+  ];
 
 //   //Orders/Orderscreencomponent
 

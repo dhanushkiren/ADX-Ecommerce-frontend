@@ -285,117 +285,49 @@ const EditProfile = ({ route, navigation }) => {
 
     getUserId();
   }, [dispatch]);
-
+  
   useEffect(() => {
     if (!profile) return;
-
+  
     setFirstName(profile.firstName || "");
     setLastName(profile.lastName || "");
     setEmail(profile.email || "");
-
-    // ✅ Process addresses
+  
+    console.log("📢 Raw Profile Addresses:", profile.addresses);
+  
     let addresses = [];
+  
     if (Array.isArray(profile.addresses)) {
-      addresses =
-        profile.addresses.length === 1 &&
-        typeof profile.addresses[0] === "string" &&
-        profile.addresses[0].includes(",")
-          ? profile.addresses[0].split(",").map((addr) => addr.trim())
-          : profile.addresses;
+      addresses = [...profile.addresses];
     } else if (typeof profile.addresses === "string") {
-      addresses = profile.addresses.split(",").map((addr) => addr.trim());
-    }
-
-    setAddress1(addresses[0] || "");
-    setAddress2(addresses[1] || "");
-    setAddress3(addresses[2] || "");
-    setCountry(profile.country || "");
-    setMobile(profile.mobile || "");
-    setDateOfBirth(
-      profile.date_of_birth ? new Date(profile.date_of_birth) : null
-    );
-
-    // ✅ Normalize BASE_URL (Remove trailing '/' or '/api/')
-    const BASE_URL = API_BASE_URL.replace(/\/$/, "").replace(/\/api$/, "");
-
-    let finalImageUrl = null;
-
-    // ✅ Helper Functions
-    const isValidBase64 = (str) =>
-      /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(
-        str
-      );
-
-    const constructFullUrl = (path) => {
-      return path.startsWith("http")
-        ? path
-        : `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
-    };
-
-    // ✅ Log API Response for Debugging
-    console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
-
-    // ✅ Image Handling
-    if (profile.image && isValidBase64(profile.image)) {
-      finalImageUrl = `data:image/jpeg;base64,${profile.image}`;
-      console.log("✅ Base64 Image Detected");
-    } else if (
-      profile.image_url &&
-      typeof profile.image_url === "string" &&
-      profile.image_url.trim() !== ""
-    ) {
-      const constructedUrl = constructFullUrl(profile.image_url);
-      console.log("🔗 Constructed Image URL:", constructedUrl);
-      finalImageUrl = constructedUrl;
+      addresses = [profile.addresses];
     } else {
-      console.log("❌ No valid image found. Using default.");
+      addresses = [];
     }
-
-    setImage(finalImageUrl);
-  }, [profile]);
-
-  // ✅ Log Image Updates
-  useEffect(() => {
-    console.log("🚀 Image state updated:", image);
-  }, [image]);
-  useEffect(() => {
-    if (!profile) return;
-
-    setFirstName(profile.firstName || "");
-    setLastName(profile.lastName || "");
-    setEmail(profile.email || "");
-
-    // ✅ Process addresses
-    let addresses = Array.isArray(profile.addresses)
-      ? profile.addresses
-      : typeof profile.addresses === "string"
-      ? profile.addresses.split(",").map((addr) => addr.trim())
-      : [];
-
+  
+    console.log("📢 Processed Addresses:", addresses);
+  
     setAddress1(addresses[0] || "");
     setAddress2(addresses[1] || "");
     setAddress3(addresses[2] || "");
+  
     setCountry(profile.country || "");
     setMobile(profile.mobile || "");
     setDateOfBirth(
       profile.date_of_birth ? new Date(profile.date_of_birth) : null
     );
-
-    // ✅ Normalize BASE_URL
+  
     const BASE_URL = API_BASE_URL.replace(/\/$/, "").replace(/\/api$/, "");
-
+  
     let finalImageUrl = null;
-
-    // ✅ Helper Functions
+  
     const constructFullUrl = (path) =>
       path.startsWith("http")
         ? path
         : `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
-
-    // ✅ Log API Response for Debugging
+  
     console.log("📢 Full Profile Response:", JSON.stringify(profile, null, 2));
-
-    // ✅ Image Handling
+  
     if (
       profile.imageUrls &&
       typeof profile.imageUrls === "string" &&
@@ -407,9 +339,10 @@ const EditProfile = ({ route, navigation }) => {
     } else {
       console.log("❌ No valid image found. Using default.");
     }
-
+  
     setImage(finalImageUrl);
   }, [profile]);
+  
 
   // ✅ Log Image Updates
   useEffect(() => {
@@ -497,109 +430,85 @@ const EditProfile = ({ route, navigation }) => {
     }
     return null; // ✅ No validation errors
   };
-  const handleUpdateProfile = async () => {
-    try {
-      console.log("🚀 Starting Profile Update...");
+  // ✅ Final corrected EditProfile.js with proper address handling
 
-      const validationError = validateProfileData();
-      if (validationError) {
-        Alert.alert("Validation Error", validationError);
-        return;
-      }
-
-      if (!dateOfBirth) {
-        Alert.alert("Error", "Please select a date of birth.");
-        return;
-      }
-
-      // ✅ Convert date to backend expected format: "dd/MM/yyyy"
-      const formattedDateOfBirth = moment(dateOfBirth).format("DD/MM/YYYY");
-
-      // ✅ Create an array for addresses
-      const addresses = [address1, address2, address3].filter(Boolean);
-
-      // ✅ Retrieve password from AsyncStorage
-      const storedPassword = await retrieveData("password");
-      if (!storedPassword) {
-        console.warn("⚠ No stored password found! Using dummy password.");
-      }
-
-      // ✅ Create FormData object
-      const formData = new FormData();
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName || "");
-      formData.append("email", email);
-      formData.append("mobile", mobile);
-      formData.append("date_of_birth", formattedDateOfBirth);
-      formData.append("country", country);
-      formData.append("role", role || "");
-      formData.append(
-        "addresses",
-        addresses.length > 0 ? addresses.join(",") : ""
-      );
-
-      // ✅ Always send password to avoid backend resetting it
-      formData.append("password", storedPassword || "DUMMY_PASSWORD");
-
-      // ✅ Ensure image is formatted correctly
-      if (imageFile) {
-        console.log("📸 Selected Image File:", imageFile);
-
-        let fileToUpload;
-        if (Platform.OS === "web") {
-          const response = await fetch(imageFile.uri);
-          const blob = await response.blob();
-          fileToUpload = new File([blob], "profile.jpg", {
-            type: "image/jpeg",
-          });
-        } else {
-          fileToUpload = {
-            uri: imageFile.uri,
-            type: "image/jpeg",
-            name: "profile.jpg",
-          };
-        }
-
-        formData.append("image", fileToUpload);
-      } else {
-        console.warn("⚠ No Image Selected");
-      }
-
-      // ✅ Determine API URL & Method
-      const url = userId
-        ? `http://localhost:8080/api/users/${userId}`
-        : `http://localhost:8080/api/users`;
-      const method = userId ? "PUT" : "POST";
-
-      console.log("📤 FormData Entries:");
-      for (let pair of formData.entries()) {
-        console.log("➡", pair[0], ":", pair[1]);
-      }
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          Authorization: `Bearer ${await retrieveData("token")}`,
-        },
-        body: formData,
-      });
-
-      const textResponse = await response.text();
-      console.log("📢 Raw API Response:", textResponse);
-
-      try {
-        const jsonResponse = JSON.parse(textResponse);
-        console.log("✅ Converted JSON:", jsonResponse);
-        Alert.alert("Success", "Profile updated successfully!");
-      } catch (error) {
-        console.error("❌ JSON Parsing Error:", error);
-        Alert.alert("Error", "Invalid response from server.");
-      }
-    } catch (error) {
-      console.error("❌ Error in handleUpdateProfile:", error);
-      Alert.alert("Update Failed", "An unexpected error occurred.");
+const handleUpdateProfile = async () => {
+  try {
+    const validationError = validateProfileData();
+    if (validationError) {
+      Alert.alert("Validation Error", validationError);
+      return;
     }
-  };
+
+    if (!dateOfBirth) {
+      Alert.alert("Error", "Please select a date of birth.");
+      return;
+    }
+
+    const formattedDateOfBirth = moment(dateOfBirth).format("DD/MM/YYYY");
+    const addresses = [address1, address2, address3].filter(Boolean);
+    const storedPassword = await retrieveData("password");
+
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName || "");
+    formData.append("email", email);
+    formData.append("mobile", mobile);
+    formData.append("date_of_birth", formattedDateOfBirth);
+    formData.append("country", country);
+    formData.append("role", role || "");
+
+    // ✅ Correctly append addresses without joining
+    addresses.forEach((address) => {
+      formData.append("addresses", address);
+    });
+
+    formData.append("password", storedPassword || "DUMMY_PASSWORD");
+
+    if (imageFile) {
+      let fileToUpload;
+      if (Platform.OS === "web") {
+        const response = await fetch(imageFile.uri);
+        const blob = await response.blob();
+        fileToUpload = new File([blob], "profile.jpg", {
+          type: "image/jpeg",
+        });
+      } else {
+        fileToUpload = {
+          uri: imageFile.uri,
+          type: "image/jpeg",
+          name: "profile.jpg",
+        };
+      }
+      formData.append("image", fileToUpload);
+    }
+
+    const url = userId
+      ? `http://localhost:8080/api/users/${userId}`
+      : `http://localhost:8080/api/users`;
+    const method = userId ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        Authorization: `Bearer ${await retrieveData("token")}`,
+      },
+      body: formData,
+    });
+
+    const textResponse = await response.text();
+
+    try {
+      const jsonResponse = JSON.parse(textResponse);
+      Alert.alert("Success", "Profile updated successfully!");
+    } catch (error) {
+      Alert.alert("Error", "Invalid response from server.");
+    }
+  } catch (error) {
+    Alert.alert("Update Failed", "An unexpected error occurred.");
+  }
+};
+
 
   useEffect(() => {
     const debugToken = async () => {
