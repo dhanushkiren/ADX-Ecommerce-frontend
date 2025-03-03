@@ -42,15 +42,23 @@ function* fetchProfileSaga(action) {
 
 // Update Profile Saga
 function* updateProfileSaga(action) {
+  const { id, profileData } = action.payload || {}; // Prevent destructuring errors
+  console.log("dkdk edit : ", profileData);
+
+  if (!id || !profileData) {
+    console.error("❌ updateProfileSaga: Missing id or profileData!");
+    yield put(updateProfileFailure({ message: "Invalid request data" }));
+    return; // Exit saga early
+  }
+
   try {
-    const { id, profileData } = action.payload;
-    if (!id || !profileData) {
-      throw new Error("Invalid action payload: Missing id or profileData");
-    }
+    const response = yield call(axios.put, apiConfig.editprofile(id), profileData, {
+      headers: {
+          "Content-Type": "multipart/form-data"
+      }
+    });
 
-    const apiEndpoint = apiConfig.editprofile(id);
-    const response = yield call(() => axios.put(apiEndpoint, profileData));
-
+    console.log("dk checking : ", response.status);
     if (response?.status === 200) {
       yield put(updateProfileSuccess(response.data));
       yield put(fetchProfileSuccess(response.data)); // Refresh profile
@@ -58,6 +66,7 @@ function* updateProfileSaga(action) {
       yield put(updateProfileFailure({ message: "Failed to update profile" }));
     }
   } catch (error) {
+    console.error("❌ updateProfileSaga Error:", error);
     yield put(updateProfileFailure({ message: handleError(error) }));
   }
 }
