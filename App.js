@@ -85,7 +85,7 @@ function MyStack() {
     <>  
       <Stack.Navigator
         initialRouteName={token ? "home" : "login"}
-        //initialRouteName="UserDashboard"
+        //initialRouteName="ChatBot"
         screenOptions={{ headerShown: false }}
       >
         {/* Define your screens */}
@@ -106,7 +106,7 @@ function MyStack() {
         <Stack.Screen name="history" component={Orderhistorycomponent} />
         <Stack.Screen name="SearchResults" component={SearchResults} />
         <Stack.Screen name="UserDashboard" component={UserDashboard} />
-        <Stack.Screen name="ChatBot" component={ChatBot} />
+        <Stack.Screen name="ChatBot" component={ChatBot} options={{ tabBarStyle: { display: 'none' } }}/>
         <Stack.Screen name="OrderStatus" component={OrderStatusComponent} />
         <Stack.Screen name="PaymentStatus" component={PaymentStatusComponent} />
         <Stack.Screen name="Transaction" component={TransactionRecordsComponent} />
@@ -118,8 +118,9 @@ function MyStack() {
       </Stack.Navigator>
 
 
-      {/* Conditionally render SmallMenu based on the screen */}
-      {!['login','profile', 'register'].includes(currentScreen) && <SmallMenu />}
+     {/* Conditionally render SmallMenu based on the screen */}
+{!['login', 'profile', 'register', 'ChatBot'].includes(currentScreen) && <SmallMenu />}
+
     </>
   );
 }
