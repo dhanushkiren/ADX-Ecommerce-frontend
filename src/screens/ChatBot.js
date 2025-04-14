@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import { GiftedChat } from 'react-native-gifted-chat';
 import { View, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
-  const [inputText, setInputText] = useState(''); // State for custom text input
+  const [inputText, setInputText] = useState('');
   const navigation = useNavigation();
 
-  // Load default messages when the component is mounted
   useEffect(() => {
     setMessages([
       {
@@ -25,7 +24,6 @@ const ChatBot = () => {
     ]);
   }, []);
 
-  // Handle sending and receiving messages
   const onSend = (newMessages = []) => {
     setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessages));
 
@@ -53,8 +51,7 @@ const ChatBot = () => {
     }, 1000);
   };
 
-  // Custom input toolbar
-  const renderCustomInputToolbar = (props) => {
+  const renderCustomInputToolbar = () => {
     return (
       <View style={styles.inputContainer}>
         <TextInput
@@ -69,7 +66,7 @@ const ChatBot = () => {
           onPress={() => {
             if (inputText.trim().length > 0) {
               onSend([{ _id: Math.random(), text: inputText, createdAt: new Date(), user: { _id: 1 } }]);
-              setInputText(''); // Clear the input field
+              setInputText('');
             }
           }}
         >
@@ -93,9 +90,7 @@ const ChatBot = () => {
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
-        user={{
-          _id: 1,
-        }}
+        user={{ _id: 1 }}
         renderInputToolbar={renderCustomInputToolbar} // Custom input toolbar
       />
     </View>
@@ -105,7 +100,7 @@ const ChatBot = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',

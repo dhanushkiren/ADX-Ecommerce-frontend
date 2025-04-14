@@ -108,6 +108,13 @@ const UserDashboard = ({ navigation }) => {
         <Text style={styles.optionText}>Refund Tracking</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("ChatBot")}
+          >
+        <Text style={styles.optionText}>Help & support </Text>
+        </TouchableOpacity>
+
         {/* Login/Logout Button */}
         <TouchableOpacity style={styles.authButton} onPress={handleAuthAction}>
           <Text style={styles.authText}>{isLoggedIn ? "Logout" : "Login"}</Text>
