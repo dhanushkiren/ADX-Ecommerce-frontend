@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  Animated,
 } from "react-native";
 import axios from "axios";
 import * as Linking from "expo-linking";
@@ -14,32 +13,29 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 
 const PaymentPage = () => {
   const route = useRoute();
-  const { products = [] } = route.params || {}; // Get products data from navigation params
-  const [selectedOption, setSelectedOption] = useState(null);
+  const { products = [] } = route.params || {}; 
   const navigation = useNavigation();
 
-  // Calculate total amount dynamically
+  const API_BASE_URL = "http://192.168.3.150:8080/api/";
+
   const totalAmount = products.reduce(
     (sum, item) => sum + (item.price || 0),
     0
   );
-
-  const [stripeVisible, setStripeVisible] = useState(false);
-  const animatedHeight = new Animated.Value(stripeVisible ? 100 : 0);
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   // Handle Stripe Payment
   const handleStripePayment = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}payment/checkout`, {
         name: products.map((item) => item.productName).join(", "),
-        amount: totalAmount * 100, // Convert ₹ to paise
+        amount: totalAmount * 100, 
         currency: "INR",
         quantity: products.length,
       });
 
       if (response.data.status === "SUCCESS") {
-        const sessionUrl = response.data.sessionUrl;
-        Linking.openURL(sessionUrl); // Open Stripe checkout in browser
+        Linking.openURL(response.data.sessionUrl);
       } else {
         Alert.alert("Payment Error", response.data.message);
       }
@@ -48,21 +44,35 @@ const PaymentPage = () => {
     }
   };
 
-  const toggleStripeDropdown = () => {
-    Animated.timing(animatedHeight, {
-      toValue: stripeVisible ? 0 : 100,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-    setStripeVisible(!stripeVisible);
+  
+  const handleRazorpayPayment = async () => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}razorpay/checkout`, {
+        name: products.map((item) => item.productName).join(", "),
+        amount: totalAmount * 100,
+        currency: "INR",
+        quantity: products.length,
+        email: "test@example.com",        
+        contact: "8526993451",
+      });
+  
+      if (response.data.status === "SUCCESS") {
+        Linking.openURL(response.data.paymentUrl);
+      } else {
+        Alert.alert("Payment Error", response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Payment error:", error.response?.data || error.message);
+      Alert.alert("Error", "Unable to process payment. Please try again.");
+    }
   };
-
+  
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()} // Go back to previous page
+          onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
@@ -76,44 +86,51 @@ const PaymentPage = () => {
       </View>
 
       <View style={styles.paymentMethods}>
-        {/* Stripe Payment (Dropdown) */}
+        {/* Stripe Payment */}
         <View style={styles.method}>
-          <TouchableOpacity
-            style={styles.methodHeader}
-            onPress={toggleStripeDropdown}
-          >
+          <TouchableOpacity style={styles.methodHeader}>
             <Text style={styles.methodHeaderText}>💳 Pay with Stripe</Text>
-            
           </TouchableOpacity>
-            <View style={styles.methodBody}>
-              <TouchableOpacity
-                style={styles.payButton}
-                onPress={handleStripePayment}
-              >
-                <Text style={styles.payButtonText}>Pay with Stripe</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.methodBody}>
+            <TouchableOpacity
+              style={styles.payButton}
+              onPress={handleStripePayment}
+            >
+              <Text style={styles.payButtonText}>Pay with Stripe</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Razorpay Payment */}
+        <View style={styles.method}>
+          <TouchableOpacity style={styles.methodHeader}>
+            <Text style={styles.methodHeaderText}>💳 Pay with Razorpay</Text>
+          </TouchableOpacity>
+          <View style={styles.methodBody}>
+            <TouchableOpacity
+              style={styles.payButton}
+              onPress={handleRazorpayPayment}
+            >
+              <Text style={styles.payButtonText}>Pay with Razorpay ₹{totalAmount}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Unavailable Payment Methods */}
-
-        {[
-          "UPI Payment",
-          "Credit / Debit Card",
-          "Wallets",
-          "Cash on Delivery",
-        ].map((method) => (
-          <View key={method} style={styles.method}>
-            <TouchableOpacity style={styles.methodHeader}>
-              <Text style={styles.methodHeaderText}>{method}</Text>
-            </TouchableOpacity>
-            <View style={styles.methodBody}>
-              <Text style={styles.unavailableText}>
-                Currently Not Available
-              </Text>
+        {["Credit / Debit Card", "Wallets", "Cash on Delivery"].map(
+          (method) => (
+            <View key={method} style={styles.method}>
+              <TouchableOpacity style={styles.methodHeader}>
+                <Text style={styles.methodHeaderText}>{method}</Text>
+              </TouchableOpacity>
+              <View style={styles.methodBody}>
+                <Text style={styles.unavailableText}>
+                  Currently Not Available
+                </Text>
+              </View>
             </View>
-          </View>
-        ))}
+          )
+        )}
       </View>
 
       <View style={styles.footer}>
@@ -183,22 +200,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#6a0dad",
     alignItems: "center",
     borderRadius: 4,
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   methodHeaderText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "white",
   },
-  arrow: {
-    fontSize: 18,
-    color: "white",
-  },
   methodBody: {
-    overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
+    padding: 10,
   },
   payButton: {
     backgroundColor: "#00008B",
