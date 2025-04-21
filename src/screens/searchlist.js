@@ -27,23 +27,16 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-  
-
-
-
 const { height } = Dimensions.get("window");
 
 const ProductScreen = ({ route }) => {
 
   const { searchQuery } = route.params || '';
-
-
-
   
   // const route = useRoute();
   // console.log("dk route",route.name);
   const dispatch = useDispatch();
-const { products, loading, error } = useSelector(state => state.productFetch);
+  const { products, loading, error } = useSelector(state => state.productFetch);
 
   const [isSortVisible, setSortVisible] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -52,6 +45,14 @@ const { products, loading, error } = useSelector(state => state.productFetch);
   const filterTranslateY = useState(new Animated.Value(height))[0];
   const [selectedCategory, setSelectedCategory] = useState("Brands");
   const navigation = useNavigation();
+
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [brands, setBrands] = useState([]); // You can fetch these from API
+
   useEffect(() => {
     if (searchQuery) {
       console.log("Query:", searchQuery);
@@ -63,7 +64,35 @@ const { products, loading, error } = useSelector(state => state.productFetch);
     console.log("Fetched Products:", products); // Check what data is coming
   }, [products]);
 
-
+  const getSortedProducts = () => {
+    let sorted = [...products];
+    switch (selectedSortOption) {
+      case "A - Z":
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case "Z - A":
+        return sorted.sort((a, b) => b.name.localeCompare(a.name));
+      case "Price (Low to High)":
+        return sorted.sort((a, b) => a.price - b.price);
+      case "Price (High to Low)":
+        return sorted.sort((a, b) => b.price - a.price);
+      default:
+        return products;
+    }
+  };
+  
+  const getFilteredProducts = () => {
+    return getSortedProducts().filter((product) => {
+      const brandMatch = selectedBrand ? product.brand === selectedBrand : true;
+      const ratingMatch = selectedRating
+        ? Math.floor(product.rating) >= parseInt(selectedRating)
+        : true;
+      const priceMatch =
+        (!minPrice || product.price >= minPrice) &&
+        (!maxPrice || product.price <= maxPrice);
+      return brandMatch && ratingMatch && priceMatch;
+    });
+  };
+  
   const openSortModal = () => {
     setSortVisible(true);
     Animated.timing(sortTranslateY, {
@@ -156,7 +185,7 @@ const { products, loading, error } = useSelector(state => state.productFetch);
       </Text>
     </View> */}
       <FlatList
-        data={products}
+        data={getFilteredProducts()}
         keyExtractor={(item) => item.id}
         renderItem={renderProduct}
         ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No products available</Text>}
@@ -239,7 +268,10 @@ const { products, loading, error } = useSelector(state => state.productFetch);
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={closeSortModal}
+              onPress={() => {
+                closeSortModal();
+                // Trigger re-render (optional, or sort is already applied in render)
+              }}
             >
               <Text style={styles.modalButtonText}>Show results</Text>
             </TouchableOpacity>
@@ -289,8 +321,31 @@ const { products, loading, error } = useSelector(state => state.productFetch);
             <View style={styles.optionsPanel}>
               <Text style={styles.optionsTitle}>{selectedCategory}</Text>
               <ScrollView>
-                {filterData[selectedCategory].map((option, index) => (
-                  <TouchableOpacity key={index} style={styles.optionItem}>
+              {(filterData[selectedCategory] || []).map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.optionItem}
+                onPress={() => {
+                  if (selectedCategory === "Brands") setSelectedBrand(option);
+                  if (selectedCategory === "Ratings") setSelectedRating(option);
+                  if (selectedCategory === "Price") {
+                    if (option.includes("Under")) {
+                      setMinPrice(0);
+                      setMaxPrice(10000);
+                    } else if (option.includes("Above")) {
+                      setMinPrice(20000);
+                      setMaxPrice(Infinity);
+                    } else {
+                      const [min, max] = option
+                        .replace(/[^\d-]/g, '')
+                        .split("-")
+                        .map(Number);
+                      setMinPrice(min);
+                      setMaxPrice(max);
+                    }
+                  }
+                }}
+              >
                     <Text>{option}</Text>
                   </TouchableOpacity>
                 ))}
@@ -303,7 +358,10 @@ const { products, loading, error } = useSelector(state => state.productFetch);
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={closeFilterModal}
+              onPress={() => {
+                closeFilterModal();
+                // triggers re-render since selectedBrand, rating, etc. changed
+              }}
             >
               <Text style={styles.modalButtonText}>Show results</Text>
             </TouchableOpacity>

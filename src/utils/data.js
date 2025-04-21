@@ -55,25 +55,25 @@
   
 // // Search List Page
 
-//  export const prodCategories = [
-//     'Brands',
-//     'Price and Deals',
-//     'Customer Reviews',
-//     'Availability',
-//     'Category', 
-//     'New Arrivals', 
-//     'Offers',
-//   ];
+ export const prodCategories = [
+    'Brands',
+    'Price and Deals',
+    'Customer Reviews',
+    'Availability',
+    'Category', 
+    'New Arrivals', 
+    'Offers',
+  ];
   
-//   export const filterData = {
-//     Brands: ['Apple', 'Samsung', 'POCO', 'iQOO', 'MI'],
-//     'Price and Deals': ['Under ₹1,000', '₹1,000 - ₹5,000', 'Above ₹5,000'],
-//     'Customer Reviews': ['4★ & above', '3★ & above', '2★ & above'],
-//     Availability: ['In Stock', 'Out of Stock'],
-//     Category: ['All','Smartphones', 'Basic Mobiles'], 
-//     'New Arrivals': ['Last 30 Days', 'Last 90 Days'], 
-//     Offers: ['Discounted Items', 'Buy 1 Get 1', 'Limited-Time Offers'], 
-//   };
+  export const filterData = {
+    Brands: ['Apple', 'Samsung', 'POCO', 'iQOO', 'MI'],
+    'Price and Deals': ['Under ₹1,000', '₹1,000 - ₹5,000', 'Above ₹5,000'],
+    'Customer Reviews': ['4★ & above', '3★ & above', '2★ & above'],
+    Availability: ['In Stock', 'Out of Stock'],
+    Category: ['All','Smartphones', 'Basic Mobiles'], 
+    'New Arrivals': ['Last 30 Days', 'Last 90 Days'], 
+    Offers: ['Discounted Items', 'Buy 1 Get 1', 'Limited-Time Offers'], 
+  };
   
 // export const searchProducts = [
 //     {
