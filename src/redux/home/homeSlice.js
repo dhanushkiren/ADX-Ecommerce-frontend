@@ -16,7 +16,7 @@ const homeSlice = createSlice({
       state.error = null;
     },
     fetchProductsSuccess: (state, action) => {
-      console.log("Products fetched:", action.payload);
+      // console.log("Products fetched:", action.payload);
       state.products = action.payload;
       state.loading = false;
     },
