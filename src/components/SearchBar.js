@@ -30,7 +30,13 @@ const SearchBar = ({ routeName, name }) => {
   const [searchQuery, setSearchQuery] = useState(name);
   const [recentSearches, setRecentSearches] = useState([]);
   const [userId, setUserId] = useState(null);
+  
   const userProfile = useSelector((state) => state.editProfile.originalProfile);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [brands, setBrands] = useState(["Nike", "Adidas", "Puma", "Reebok"])
 
   const handleSearch = (text) => {
     setSearchQuery(text);
